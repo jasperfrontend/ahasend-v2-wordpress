@@ -35,7 +35,9 @@ folder of this repo. Namespace `Xolution\MailDelivery`, option and table prefix 
    and only from that server.
 7. **From address per site:** `<site-host>@mail-delivery.<sending-domain>`, e.g.
    `client-site.nl@mail-delivery.example.com`, so AhaSend's stats show which site sent what.
-   Verified in the sandbox on 2026-11-10: AhaSend accepts dots in the local part, including several
+   Verified on the dev site on 2026-11-10: a Slack test alert arrived in #status (v0.0.8).
+
+Verified in the sandbox on 2026-11-10: AhaSend accepts dots in the local part, including several
    (`shop.client-site.co.uk@…`). The `theirdomain-com` form is not needed.
 8. **The plugin is cloaked.** Clients have administrator accounts; only the plugin's managers see it.
 9. **Local log, 7 days**, matching AhaSend's own retention. Metadata only, no message content.
@@ -287,7 +289,6 @@ xolution-maildelivery/
 ## Still to verify
 
 - That MainWP sees and updates the plugin while it is cloaked.
-- Slack alerts against the real #status webhook (built and tested against a fake endpoint).
 - Shield's email sending verification going through AhaSend (v0.0.6). Not testable on the dev
   site: Shield remembers a passed verification, even after switching Email Authentication off and
   on again. Test on the next new site: switch on both Shield types first, then Email Authentication.
