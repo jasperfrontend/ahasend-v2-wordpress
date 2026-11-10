@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Admin;
 
+use InvalidArgumentException;
 use WP_Error;
 use Xolution\MailDelivery\Alerts\SlackAlerts;
 use Xolution\MailDelivery\Integration\Registry;
 use Xolution\MailDelivery\Log\LogTable;
 use Xolution\MailDelivery\Mail\Sender;
 use Xolution\MailDelivery\Plugin;
+use Xolution\MailDelivery\Settings\Configurator;
 use Xolution\MailDelivery\Settings\Secrets;
 
 /**
@@ -23,8 +25,6 @@ final class SettingsPage
     private const ACTION_TEST = 'xmd_test';
     private const ACTION_ALERT_TEST = 'xmd_alert_test';
 
-    private const UUID_PATTERN   = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/';
-    private const DOMAIN_PATTERN = '/^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{0,61}[a-z0-9]$/';
 
     public function __construct(private readonly Plugin $plugin)
     {
@@ -58,65 +58,44 @@ final class SettingsPage
     public function handleSave(): void
     {
         $this->guard(self::ACTION_SAVE);
-        $options  = $this->plugin->options;
+        $config   = new Configurator($this->plugin);
         $messages = [];
         $errors   = [];
 
-        $accountId = strtolower(trim($this->post('account_id')));
-        if ($accountId === '' || preg_match(self::UUID_PATTERN, $accountId) === 1) {
-            $options->update(['account_id' => $accountId]);
-        } else {
-            $errors[] = __('The account ID is not a valid UUID. It was not saved.', 'xolution-maildelivery');
-        }
-
-        $apiKey = trim($this->post('api_key'));
-        if ($apiKey !== '') {
-            if (str_starts_with($apiKey, 'aha-sk-') && strlen($apiKey) > 20) {
-                $options->update([
-                    'api_key'      => Secrets::encrypt($apiKey),
-                    'api_key_hint' => substr($apiKey, -4),
-                ]);
+        $steps = [
+            fn () => $config->setAccountId($this->post('account_id')),
+            fn () => $config->setSendingDomain($this->post('sending_domain')),
+            fn () => $config->setSandbox(isset($_POST['sandbox'])),
+        ];
+        if (trim($this->post('api_key')) !== '') {
+            $steps[] = function () use ($config, &$messages): void {
+                $config->setApiKey($this->post('api_key'));
                 $messages[] = __('API key saved.', 'xolution-maildelivery');
-            } else {
-                $errors[] = __('The API key must be an AhaSend API v2 key, starting with "aha-sk-". Keys from API v1 do not work. It was not saved.', 'xolution-maildelivery');
-            }
+            };
         }
-
-        $domain = strtolower(trim($this->post('sending_domain')));
-        if ($domain === '' || preg_match(self::DOMAIN_PATTERN, $domain) === 1) {
-            $options->update(['sending_domain' => $domain]);
-        } else {
-            $errors[] = __('The sending domain is not a valid domain name. It was not saved.', 'xolution-maildelivery');
-        }
-
-        $options->update(['sandbox' => isset($_POST['sandbox'])]);
-
-        $webhook = trim($this->post('slack_webhook'));
         if (isset($_POST['remove_slack_webhook'])) {
-            $options->update(['slack_webhook' => '']);
-        } elseif ($webhook !== '') {
-            if (str_starts_with($webhook, SlackAlerts::WEBHOOK_PREFIX) && wp_http_validate_url($webhook) !== false) {
-                $options->update(['slack_webhook' => $webhook]);
-            } else {
-                $errors[] = sprintf(
-                    __('The Slack webhook must start with %s. It was not saved.', 'xolution-maildelivery'),
-                    SlackAlerts::WEBHOOK_PREFIX,
-                );
+            $steps[] = fn () => $config->setSlackWebhook('');
+        } elseif (trim($this->post('slack_webhook')) !== '') {
+            $steps[] = fn () => $config->setSlackWebhook($this->post('slack_webhook'));
+        }
+        // After the credentials, so a key saved in this same form counts.
+        $steps[] = function () use ($config): void {
+            $wanted = $this->plugin->registry->filterSwitchable($this->postList('enabled_types'));
+            try {
+                $config->setEnabledTypes($wanted);
+            } catch (InvalidArgumentException $e) {
+                $config->setEnabledTypes([]);
+                throw new InvalidArgumentException($e->getMessage() . ' ' . __('All email types are off.', 'xolution-maildelivery'));
             }
-        }
+        };
+        $steps[] = fn () => $config->setManagers(array_map('intval', $this->postList('managers')));
 
-        $wanted = $this->plugin->registry->filterSwitchable($this->postList('enabled_types'));
-        if ($wanted !== [] && $this->plugin->client() instanceof WP_Error) {
-            $errors[] = __('Email types can only be switched on once the account ID, a working API key and the sending domain are saved. All email types are off.', 'xolution-maildelivery');
-            $wanted   = [];
-        }
-        $options->update(['enabled_types' => $wanted]);
-
-        $managers = array_map('intval', $this->postList('managers'));
-        if ($managers === []) {
-            $errors[] = __('At least one manager is needed. The managers were not changed.', 'xolution-maildelivery');
-        } else {
-            $this->plugin->managers->replace($managers);
+        foreach ($steps as $step) {
+            try {
+                $step();
+            } catch (InvalidArgumentException $e) {
+                $errors[] = $e->getMessage();
+            }
         }
 
         $messages[] = __('Settings saved.', 'xolution-maildelivery');

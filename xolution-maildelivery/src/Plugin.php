@@ -61,6 +61,10 @@ final class Plugin
         (new GitHubUpdater())->register();
         $this->alerts->register();
 
+        if (defined('WP_CLI') && WP_CLI) {
+            \WP_CLI::add_command('maildelivery', Cli\Command::class);
+        }
+
         add_action(self::PURGE_HOOK, [$this->log, 'purge']);
         if (!wp_next_scheduled(self::PURGE_HOOK)) {
             wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', self::PURGE_HOOK);

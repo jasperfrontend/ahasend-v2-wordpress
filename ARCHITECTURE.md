@@ -13,7 +13,8 @@ folder of this repo. Namespace `Xolution\MailDelivery`, option and table prefix 
 - Requirements: **WordPress 7.0+, PHP 8.4+.** No Composer dependencies at runtime.
 - Public GitHub repo. Versions start at **v0.0.1**. Nothing account-specific (account ID, sending
   domain, user names, keys) ever lives in the code or the repo: all of it is a setting.
-- **v0.0.1 targets one website.** v0.0.2 adds updates from GitHub releases; WP-CLI comes later.
+- **v0.0.1 targets one website.** v0.0.2 adds updates from GitHub releases, v0.0.9 WP-CLI.
+- README.md explains setting the plugin up yourself.
 
 ## Decisions (2026-11-10)
 
@@ -225,10 +226,15 @@ webhook**, meant for the #status channel. Configured per site, optional.
 - **Settings page** (managers only): API key, account ID, sending domain, the computed From address
   (read-only), a switch per email type, sandbox mode, managers, "Test connection" (`GET /v2/ping`)
   and "Send test email" (to the current manager).
-- **WP-CLI (later, not in v0.0.1)** for setting up a whole server at once, since all sites on a server share one key:
-  `wp maildelivery setup` asks for the key on a hidden prompt (so it doesn't end up in shell history),
-  plus `status`, `test <email>`, `managers …`; run by the sysadmin, who has SSH. The key is never
-  passed through MainWP.
+- **WP-CLI (since v0.0.9)**, `wp maildelivery`, for the sysadmin (who has SSH) to set up a whole server
+  at once, since all sites on a server share one key. The key is never an argument (shell history,
+  process lists): `setup` asks for it without echo, or reads it from STDIN (`--key-from-stdin`) so
+  one typed key can be piped into a loop over all sites. Also `status`, `types`, `enable`,
+  `disable`, `test`, `health`, `alert-test`, `managers`, `manager-add`, `manager-remove`. Setting
+  up through WP-CLI has no current user, so `--manager` sets the managers. The key is never passed
+  through MainWP.
+- **One set of rules.** The settings page and WP-CLI save through the same `Configurator`, so both
+  refuse the same invalid input and both refuse switching email types on before the plugin can send.
 - **MainWP** installs and updates the plugin. A MainWP dashboard extension for settings is a
   possible later step, not part of v0.0.1.
 
@@ -278,7 +284,8 @@ xolution-maildelivery/
     Integration/FilteredEmailType.php, PlannedEmailType.php
     Integration/WpCore/WpCoreIntegration.php, EmailChangeConfirmation.php
     Integration/Shield/ShieldIntegration.php, TwoFactorLoginEmail.php, EmailSendingVerification.php
-    Settings/Options.php, Secrets.php, Managers.php
+    Settings/Options.php, Secrets.php, Managers.php, Configurator.php
+    Cli/Command.php           wp maildelivery …
     Log/LogTable.php
     Admin/Cloak.php, SettingsPage.php, Notices.php
     Alerts/SlackAlerts.php      Slack webhook alerts and the health check
@@ -289,6 +296,7 @@ xolution-maildelivery/
 ## Still to verify
 
 - That MainWP sees and updates the plugin while it is cloaked.
+- WP-CLI on a real server (built and tested against a fake WP-CLI; the hidden prompt needs a Linux terminal).
 - Shield's email sending verification going through AhaSend (v0.0.6). Not testable on the dev
   site: Shield remembers a passed verification, even after switching Email Authentication off and
   on again. Test on the next new site: switch on both Shield types first, then Email Authentication.
