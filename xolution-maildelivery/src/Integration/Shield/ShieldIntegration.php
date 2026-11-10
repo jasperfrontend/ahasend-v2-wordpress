@@ -31,6 +31,7 @@ final class ShieldIntegration implements Integration
     {
         return [
             new TwoFactorLoginEmail(),
+            new EmailSendingVerification(),
         ];
     }
 }

@@ -104,7 +104,7 @@ interface EmailType {
 
 ### Shield Security integration (since v0.0.5)
 
-Available when Shield is active. One email type, the one that has to arrive: **Email 2FA login**
+Available when Shield is active. Two email types. The one that has to arrive: **Email 2FA login**
 ("Two-Factor Login Verification", with the auto-login link when "Enable Auto-Login Links" is on).
 That is how Shield's "magic link" login works: Email Authentication enforced for the roles, plus
 auto-login links. Shield has no email-only (passwordless) login; its passwordless option is passkeys.
@@ -119,8 +119,12 @@ it is claimed by matching what Shield announces right before it:
 Shield's emails are HTML, and Shield adds the plain-text part through PHPMailer, which this plugin
 bypasses. So HTML email types are sent with `html_content` plus a `text_content` made by
 `HtmlToText` (links kept as visible URLs). Shield's "SureSend" service, if ever switched on, sends
-2FA email outside `wp_mail()`; this plugin can't claim it then. Shield's own email delivery test
-(needed once before Email 2FA can be enabled) is not claimed and goes the normal way.
+2FA email outside `wp_mail()`; this plugin can't claim it then.
+
+Since v0.0.6 also **Email sending verification**: the one-time email Shield sends before Email
+Authentication can be switched on. It tests the route the 2FA emails will take, so it takes that
+route too. Shield announces nothing before it, but its verify link is a Shield action URL with
+`ex=email_send_verify` (next to `shield_action`), which no other email contains; that is the claim.
 
 ## Sending
 
@@ -240,7 +244,7 @@ xolution-maildelivery/
     Mail/Headers.php, Address.php, Attachments.php, FromAddress.php, HtmlToText.php
     Integration/Integration.php, EmailType.php, PlannedEmailType.php, Registry.php
     Integration/WpCore/WpCoreIntegration.php, PasswordReset.php
-    Integration/Shield/ShieldIntegration.php, TwoFactorLoginEmail.php
+    Integration/Shield/ShieldIntegration.php, TwoFactorLoginEmail.php, EmailSendingVerification.php
     Settings/Options.php, Secrets.php, Managers.php
     Log/LogTable.php
     Admin/Cloak.php, SettingsPage.php, Notices.php
