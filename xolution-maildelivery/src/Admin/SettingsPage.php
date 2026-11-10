@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xolution\MailDelivery\Admin;
 
 use WP_Error;
+use Xolution\MailDelivery\Alerts\SlackAlerts;
 use Xolution\MailDelivery\Integration\Registry;
 use Xolution\MailDelivery\Log\LogTable;
 use Xolution\MailDelivery\Mail\Sender;
@@ -20,6 +21,7 @@ final class SettingsPage
     private const ACTION_SAVE = 'xmd_save';
     private const ACTION_PING = 'xmd_ping';
     private const ACTION_TEST = 'xmd_test';
+    private const ACTION_ALERT_TEST = 'xmd_alert_test';
 
     private const UUID_PATTERN   = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/';
     private const DOMAIN_PATTERN = '/^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{0,61}[a-z0-9]$/';
@@ -34,6 +36,7 @@ final class SettingsPage
         add_action('admin_post_' . self::ACTION_SAVE, [$this, 'handleSave']);
         add_action('admin_post_' . self::ACTION_PING, [$this, 'handlePing']);
         add_action('admin_post_' . self::ACTION_TEST, [$this, 'handleTest']);
+        add_action('admin_post_' . self::ACTION_ALERT_TEST, [$this, 'handleAlertTest']);
     }
 
     public function addMenu(): void
@@ -88,6 +91,20 @@ final class SettingsPage
 
         $options->update(['sandbox' => isset($_POST['sandbox'])]);
 
+        $webhook = trim($this->post('slack_webhook'));
+        if (isset($_POST['remove_slack_webhook'])) {
+            $options->update(['slack_webhook' => '']);
+        } elseif ($webhook !== '') {
+            if (str_starts_with($webhook, SlackAlerts::WEBHOOK_PREFIX) && wp_http_validate_url($webhook) !== false) {
+                $options->update(['slack_webhook' => $webhook]);
+            } else {
+                $errors[] = sprintf(
+                    __('The Slack webhook must start with %s. It was not saved.', 'xolution-maildelivery'),
+                    SlackAlerts::WEBHOOK_PREFIX,
+                );
+            }
+        }
+
         $wanted = $this->plugin->registry->filterSwitchable($this->postList('enabled_types'));
         if ($wanted !== [] && $this->plugin->client() instanceof WP_Error) {
             $errors[] = __('Email types can only be switched on once the account ID, a working API key and the sending domain are saved. All email types are off.', 'xolution-maildelivery');
@@ -127,6 +144,15 @@ final class SettingsPage
         $result->ok
             ? $this->redirect('settings', [sprintf(__('Test email accepted by AhaSend for %1$s (message %2$s).', 'xolution-maildelivery'), $email, (string) $result->messageId)], [])
             : $this->redirect('settings', [], [sprintf(__('Test email failed: %s', 'xolution-maildelivery'), $result->error)]);
+    }
+
+    public function handleAlertTest(): void
+    {
+        $this->guard(self::ACTION_ALERT_TEST);
+        $result = $this->plugin->alerts->sendTest();
+        $result === true
+            ? $this->redirect('settings', [__('Test alert posted to Slack.', 'xolution-maildelivery')], [])
+            : $this->redirect('settings', [], [sprintf(__('Test alert failed: %s', 'xolution-maildelivery'), $result)]);
     }
 
     // ---------------------------------------------------------------- rendering
@@ -240,6 +266,24 @@ final class SettingsPage
         }
         echo '</tbody></table>';
 
+        $webhook = $this->plugin->alerts->webhookUrl();
+        echo '<h2>' . esc_html__('Alerts', 'xolution-maildelivery') . '</h2>';
+        echo '<p>' . esc_html__('Posts to Slack when an email this plugin takes over can\'t be sent, when the twice-daily check of the API key fails, and once when it works again. Recipients are masked; no content is posted.', 'xolution-maildelivery') . '</p>';
+        echo '<table class="form-table" role="presentation"><tbody>';
+        $this->row(
+            'xmd-slack-webhook',
+            __('Slack webhook', 'xolution-maildelivery'),
+            sprintf(
+                '<input type="password" class="regular-text code" id="xmd-slack-webhook" name="slack_webhook" value="" autocomplete="off" placeholder="%s">%s',
+                esc_attr($webhook === null ? SlackAlerts::WEBHOOK_PREFIX . 'services/…' : SlackAlerts::WEBHOOK_PREFIX . '…' . substr($webhook, -4)),
+                $webhook === null ? '' : '<br><label><input type="checkbox" name="remove_slack_webhook" value="1"> ' . esc_html__('Remove the Slack webhook', 'xolution-maildelivery') . '</label>',
+            ),
+            $webhook === null
+                ? __('A Slack incoming webhook URL. Without one, failures only show in the log and as a notice to managers.', 'xolution-maildelivery')
+                : __('Saved. Leave empty to keep it; type a new URL to replace it.', 'xolution-maildelivery'),
+        );
+        echo '</tbody></table>';
+
         echo '<h2>' . esc_html__('Managers', 'xolution-maildelivery') . '</h2>';
         echo '<p>' . esc_html__('Only managers see this plugin: in the Plugins list, here, and in notices. Other administrators don\'t.', 'xolution-maildelivery') . '</p>';
         $admins = get_users(['role' => 'administrator', 'orderby' => 'login', 'fields' => ['ID', 'user_login', 'display_name']]);
@@ -269,6 +313,8 @@ final class SettingsPage
             sprintf(__('Send test email to %s', 'xolution-maildelivery'), wp_get_current_user()->user_email),
             !$configured,
         );
+        echo ' ';
+        $this->actionButton(self::ACTION_ALERT_TEST, __('Send test alert to Slack', 'xolution-maildelivery'), $webhook === null);
         echo '</p>';
     }
 

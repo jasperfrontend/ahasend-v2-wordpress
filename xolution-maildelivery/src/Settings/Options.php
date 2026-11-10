@@ -19,6 +19,7 @@ final class Options
         'sandbox'        => false,
         'enabled_types'  => [], // markers, e.g. 'wp-core/password-reset'
         'managers'       => [], // user IDs
+        'slack_webhook'  => '', // plain on purpose, see SlackAlerts
     ];
 
     /** @var array<string, mixed>|null */

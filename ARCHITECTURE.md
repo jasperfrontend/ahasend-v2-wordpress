@@ -198,6 +198,26 @@ configuration error, the next attempt must use a fresh key. Generating keys per 
 - Shown to managers on a log page, newest first, filterable by status and email type.
 - Recipient addresses are personal data; 7 days keeps that minimal.
 
+## Alerts (since v0.0.8)
+
+There is no fallback mailer, so a broken site has to be noticed another way: a **Slack incoming
+webhook**, meant for the #status channel. Configured per site, optional.
+
+- **When:** immediately when a claimed email can't be sent; when the twice-daily health check fails
+  (only while email types are on: can the key be decrypted, does AhaSend accept it from this
+  server via `/v2/ping`), which catches a rotated salt, revoked key or changed server IP before a
+  user does; and once with "working again" after a failure (any successful send or check).
+- **Throttled:** the same error from the same site is posted at most once per hour.
+- **Content:** site, email type, error, masked recipient (`j***@example.com`), a link to the log.
+  Never message content.
+- **The webhook URL is stored unencrypted, on purpose.** When the salts change, the API key can no
+  longer be decrypted and every claimed email fails; an encrypted webhook would become unreadable
+  at that same moment and the alert would never arrive. A leaked webhook can only post messages.
+- Hooks for other listeners: `xolution_maildelivery/send_failed` ($marker, $recipient, SendResult)
+  and `xolution_maildelivery/send_succeeded` ($marker).
+- Slack is posted to synchronously (3 s timeout) in the failing request; failures are rare and
+  throttled.
+
 ## Setup and administration
 
 - **Settings page** (managers only): API key, account ID, sending domain, the computed From address
@@ -259,6 +279,7 @@ xolution-maildelivery/
     Settings/Options.php, Secrets.php, Managers.php
     Log/LogTable.php
     Admin/Cloak.php, SettingsPage.php, Notices.php
+    Alerts/SlackAlerts.php      Slack webhook alerts and the health check
     Update/GitHubUpdater.php  update check, View details, auto-update
 .github/workflows/release.yml
 ```
@@ -266,6 +287,7 @@ xolution-maildelivery/
 ## Still to verify
 
 - That MainWP sees and updates the plugin while it is cloaked.
+- Slack alerts against the real #status webhook (built and tested against a fake endpoint).
 - Shield's email sending verification going through AhaSend (v0.0.6). Not testable on the dev
   site: Shield remembers a passed verification, even after switching Email Authentication off and
   on again. Test on the next new site: switch on both Shield types first, then Email Authentication.

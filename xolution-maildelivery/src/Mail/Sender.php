@@ -45,6 +45,7 @@ final class Sender
         if ($recipients === []) {
             $result = SendResult::failure('No recipient address.');
             $this->plugin->log->record($marker, '', $subject, $result, $this->sandbox());
+            do_action('xolution_maildelivery/send_failed', $marker, '', $result);
             $failures[] = $result->error;
         }
 
@@ -56,7 +57,10 @@ final class Sender
                 default                          => $this->sendOne($client, $to, $subject, $message, $contentType, $parsed, $attachments, $marker),
             };
             $this->plugin->log->record($marker, $to->email, $subject, $result, $this->sandbox());
-            if (!$result->ok) {
+            if ($result->ok) {
+                do_action('xolution_maildelivery/send_succeeded', $marker);
+            } else {
+                do_action('xolution_maildelivery/send_failed', $marker, $to->email, $result);
                 $failures[] = sprintf('%s: %s', $to->email, $result->error);
             }
         }
@@ -95,6 +99,10 @@ final class Sender
             default                     => $this->sendOne($client, $to, $subject, $message, 'text/plain', ['reply_to' => null, 'headers' => []], [], self::TEST_MARKER),
         };
         $this->plugin->log->record(self::TEST_MARKER, $email, $subject, $result, $this->sandbox());
+        // A working test email means the setup works again; a failing one the manager sees right away.
+        if ($result->ok) {
+            do_action('xolution_maildelivery/send_succeeded', self::TEST_MARKER);
+        }
 
         return $result;
     }

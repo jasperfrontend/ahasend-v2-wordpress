@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xolution\MailDelivery;
 
 use WP_Error;
+use Xolution\MailDelivery\Alerts\SlackAlerts;
 use Xolution\MailDelivery\Admin\Cloak;
 use Xolution\MailDelivery\Admin\Notices;
 use Xolution\MailDelivery\Admin\SettingsPage;
@@ -31,6 +32,7 @@ final class Plugin
     public readonly Managers $managers;
     public readonly Registry $registry;
     public readonly LogTable $log;
+    public readonly SlackAlerts $alerts;
 
     private function __construct()
     {
@@ -40,7 +42,8 @@ final class Plugin
             new WpCoreIntegration(),
             new ShieldIntegration(),
         ]);
-        $this->log = new LogTable();
+        $this->log    = new LogTable();
+        $this->alerts = new SlackAlerts($this);
     }
 
     public static function instance(): self
@@ -54,8 +57,9 @@ final class Plugin
 
         (new Dispatcher($this))->register();
         $this->registry->registerEnabledTypes();
-        // Not admin-only: update checks and auto-updates run from cron.
+        // Not admin-only: update checks, auto-updates and the health check run from cron.
         (new GitHubUpdater())->register();
+        $this->alerts->register();
 
         add_action(self::PURGE_HOOK, [$this->log, 'purge']);
         if (!wp_next_scheduled(self::PURGE_HOOK)) {
@@ -82,6 +86,7 @@ final class Plugin
     public static function deactivate(): void
     {
         wp_clear_scheduled_hook(self::PURGE_HOOK);
+        wp_clear_scheduled_hook(SlackAlerts::HEALTH_HOOK);
     }
 
     public static function basename(): string
