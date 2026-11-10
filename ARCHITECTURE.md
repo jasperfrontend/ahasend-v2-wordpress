@@ -255,6 +255,9 @@ xolution-maildelivery/
 ## Still to verify
 
 - That MainWP sees and updates the plugin while it is cloaked.
+- Shield's email sending verification going through AhaSend (v0.0.6). Not testable on the dev
+  site: Shield remembers a passed verification, even after switching Email Authentication off and
+  on again. Test on the next new site: switch on both Shield types first, then Email Authentication.
 - An end-to-end send with a real per-server key (the local test key is not allowed to send from
   the sending domain).
 
