@@ -32,6 +32,18 @@ that.
    separate "Create Conversation Message" endpoint (the only one that supports CC/BCC) is not
    needed.
 3. **API only, no SMTP.** The plugin never talks SMTP. AhaSend handles SMTP delivery on their side.
+4. **One API request per address.** When `wp_mail()` gets several To addresses (WooCommerce admin
+   notifications and Gravity Forms notifications both allow a comma-separated list), the plugin
+   sends one request per address. Each is still one email to one person, and nobody on the list
+   silently misses it. `wp_mail()` returns `true` only if every request succeeded.
+5. **Click tracking off.** Every request sends `tracking.click: false`, so no link (a magic login
+   link above all) is rewritten through AhaSend's tracking redirect.
+6. **AhaSend keeps no copy of the content.** Every request sends `retention.data: 0`, so the
+   message body, and with it any login link, is not stored at AhaSend. Metadata (delivery status)
+   is still kept, so failures can be traced.
+
+Decisions 5 and 6 apply to every email the plugin sends, not only Shield's. That means the plugin
+never needs to recognise which email is a magic link.
 
 ## What the plugin does today
 
@@ -130,9 +142,8 @@ These are in the current plugin regardless of v1 or v2, and a rewrite should fix
 
 1. **Comma-separated recipients break** (lines 62-64). WordPress accepts `$to` as a string like
    `"a@x.com, b@y.com"`. The plugin sends that whole string as one recipient's email, so the send
-   fails. It also ignores `Name <email>` formatting. Under decision 2 multiple recipients are not
-   supported, but `$to` still has to be parsed properly, if only to detect that case (see "Still
-   to decide").
+   fails. It also ignores `Name <email>` formatting. `$to` has to be parsed properly so each address
+   can get its own request (decision 4).
 2. **Headers are thrown away.** Reply-To, a per-message From and any custom header in `$headers`
    are dropped. Gravity Forms notifications rely on Reply-To. (CC and BCC are dropped too, which is
    now intended, per decision 2.)
@@ -167,31 +178,22 @@ These are in the current plugin regardless of v1 or v2, and a rewrite should fix
   does, honour `wp_mail_content_type`, `wp_mail_from`, `wp_mail_from_name`.
 - Settings: API key (password field, must start with `aha-sk-`), account ID, From email, From name,
   optional sandbox toggle, and a "Test connection" button calling `/v2/ping`.
-- Exactly one entry in `recipients` per request (decision 2). CC and BCC headers are dropped.
+- Exactly one entry in `recipients` per request (decision 2), one request per To address
+  (decision 4). CC and BCC headers are dropped.
+- Every request carries `tracking.click: false` (decision 5) and `retention.data: 0`
+  (decision 6). Whether `retention` accepts `data` on its own, without `metadata`, is not stated in
+  the docs: check against the API before relying on it.
 - Map Reply-To to `reply_to`, other headers to `headers`, attachments to base64 `attachments`.
-- Treat the send as successful only when the single item in `data` is `queued` or `scheduled`, and
-  fire `wp_mail_failed` with the API's error otherwise.
+- Treat a request as successful only when the single item in `data` is `queued` or `scheduled`.
+  If any request fails, fire `wp_mail_failed` naming the address and the API's error, and return
+  `false`.
 - Set an explicit timeout and handle `429` / `503` with `Retry-After`.
 - Send an `Idempotency-Key` per message, so a retry after a timeout can never deliver a magic link
   or an order email twice.
 
-### Suggestions for magic link mail (not decided)
+## Still to verify
 
-- **Turn click tracking off** (`tracking.click: false`). Click tracking rewrites links through a
-  redirect, so a login link would pass through AhaSend's tracking domain. Open tracking is
-  harmless but adds nothing for a login email either.
-- **Consider `retention.data: 0`** for these messages, so AhaSend does not keep a copy of the
-  login link. Default retention for new accounts is 7 days.
-- Both need a way to recognise Shield's emails (for example a filter Shield exposes, or a subject
-  match). Not looked into yet.
-
-## Still to decide
-
-- **What happens when `wp_mail()` is called with several To addresses?** WooCommerce's admin
-  notifications (New order, Cancelled order, etc.) and Gravity Forms notifications both accept a
-  comma-separated recipient list, so this will happen on real sites. Three options:
-  1. **One API request per address** (recommended). Each request is still one email to one
-     person, so it fits decision 2, and nobody on the list silently misses the email.
-  2. Send to the first address only. Simple, but the others get nothing and nothing says so.
-  3. Refuse the send and fire `wp_mail_failed`. Honest, but a store owner who lists two addresses
-     stops getting order notifications.
+- Whether `retention` accepts `data` alone, or needs `metadata` alongside it (decision 6).
+- What a retry does when only some requests in a multi-address send failed: with an
+  `Idempotency-Key` per address, resending the whole call should only deliver to the ones that
+  failed. Confirm against the API.
