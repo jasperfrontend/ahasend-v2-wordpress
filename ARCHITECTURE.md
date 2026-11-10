@@ -13,8 +13,7 @@ folder of this repo. Namespace `Xolution\MailDelivery`, option and table prefix 
 - Requirements: **WordPress 7.0+, PHP 8.4+.** No Composer dependencies at runtime.
 - Public GitHub repo. Versions start at **v0.0.1**. Nothing account-specific (account ID, sending
   domain, user names, keys) ever lives in the code or the repo: all of it is a setting.
-- **v0.0.1 targets one website.** Distribution (updater, release workflow, WP-CLI) comes after it
-  works there.
+- **v0.0.1 targets one website.** v0.0.2 adds updates from GitHub releases; WP-CLI comes later.
 
 ## Decisions (2026-11-10)
 
@@ -185,16 +184,25 @@ configuration error, the next attempt must use a fresh key. Generating keys per 
   so it stays unique and traceable.
 - From name: the site title.
 
-## Updates and releases (later, not in v0.0.1)
+## Updates and releases (since v0.0.2)
 
 - Plugin header `Update URI: https://github.com/<owner>/<repo>`; the plugin answers WordPress's
-  `update_plugins_github.com` filter.
+  `update_plugins_github.com` filter. The repository is configured only in that header.
 - It reads a static `update.json` from `releases/latest/download/update.json`, **not** the GitHub
   API. The unauthenticated API allows 60 requests per hour per IP, and many sites share a server IP.
-- Auto-updates are switched on for this plugin through the `auto_update_plugin` filter.
-- A GitHub Action on every `v*` tag builds the plugin zip (folder named after the slug) and
-  `update.json`, and attaches both to the release.
-- Version numbers: tag `v0.0.1` → plugin version `0.0.1`.
+  The result is cached for 3 hours (1 hour after a failure); "Check again" on Dashboard → Updates
+  skips the cache.
+- Only packages under the repository's own `releases/download/` are accepted.
+- **The repository must be public**: release files of a private repo can't be downloaded anonymously.
+- Auto-updates are switched on for this plugin through the `auto_update_plugin` filter, so sites
+  update themselves on WordPress's twice-daily update run. MainWP sees the update the normal way.
+- "View details" is answered by the plugin itself (`plugins_api`), not by wordpress.org.
+- Non-managers don't see the update on Dashboard → Updates (cloaking).
+- `.github/workflows/release.yml`, on every `v*` tag: checks the tag matches the plugin header
+  and `VERSION` constant, lints, builds `xolution-maildelivery.zip` and `update.json`, publishes
+  the release with generated notes.
+- Releasing: bump `Version:` and `VERSION` in `xolution-maildelivery.php`, commit, tag `vX.Y.Z`,
+  push with `--follow-tags`.
 
 ## Code layout
 
@@ -215,6 +223,8 @@ xolution-maildelivery/
     Settings/Options.php, Secrets.php, Managers.php
     Log/LogTable.php
     Admin/Cloak.php, SettingsPage.php, Notices.php
+    Update/GitHubUpdater.php  update check, View details, auto-update
+.github/workflows/release.yml
 ```
 
 ## Still to verify

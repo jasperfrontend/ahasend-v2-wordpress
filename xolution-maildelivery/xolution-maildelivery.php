@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Xolution MailDelivery
  * Description:       Sends selected WordPress emails through the AhaSend API instead of the server's own mailer.
- * Version:           0.0.1
+ * Version:           0.0.2
  * Requires at least: 7.0
  * Requires PHP:      8.4
  * Author:            Team Xolution
@@ -10,6 +10,7 @@
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       xolution-maildelivery
+ * Update URI:        https://github.com/jasperfrontend/ahasend-v2-wordpress
  */
 
 declare(strict_types=1);
@@ -18,7 +19,7 @@ namespace Xolution\MailDelivery;
 
 defined('ABSPATH') || exit;
 
-const VERSION = '0.0.1';
+const VERSION = '0.0.2';
 const FILE    = __FILE__;
 
 spl_autoload_register(static function (string $class): void {

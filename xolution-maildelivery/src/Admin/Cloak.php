@@ -21,6 +21,25 @@ final class Cloak
     {
         add_filter('all_plugins', [$this, 'hideFromPluginList']);
         add_filter('plugin_action_links_' . Plugin::basename(), [$this, 'actionLinks']);
+        add_filter('site_transient_update_plugins', [$this, 'hideFromUpdatesPage']);
+    }
+
+    /**
+     * Keeps our update off Dashboard → Updates for non-managers. Only on that screen: everywhere else (cron,
+     * auto-updates, MainWP) must keep seeing it.
+     */
+    public function hideFromUpdatesPage(mixed $transient): mixed
+    {
+        global $pagenow;
+
+        if ($pagenow !== 'update-core.php' || !is_object($transient) || $this->managers->isManager()) {
+            return $transient;
+        }
+        if (isset($transient->response) && is_array($transient->response)) {
+            unset($transient->response[Plugin::basename()]);
+        }
+
+        return $transient;
     }
 
     /**

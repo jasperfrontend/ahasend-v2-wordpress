@@ -17,6 +17,7 @@ use Xolution\MailDelivery\Mail\FromAddress;
 use Xolution\MailDelivery\Settings\Managers;
 use Xolution\MailDelivery\Settings\Options;
 use Xolution\MailDelivery\Settings\Secrets;
+use Xolution\MailDelivery\Update\GitHubUpdater;
 
 final class Plugin
 {
@@ -51,6 +52,8 @@ final class Plugin
 
         (new Dispatcher($this))->register();
         $this->registry->registerEnabledTypes();
+        // Not admin-only: update checks and auto-updates run from cron.
+        (new GitHubUpdater())->register();
 
         add_action(self::PURGE_HOOK, [$this->log, 'purge']);
         if (!wp_next_scheduled(self::PURGE_HOOK)) {
