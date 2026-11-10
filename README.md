@@ -100,7 +100,7 @@ while you do: there is no fallback, so a misconfiguration means that user can't 
 
 ### 5. Alerts
 
-Under **Alerts**, paste a Slack incoming webhook URL and click **Send test alert to Slack**. The
+On the **Alerts** tab, paste a Slack incoming webhook URL and click **Send test alert to Slack**. The
 plugin then posts:
 
 - when a claimed email can't be sent;
@@ -115,7 +115,7 @@ the error and a masked recipient (`j***@example.com`), never message content.
 
 Clients often have administrator accounts, so the plugin is hidden from everyone except its
 **managers**: they alone see it in the Plugins list, its settings, its log and its notices. Pick the
-managers at the bottom of the settings page. If no listed manager exists any more, every
+managers on the **Managers** tab. If no listed manager exists any more, every
 administrator counts as one again, so access can always be recovered. This keeps the plugin out of
 sight; it is not a security boundary, as an administrator can always run code.
 

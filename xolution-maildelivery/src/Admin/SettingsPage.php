@@ -14,16 +14,20 @@ use Xolution\MailDelivery\Settings\Configurator;
 use Xolution\MailDelivery\Settings\Secrets;
 
 /**
- * Settings → MailDelivery, with a Settings and a Log tab. Only registered for managers, and every handler checks
- * again.
+ * Settings → MailDelivery, with tabs: Settings (AhaSend and the email types), Alerts, Managers and Log. Only
+ * registered for managers, and every handler checks again.
+ *
+ * Each tab has its own form and saves only its own section, so a form can't clear settings it doesn't show.
  */
 final class SettingsPage
 {
-    private const ACTION_SAVE = 'xmd_save';
-    private const ACTION_PING = 'xmd_ping';
-    private const ACTION_TEST = 'xmd_test';
+    private const ACTION_SAVE       = 'xmd_save';
+    private const ACTION_PING       = 'xmd_ping';
+    private const ACTION_TEST       = 'xmd_test';
     private const ACTION_ALERT_TEST = 'xmd_alert_test';
 
+    /** Tabs that have a form, in addition to the read-only Log tab. */
+    private const FORM_TABS = ['settings', 'alerts', 'managers'];
 
     public function __construct(private readonly Plugin $plugin)
     {
@@ -68,25 +72,43 @@ final class SettingsPage
     public function handleSave(): void
     {
         $this->guard(self::ACTION_SAVE);
-        $config   = new Configurator($this->plugin);
-        $messages = [];
-        $errors   = [];
+        $section = in_array($this->post('section'), self::FORM_TABS, true) ? $this->post('section') : 'settings';
+        $config  = new Configurator($this->plugin);
+        $steps   = match ($section) {
+            'alerts'   => $this->alertsSteps($config),
+            'managers' => [fn () => $config->setManagers(array_map('intval', $this->postList('managers')))],
+            default    => $this->settingsSteps($config),
+        };
 
+        $errors = [];
+        foreach ($steps as $step) {
+            try {
+                $step();
+            } catch (InvalidArgumentException $e) {
+                $errors[] = $e->getMessage();
+            }
+        }
+
+        $saved = match ($section) {
+            'alerts'   => __('Alerts saved.', 'xolution-maildelivery'),
+            'managers' => __('Managers saved.', 'xolution-maildelivery'),
+            default    => __('Settings saved.', 'xolution-maildelivery'),
+        };
+        $this->redirect($section, [$saved], $errors);
+    }
+
+    /**
+     * @return list<callable>
+     */
+    private function settingsSteps(Configurator $config): array
+    {
         $steps = [
             fn () => $config->setAccountId($this->post('account_id')),
             fn () => $config->setSendingDomain($this->post('sending_domain')),
             fn () => $config->setSandbox(isset($_POST['sandbox'])),
         ];
         if (trim($this->post('api_key')) !== '') {
-            $steps[] = function () use ($config, &$messages): void {
-                $config->setApiKey($this->post('api_key'));
-                $messages[] = __('API key saved.', 'xolution-maildelivery');
-            };
-        }
-        if (isset($_POST['remove_slack_webhook'])) {
-            $steps[] = fn () => $config->setSlackWebhook('');
-        } elseif (trim($this->post('slack_webhook')) !== '') {
-            $steps[] = fn () => $config->setSlackWebhook($this->post('slack_webhook'));
+            $steps[] = fn () => $config->setApiKey($this->post('api_key'));
         }
         // After the credentials, so a key saved in this same form counts.
         $steps[] = function () use ($config): void {
@@ -98,18 +120,23 @@ final class SettingsPage
                 throw new InvalidArgumentException($e->getMessage() . ' ' . __('All email types are off.', 'xolution-maildelivery'));
             }
         };
-        $steps[] = fn () => $config->setManagers(array_map('intval', $this->postList('managers')));
 
-        foreach ($steps as $step) {
-            try {
-                $step();
-            } catch (InvalidArgumentException $e) {
-                $errors[] = $e->getMessage();
-            }
+        return $steps;
+    }
+
+    /**
+     * @return list<callable>
+     */
+    private function alertsSteps(Configurator $config): array
+    {
+        if (isset($_POST['remove_slack_webhook'])) {
+            return [fn () => $config->setSlackWebhook('')];
+        }
+        if (trim($this->post('slack_webhook')) !== '') {
+            return [fn () => $config->setSlackWebhook($this->post('slack_webhook'))];
         }
 
-        $messages[] = __('Settings saved.', 'xolution-maildelivery');
-        $this->redirect('settings', $messages, $errors);
+        return [];
     }
 
     public function handlePing(): void
@@ -140,8 +167,8 @@ final class SettingsPage
         $this->guard(self::ACTION_ALERT_TEST);
         $result = $this->plugin->alerts->sendTest();
         $result === true
-            ? $this->redirect('settings', [__('Test alert posted to Slack.', 'xolution-maildelivery')], [])
-            : $this->redirect('settings', [], [sprintf(__('Test alert failed: %s', 'xolution-maildelivery'), $result)]);
+            ? $this->redirect('alerts', [__('Test alert posted to Slack.', 'xolution-maildelivery')], [])
+            : $this->redirect('alerts', [], [sprintf(__('Test alert failed: %s', 'xolution-maildelivery'), $result)]);
     }
 
     // ---------------------------------------------------------------- rendering
@@ -151,7 +178,14 @@ final class SettingsPage
         if (!$this->plugin->managers->isManager()) {
             wp_die(esc_html__('Sorry, you are not allowed to access this page.', 'xolution-maildelivery'), 403);
         }
-        $tab = ($_GET['tab'] ?? '') === 'log' ? 'log' : 'settings';
+        $tabs = [
+            'settings' => __('Settings', 'xolution-maildelivery'),
+            'alerts'   => __('Alerts', 'xolution-maildelivery'),
+            'managers' => __('Managers', 'xolution-maildelivery'),
+            'log'      => __('Log', 'xolution-maildelivery'),
+        ];
+        $tab = sanitize_key((string) ($_GET['tab'] ?? ''));
+        $tab = isset($tabs[$tab]) ? $tab : 'settings';
 
         echo '<div class="wrap xmd-page">';
         printf(
@@ -161,17 +195,23 @@ final class SettingsPage
         );
         $this->renderFlash();
         echo '<nav class="nav-tab-wrapper">';
-        foreach (['settings' => __('Settings', 'xolution-maildelivery'), 'log' => __('Log', 'xolution-maildelivery')] as $id => $label) {
+        foreach ($tabs as $id => $label) {
             printf(
-                '<a href="%s" class="nav-tab%s">%s</a>',
+                '<a href="%s" class="nav-tab%s"%s>%s</a>',
                 esc_url($this->url($id)),
                 $tab === $id ? ' nav-tab-active' : '',
+                $tab === $id ? ' aria-current="page"' : '',
                 esc_html($label),
             );
         }
         echo '</nav>';
 
-        $tab === 'log' ? $this->renderLog() : $this->renderSettings();
+        match ($tab) {
+            'alerts'   => $this->renderAlerts(),
+            'managers' => $this->renderManagers(),
+            'log'      => $this->renderLog(),
+            default    => $this->renderSettings(),
+        };
         echo '</div>';
     }
 
@@ -180,19 +220,15 @@ final class SettingsPage
         $o          = $this->plugin->options;
         $configured = $this->plugin->isConfigured();
         $hint       = (string) $o->get('api_key_hint');
-        $managerIds = $this->plugin->managers->ids();
 
         if (!Secrets::saltsInConfig()) {
             echo '<div class="notice notice-warning inline"><p>' . esc_html__('wp-config.php does not define its own salts, so WordPress keeps them in the database. The API key is encrypted with them, which protects nothing while they sit next to it. Add salts to wp-config.php, then re-enter the API key.', 'xolution-maildelivery') . '</p></div>';
         }
 
-        echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
-        echo '<input type="hidden" name="action" value="' . esc_attr(self::ACTION_SAVE) . '">';
-        wp_nonce_field(self::ACTION_SAVE);
+        $this->openForm('settings');
 
         echo '<h2>' . esc_html__('AhaSend', 'xolution-maildelivery') . '</h2>';
         echo '<table class="form-table" role="presentation"><tbody>';
-
         $this->row(
             'xmd-account-id',
             __('Account ID', 'xolution-maildelivery'),
@@ -236,48 +272,12 @@ final class SettingsPage
         echo '<p>' . esc_html__('Only switched-on email types go through AhaSend. All other email is sent the normal way. A switched-on email that AhaSend can\'t accept fails; it is not sent the normal way instead.', 'xolution-maildelivery') . '</p>';
         echo (new EmailTypesField($this->plugin->registry))->render(); // escaped inside
 
-        $webhook = $this->plugin->alerts->webhookUrl();
-        echo '<h2>' . esc_html__('Alerts', 'xolution-maildelivery') . '</h2>';
-        echo '<p>' . esc_html__('Posts to Slack when an email this plugin takes over can\'t be sent, when the twice-daily check of the API key fails, and once when it works again. Recipients are masked; no content is posted.', 'xolution-maildelivery') . '</p>';
-        echo '<table class="form-table" role="presentation"><tbody>';
-        $this->row(
-            'xmd-slack-webhook',
-            __('Slack webhook', 'xolution-maildelivery'),
-            sprintf(
-                '<input type="password" class="regular-text code" id="xmd-slack-webhook" name="slack_webhook" value="" autocomplete="off" placeholder="%s">%s',
-                esc_attr($webhook === null ? SlackAlerts::WEBHOOK_PREFIX . 'services/…' : SlackAlerts::WEBHOOK_PREFIX . '…' . substr($webhook, -4)),
-                $webhook === null ? '' : '<label class="xmd-remove-webhook"><input type="checkbox" name="remove_slack_webhook" value="1"> ' . esc_html__('Remove the Slack webhook', 'xolution-maildelivery') . '</label>',
-            ),
-            $webhook === null
-                ? __('A Slack incoming webhook URL. Without one, failures only show in the log and as a notice to managers.', 'xolution-maildelivery')
-                : __('Saved. Leave empty to keep it; type a new URL to replace it.', 'xolution-maildelivery'),
-        );
-        echo '</tbody></table>';
-
-        echo '<h2>' . esc_html__('Managers', 'xolution-maildelivery') . '</h2>';
-        echo '<p>' . esc_html__('Only managers see this plugin: in the Plugins list, here, and in notices. Other administrators don\'t.', 'xolution-maildelivery') . '</p>';
-        $admins = get_users(['role' => 'administrator', 'orderby' => 'login', 'fields' => ['ID', 'user_login', 'display_name']]);
-        $cells  = [];
-        foreach ($admins as $admin) {
-            $cells[] = sprintf(
-                '<label><input type="checkbox" name="managers[]" value="%d"%s> %s <span class="description">(%s)</span></label>',
-                (int) $admin->ID,
-                checked(in_array((int) $admin->ID, $managerIds, true), true, false),
-                esc_html($admin->display_name),
-                esc_html($admin->user_login),
-            );
-        }
-        echo '<table class="form-table" role="presentation"><tbody>';
-        $this->row('', __('Managers', 'xolution-maildelivery'), '<fieldset>' . implode('<br>', $cells) . '</fieldset>');
-        echo '</tbody></table>';
-
         submit_button(__('Save settings', 'xolution-maildelivery'));
         echo '</form>';
 
         $email   = wp_get_current_user()->user_email;
         $sandbox = (bool) $o->get('sandbox');
         $from    = $o->get('sending_domain') === '' ? '' : $this->plugin->fromAddress()->email;
-        $host    = (string) wp_parse_url(home_url(), PHP_URL_HOST);
 
         echo '<h2>' . esc_html__('Check', 'xolution-maildelivery') . '</h2>';
         echo '<p>';
@@ -295,7 +295,37 @@ final class SettingsPage
                 . ($sandbox ? "\n" . __('Sandbox mode is on: AhaSend accepts the email but does not deliver it.', 'xolution-maildelivery') : ''),
             'ok'    => __('Send test email', 'xolution-maildelivery'),
         ]);
-        echo ' ';
+        echo '</p>';
+        $this->renderConfirmDialog();
+    }
+
+    private function renderAlerts(): void
+    {
+        $webhook = $this->plugin->alerts->webhookUrl();
+        $host    = (string) wp_parse_url(home_url(), PHP_URL_HOST);
+
+        $this->openForm('alerts');
+        echo '<h2>' . esc_html__('Slack', 'xolution-maildelivery') . '</h2>';
+        echo '<p>' . esc_html__('Posts to Slack when an email this plugin takes over can\'t be sent, when the twice-daily check of the API key fails, and once when it works again. Recipients are masked; no content is posted.', 'xolution-maildelivery') . '</p>';
+        echo '<table class="form-table" role="presentation"><tbody>';
+        $this->row(
+            'xmd-slack-webhook',
+            __('Slack webhook', 'xolution-maildelivery'),
+            sprintf(
+                '<input type="password" class="regular-text code" id="xmd-slack-webhook" name="slack_webhook" value="" autocomplete="off" placeholder="%s">%s',
+                esc_attr($webhook === null ? SlackAlerts::WEBHOOK_PREFIX . 'services/…' : SlackAlerts::WEBHOOK_PREFIX . '…' . substr($webhook, -4)),
+                $webhook === null ? '' : '<label class="xmd-remove-webhook"><input type="checkbox" name="remove_slack_webhook" value="1"> ' . esc_html__('Remove the Slack webhook', 'xolution-maildelivery') . '</label>',
+            ),
+            $webhook === null
+                ? __('A Slack incoming webhook URL. Without one, failures only show in the log and as a notice to managers.', 'xolution-maildelivery')
+                : __('Saved. Leave empty to keep it; type a new URL to replace it.', 'xolution-maildelivery'),
+        );
+        echo '</tbody></table>';
+        submit_button(__('Save alerts', 'xolution-maildelivery'));
+        echo '</form>';
+
+        echo '<h2>' . esc_html__('Check', 'xolution-maildelivery') . '</h2>';
+        echo '<p>';
         $this->actionButton(self::ACTION_ALERT_TEST, __('Send test alert to Slack', 'xolution-maildelivery'), $webhook === null, [
             'title' => __('Post a test alert to Slack?', 'xolution-maildelivery'),
             'body'  => sprintf(__('This posts a test message to the Slack channel of the saved webhook, saying that alerts from %s arrive there.', 'xolution-maildelivery'), $host)
@@ -304,6 +334,31 @@ final class SettingsPage
         ]);
         echo '</p>';
         $this->renderConfirmDialog();
+    }
+
+    private function renderManagers(): void
+    {
+        $managerIds = $this->plugin->managers->ids();
+        $admins     = get_users(['role' => 'administrator', 'orderby' => 'login', 'fields' => ['ID', 'user_login', 'display_name']]);
+        $cells      = [];
+        foreach ($admins as $admin) {
+            $cells[] = sprintf(
+                '<label><input type="checkbox" name="managers[]" value="%d"%s> %s <span class="description">(%s)</span></label>',
+                (int) $admin->ID,
+                checked(in_array((int) $admin->ID, $managerIds, true), true, false),
+                esc_html($admin->display_name),
+                esc_html($admin->user_login),
+            );
+        }
+
+        $this->openForm('managers');
+        echo '<h2>' . esc_html__('Managers', 'xolution-maildelivery') . '</h2>';
+        echo '<p>' . esc_html__('Only managers see this plugin: in the Plugins list, here, and in notices. Other administrators don\'t.', 'xolution-maildelivery') . '</p>';
+        echo '<table class="form-table" role="presentation"><tbody>';
+        $this->row('', __('Managers', 'xolution-maildelivery'), '<fieldset>' . implode('<br>', $cells) . '</fieldset>');
+        echo '</tbody></table>';
+        submit_button(__('Save managers', 'xolution-maildelivery'));
+        echo '</form>';
     }
 
     private function renderLog(): void
@@ -376,6 +431,14 @@ final class SettingsPage
 
     // ---------------------------------------------------------------- helpers
 
+    private function openForm(string $section): void
+    {
+        echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
+        echo '<input type="hidden" name="action" value="' . esc_attr(self::ACTION_SAVE) . '">';
+        echo '<input type="hidden" name="section" value="' . esc_attr($section) . '">';
+        wp_nonce_field(self::ACTION_SAVE);
+    }
+
     private function row(string $for, string $label, string $fieldHtml, string $description = ''): void
     {
         $th = $for === '' ? esc_html($label) : sprintf('<label for="%s">%s</label>', esc_attr($for), esc_html($label));
@@ -442,7 +505,7 @@ final class SettingsPage
 
     private function url(string $tab): string
     {
-        return admin_url('options-general.php?page=' . Plugin::SLUG . ($tab === 'log' ? '&tab=log' : ''));
+        return admin_url('options-general.php?page=' . Plugin::SLUG . ($tab === 'settings' ? '' : '&tab=' . $tab));
     }
 
     /**

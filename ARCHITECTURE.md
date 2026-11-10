@@ -223,9 +223,16 @@ webhook**, meant for the #status channel. Configured per site, optional.
 
 ## Setup and administration
 
-- **Settings page** (managers only): API key, account ID, sending domain, the computed From address
-  (read-only), a switch per email type, sandbox mode, managers, "Test connection" (`GET /v2/ping`)
-  and "Send test email" (to the current manager).
+- **Settings page** (managers only), Settings → MailDelivery, with tabs (since v0.0.11):
+  - **Settings:** account ID, API key, sending domain, the computed From address (read-only),
+    sandbox mode, and the email types as an accordion per integration (one section open at a time,
+    whole rows clickable); "Test connection" (`GET /v2/ping`) and "Send test email".
+  - **Alerts:** the Slack webhook and "Send test alert to Slack".
+  - **Managers:** who sees the plugin.
+  - **Log:** the 7-day log.
+  Each tab has its own form and saves only its own section, since an unchecked checkbox isn't
+  posted at all: one shared form would let a save on one tab clear another tab's switches. The check
+  buttons ask for confirmation in a dialog that says what will happen first.
 - **WP-CLI (since v0.0.9)**, `wp maildelivery`, for the sysadmin (who has SSH) to set up a whole server
   at once, since all sites on a server share one key. The key is never an argument (shell history,
   process lists): `setup` asks for it without echo, or reads it from STDIN (`--key-from-stdin`) so

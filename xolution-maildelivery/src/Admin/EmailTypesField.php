@@ -42,18 +42,19 @@ final class EmailTypesField
                 $marker   = $markers[$i];
                 $inputId  = 'xmd-type-' . sanitize_html_class(str_replace('/', '-', $marker));
                 $disabled = !$type->isImplemented() || !$integration->isAvailable();
+                // The whole row is the label, so a click anywhere in it toggles the checkbox.
                 $rows    .= sprintf(
-                    '<li class="xmd-type%s"><input type="checkbox" id="%s" name="enabled_types[]" value="%s"%s%s>'
-                    . '<label for="%s" class="xmd-type__label">%s%s</label>%s</li>',
+                    '<li><label class="xmd-type%s" for="%s"><input type="checkbox" id="%s" name="enabled_types[]" value="%s"%s%s>'
+                    . '<span class="xmd-type__label">%s%s</span>%s</label></li>',
                     $disabled ? ' is-disabled' : '',
+                    esc_attr($inputId),
                     esc_attr($inputId),
                     esc_attr($marker),
                     checked(in_array($marker, $enabled, true), true, false),
                     disabled($disabled, true, false),
-                    esc_attr($inputId),
                     esc_html($type->label()),
                     $type->isImplemented() ? '' : ' <em>(' . esc_html__('not available yet', 'xolution-maildelivery') . ')</em>',
-                    $type->description() === '' ? '' : '<p class="xmd-type__description">' . esc_html($type->description()) . '</p>',
+                    $type->description() === '' ? '' : '<span class="xmd-type__description">' . esc_html($type->description()) . '</span>',
                 );
             }
 

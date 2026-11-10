@@ -90,17 +90,31 @@
 
 .xmd-type-list {
 	margin: 0;
-	padding: 4px 0;
+	padding: 0;
 	list-style: none;
 }
 
+.xmd-type-list > li {
+	margin: 0;
+}
+
+.xmd-type-list > li + li {
+	border-top: 1px solid var(--xmd-border-light);
+}
+
+/* The whole row is the label: click anywhere to toggle, same hover as the section triggers. */
 .xmd-type {
 	display: grid;
 	grid-template-columns: auto 1fr;
 	column-gap: 10px;
 	align-items: start;
 	margin: 0;
-	padding: 10px 16px;
+	padding: 12px 16px;
+	cursor: pointer;
+}
+
+.xmd-type:hover {
+	background: var(--xmd-surface-alt);
 }
 
 .xmd-type input[type="checkbox"] {
@@ -113,6 +127,7 @@
 
 /* The description sits directly under its own label, in the label's column. */
 .xmd-type__description {
+	display: block;
 	grid-column: 2;
 	margin: 2px 0 0;
 	color: var(--xmd-muted);
@@ -120,13 +135,17 @@
 	line-height: 1.5;
 }
 
+.xmd-type.is-disabled {
+	cursor: default;
+}
+
+.xmd-type.is-disabled:hover {
+	background: none;
+}
+
 .xmd-type.is-disabled .xmd-type__label,
 .xmd-type.is-disabled .xmd-type__description {
 	opacity: 0.6;
-}
-
-.xmd-type + .xmd-type {
-	border-top: 1px solid var(--xmd-border-light);
 }
 
 /* ---------------------------------------------------------------- Slack webhook */
