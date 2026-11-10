@@ -182,9 +182,7 @@ foreach ($entries as $entry) {
 
 if (in_array('--check', $argv, true)) {
     // Line endings aside: Git may check the file out with CRLF on Windows.
-    if (!is_file($target) || str_replace("
-", "
-", (string) file_get_contents($target)) !== $out) {
+    if (!is_file($target) || str_replace("\r\n", "\n", (string) file_get_contents($target)) !== $out) {
         fwrite(STDERR, "languages/" . DOMAIN . ".pot is out of date: run php bin/make-pot.php and commit it.\n");
         exit(1);
     }
