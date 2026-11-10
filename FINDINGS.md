@@ -19,6 +19,20 @@ v1, which the docs now call legacy.
 - v2 status: **"Actively developed"**, OpenAPI version `2.0.0`. The v1 reference says to use v2 for
   new integrations.
 
+## Decisions (2026-11-10)
+
+What the v2 plugin is for: guaranteed delivery of **Shield Security's passwordless / magic link
+emails** and of **WooCommerce and Gravity Forms transactional mail**. Every decision below serves
+that.
+
+1. **v2 API only, with a new key.** A v1 API key does NOT work with v2's `aha-sk-` key format, so
+   every existing user has to create a new v2 key. The settings page has to say so, not just fail.
+2. **One email to one person, always.** CC, BCC and multi-recipient messages are dropped on
+   purpose. Each API request carries exactly one entry in `recipients`. That also means the
+   separate "Create Conversation Message" endpoint (the only one that supports CC/BCC) is not
+   needed.
+3. **API only, no SMTP.** The plugin never talks SMTP. AhaSend handles SMTP delivery on their side.
+
 ## What the plugin does today
 
 The main plugin writes a must-use plugin to `wp-content/mu-plugins/ahasend-mu-mailer.php`
@@ -67,9 +81,9 @@ dead code.
 Consequences for the plugin:
 
 - **New setting: account ID.** The plugin has nowhere to store one today.
-- **Possibly a new key.** v2 keys have the `aha-sk-` format and carry scopes. The key needs
-  `messages:send:all` or `messages:send:{domain}` for the From domain. Whether a key created for v1
-  works on v2 is not stated in the docs: unverified.
+- **A new key, always.** v1 keys do not work on v2 (decision 1). v2 keys have the `aha-sk-` format
+  and carry scopes: the key needs `messages:send:all` or `messages:send:{domain}` for the From
+  domain. The settings page can reject a key that does not start with `aha-sk-` and explain why.
 - **Success is per recipient.** v2 can answer 202 while one recipient has `"status": "error"`
   (with `id` and `message_id_header` null and the reason in `error`). The plugin must check every
   item in `data`, not just the HTTP code. Item statuses are `queued`, `scheduled` or `error`.
@@ -98,9 +112,8 @@ Required: `from`, `recipients`, `subject`, and one of `text_content` / `html_con
   within 8 days (the guide and the OpenAPI spec word the 8-day window differently).
 - Optional `Idempotency-Key` request header, max 255 chars, keys expire after 24 hours.
 
-**CC and BCC are not supported on this endpoint.** The docs point to a separate "Create
-Conversation Message" endpoint for that. That page was not read, so its path is still to be looked
-up.
+CC and BCC are not supported on this endpoint (they need the separate "Create Conversation
+Message" endpoint). Out of scope per decision 2.
 
 ### Limits
 
@@ -117,9 +130,12 @@ These are in the current plugin regardless of v1 or v2, and a rewrite should fix
 
 1. **Comma-separated recipients break** (lines 62-64). WordPress accepts `$to` as a string like
    `"a@x.com, b@y.com"`. The plugin sends that whole string as one recipient's email, so the send
-   fails. It also ignores `Name <email>` formatting.
-2. **Headers are thrown away.** Reply-To, CC, BCC, a per-message From and any custom header in
-   `$headers` are dropped. Contact form plugins rely on Reply-To.
+   fails. It also ignores `Name <email>` formatting. Under decision 2 multiple recipients are not
+   supported, but `$to` still has to be parsed properly, if only to detect that case (see "Still
+   to decide").
+2. **Headers are thrown away.** Reply-To, a per-message From and any custom header in `$headers`
+   are dropped. Gravity Forms notifications rely on Reply-To. (CC and BCC are dropped too, which is
+   now intended, per decision 2.)
 3. **Attachments are ignored entirely.** `$attachments` is accepted and never used.
 4. **HTML detection is too narrow** (lines 49-59). It only looks for `Content-Type: text/html` in
    `$headers`. Plugins that set HTML through the `wp_mail_content_type` filter get their HTML
@@ -143,29 +159,39 @@ These are in the current plugin regardless of v1 or v2, and a rewrite should fix
     the save code reuses the variable name `$ahasend_api_key` for all three fields (lines 210-221).
     Harmless, but confusing.
 
-## Side note: SMTP
-
-The plugin description says "easy SMTP integration", but the code only uses the REST API. For
-reference, AhaSend SMTP is `send.ahasend.com`, ports 25 / 587 / 2525 with STARTTLS, port 465 with
-implicit TLS, SMTP credentials (not an API key). The docs contradict themselves on 465: the SMTP
-page says it is supported, an "Agent Instructions" block elsewhere says it is not.
-
 ## Suggested shape for a v2 plugin
 
 - Hook `pre_wp_mail` (WordPress 5.7+) instead of writing a mu-plugin that redefines `wp_mail()`.
   It gets the same arguments, lets core parse headers, and needs no file writes.
 - Reuse core's parsing: let `wp_mail` filters run, then split addresses and headers the way core
   does, honour `wp_mail_content_type`, `wp_mail_from`, `wp_mail_from_name`.
-- Settings: API key (password field), account ID, From email, From name, optional sandbox toggle,
-  and a "Test connection" button calling `/v2/ping`.
+- Settings: API key (password field, must start with `aha-sk-`), account ID, From email, From name,
+  optional sandbox toggle, and a "Test connection" button calling `/v2/ping`.
+- Exactly one entry in `recipients` per request (decision 2). CC and BCC headers are dropped.
 - Map Reply-To to `reply_to`, other headers to `headers`, attachments to base64 `attachments`.
-  Route mail with CC/BCC to the conversation endpoint once its path is confirmed.
-- Treat the send as successful only when every item in `data` is `queued` or `scheduled`, and fire
-  `wp_mail_failed` with the API's error otherwise.
+- Treat the send as successful only when the single item in `data` is `queued` or `scheduled`, and
+  fire `wp_mail_failed` with the API's error otherwise.
 - Set an explicit timeout and handle `429` / `503` with `Retry-After`.
+- Send an `Idempotency-Key` per message, so a retry after a timeout can never deliver a magic link
+  or an order email twice.
 
-## Open questions
+### Suggestions for magic link mail (not decided)
 
-- Does a v1 API key work against v2, or does every user need a new `aha-sk-` key?
-- Path and body of the Create Conversation Message endpoint (needed for CC/BCC).
-- Whether port 465 is actually supported on SMTP (docs disagree).
+- **Turn click tracking off** (`tracking.click: false`). Click tracking rewrites links through a
+  redirect, so a login link would pass through AhaSend's tracking domain. Open tracking is
+  harmless but adds nothing for a login email either.
+- **Consider `retention.data: 0`** for these messages, so AhaSend does not keep a copy of the
+  login link. Default retention for new accounts is 7 days.
+- Both need a way to recognise Shield's emails (for example a filter Shield exposes, or a subject
+  match). Not looked into yet.
+
+## Still to decide
+
+- **What happens when `wp_mail()` is called with several To addresses?** WooCommerce's admin
+  notifications (New order, Cancelled order, etc.) and Gravity Forms notifications both accept a
+  comma-separated recipient list, so this will happen on real sites. Three options:
+  1. **One API request per address** (recommended). Each request is still one email to one
+     person, so it fits decision 2, and nobody on the list silently misses the email.
+  2. Send to the first address only. Simple, but the others get nothing and nothing says so.
+  3. Refuse the send and fire `wp_mail_failed`. Honest, but a store owner who lists two addresses
+     stops getting order notifications.
