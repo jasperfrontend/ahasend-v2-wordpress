@@ -93,14 +93,24 @@ interface EmailType {
 
 ### WordPress Core integration
 
-| Email type | Source filter | v0.0.1 |
+Hooks checked against WordPress 7.1.4. All implemented since v0.0.7 (password reset since v0.0.1).
+
+| Email type | Marker | Claimed through |
 |---|---|---|
-| Password reset | `retrieve_password_notification_email` | implemented |
-| New user: set your password (to user) | `wp_new_user_notification_email` | listed, not implemented |
-| New user (to admin) | `wp_new_user_notification_email_admin` | listed, not implemented |
-| Password changed | `wp_password_change_notification_email` / `password_change_email` | listed, not implemented |
-| Email address changed | `email_change_email` | listed, not implemented |
-| Admin email change confirmation | `new_admin_email_content` | listed, not implemented |
+| Password reset | `wp-core/password-reset` | `retrieve_password_notification_email` |
+| New user: login details (to the user) | `wp-core/new-user` | `wp_new_user_notification_email` |
+| New user registration (to the site admin) | `wp-core/new-user-admin` | `wp_new_user_notification_email_admin` |
+| Password changed (to the user) | `wp-core/password-changed` | `password_change_email` |
+| Password reset by a user (to the site admin) | `wp-core/password-changed-admin` | `wp_password_change_notification_email` |
+| Email address changed (to the old address) | `wp-core/email-changed` | `email_change_email` |
+| Email change confirmation (to the new address) | `wp-core/email-change-confirm` | `new_user_email_content` + match |
+| Admin email change confirmation (to the new address) | `wp-core/admin-email-change` | `new_admin_email_content` + match |
+
+The first six filters hand over the full mail arguments, so they use one generic class,
+`FilteredEmailType`, which adds the marker. The two confirmations only filter the text; core fills
+in the link afterwards and calls `wp_mail()` without headers. Their filter does pass the new
+address and the hash that ends up in the link, so `EmailChangeConfirmation` claims the next
+`wp_mail()` to exactly that address containing exactly that hash. One-shot, like Shield's 2FA email.
 
 ### Shield Security integration (since v0.0.5)
 
@@ -242,8 +252,9 @@ xolution-maildelivery/
     Mail/Sender.php           payload, one request per address, log, wp_mail_failed/succeeded
     Mail/Claim.php            the marker header
     Mail/Headers.php, Address.php, Attachments.php, FromAddress.php, HtmlToText.php
-    Integration/Integration.php, EmailType.php, PlannedEmailType.php, Registry.php
-    Integration/WpCore/WpCoreIntegration.php, PasswordReset.php
+    Integration/Integration.php, EmailType.php, Registry.php
+    Integration/FilteredEmailType.php, PlannedEmailType.php
+    Integration/WpCore/WpCoreIntegration.php, EmailChangeConfirmation.php
     Integration/Shield/ShieldIntegration.php, TwoFactorLoginEmail.php, EmailSendingVerification.php
     Settings/Options.php, Secrets.php, Managers.php
     Log/LogTable.php
