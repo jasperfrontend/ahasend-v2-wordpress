@@ -140,7 +140,7 @@ final class SettingsPage
 
         echo '<div class="wrap">';
         printf(
-            '<h1>%s <span class="title-count" style="font-size:13px;font-weight:400;color:#646970">v%s</span></h1>',
+            '<h1>%s <span class="title-count">v%s</span></h1>',
             esc_html__('Xolution MailDelivery', 'xolution-maildelivery'),
             esc_html(\Xolution\MailDelivery\VERSION),
         );
