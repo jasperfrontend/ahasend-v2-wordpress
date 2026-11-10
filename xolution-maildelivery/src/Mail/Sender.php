@@ -117,12 +117,15 @@ final class Sender
             'from'       => $this->plugin->fromAddress()->toApi(),
             'recipients' => [$to->toApi()],
             'subject'    => $subject,
-            ($contentType === 'text/html' ? 'html_content' : 'text_content') => $message,
+            'text_content' => $contentType === 'text/html' ? HtmlToText::convert($message) : $message,
             // Never rewrite links (magic login links above all), and keep the content at AhaSend as briefly as allowed.
             'tracking'   => ['open' => false, 'click' => false],
             'retention'  => ['metadata' => 7, 'data' => self::DATA_RETENTION_DAYS],
             'tags'       => [$marker],
         ];
+        if ($contentType === 'text/html') {
+            $payload['html_content'] = $message;
+        }
         if ($parsed['reply_to'] !== null) {
             $payload['reply_to'] = $parsed['reply_to'];
         }

@@ -102,6 +102,26 @@ interface EmailType {
 | Email address changed | `email_change_email` | listed, not implemented |
 | Admin email change confirmation | `new_admin_email_content` | listed, not implemented |
 
+### Shield Security integration (since v0.0.5)
+
+Available when Shield is active. One email type, the one that has to arrive: **Email 2FA login**
+("Two-Factor Login Verification", with the auto-login link when "Enable Auto-Login Links" is on).
+That is how Shield's "magic link" login works: Email Authentication enforced for the roles, plus
+auto-login links. Shield has no email-only (passwordless) login; its passwordless option is passkeys.
+
+Shield sends it with a bare `wp_mail()` that has no filter of its own (checked against 22.3.4), so
+it is claimed by matching what Shield announces right before it:
+
+1. action `shield/2fa/email/pre_send_email/nonce_verified` gives the user (recipient);
+2. filter `shield/2fa_email_otp` gives the code, which Shield's template always prints;
+3. the next `wp_mail()` to exactly that address containing exactly that code is claimed. One-shot.
+
+Shield's emails are HTML, and Shield adds the plain-text part through PHPMailer, which this plugin
+bypasses. So HTML email types are sent with `html_content` plus a `text_content` made by
+`HtmlToText` (links kept as visible URLs). Shield's "SureSend" service, if ever switched on, sends
+2FA email outside `wp_mail()`; this plugin can't claim it then. Shield's own email delivery test
+(needed once before Email 2FA can be enabled) is not claimed and goes the normal way.
+
 ## Sending
 
 Every request: `POST /v2/accounts/{account_id}/messages`, Bearer key, and
@@ -217,9 +237,10 @@ xolution-maildelivery/
     Mail/Dispatcher.php       pre_wp_mail, plus stripping stray markers
     Mail/Sender.php           payload, one request per address, log, wp_mail_failed/succeeded
     Mail/Claim.php            the marker header
-    Mail/Headers.php, Address.php, Attachments.php, FromAddress.php
+    Mail/Headers.php, Address.php, Attachments.php, FromAddress.php, HtmlToText.php
     Integration/Integration.php, EmailType.php, PlannedEmailType.php, Registry.php
     Integration/WpCore/WpCoreIntegration.php, PasswordReset.php
+    Integration/Shield/ShieldIntegration.php, TwoFactorLoginEmail.php
     Settings/Options.php, Secrets.php, Managers.php
     Log/LogTable.php
     Admin/Cloak.php, SettingsPage.php, Notices.php

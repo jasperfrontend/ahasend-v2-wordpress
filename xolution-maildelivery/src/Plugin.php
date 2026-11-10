@@ -10,6 +10,7 @@ use Xolution\MailDelivery\Admin\Notices;
 use Xolution\MailDelivery\Admin\SettingsPage;
 use Xolution\MailDelivery\Api\Client;
 use Xolution\MailDelivery\Integration\Registry;
+use Xolution\MailDelivery\Integration\Shield\ShieldIntegration;
 use Xolution\MailDelivery\Integration\WpCore\WpCoreIntegration;
 use Xolution\MailDelivery\Log\LogTable;
 use Xolution\MailDelivery\Mail\Dispatcher;
@@ -37,6 +38,7 @@ final class Plugin
         $this->managers = new Managers($this->options);
         $this->registry = new Registry($this->options, [
             new WpCoreIntegration(),
+            new ShieldIntegration(),
         ]);
         $this->log = new LogTable();
     }
