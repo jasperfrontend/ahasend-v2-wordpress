@@ -7,7 +7,6 @@ namespace Xolution\MailDelivery\Admin;
 use InvalidArgumentException;
 use WP_Error;
 use Xolution\MailDelivery\Alerts\SlackAlerts;
-use Xolution\MailDelivery\Integration\Registry;
 use Xolution\MailDelivery\Log\LogTable;
 use Xolution\MailDelivery\Mail\Sender;
 use Xolution\MailDelivery\Plugin;
@@ -33,10 +32,21 @@ final class SettingsPage
     public function register(): void
     {
         add_action('admin_menu', [$this, 'addMenu']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
         add_action('admin_post_' . self::ACTION_SAVE, [$this, 'handleSave']);
         add_action('admin_post_' . self::ACTION_PING, [$this, 'handlePing']);
         add_action('admin_post_' . self::ACTION_TEST, [$this, 'handleTest']);
         add_action('admin_post_' . self::ACTION_ALERT_TEST, [$this, 'handleAlertTest']);
+    }
+
+    public function enqueueAssets(string $hookSuffix): void
+    {
+        if ($hookSuffix !== 'settings_page_' . Plugin::SLUG) {
+            return;
+        }
+        $version = \Xolution\MailDelivery\VERSION;
+        wp_enqueue_style('xmd-admin', plugins_url('assets/admin.css', \Xolution\MailDelivery\FILE), ['dashicons'], $version);
+        wp_enqueue_script('xmd-admin', plugins_url('assets/admin.js', \Xolution\MailDelivery\FILE), [], $version, ['in_footer' => true, 'strategy' => 'defer']);
     }
 
     public function addMenu(): void
@@ -143,7 +153,7 @@ final class SettingsPage
         }
         $tab = ($_GET['tab'] ?? '') === 'log' ? 'log' : 'settings';
 
-        echo '<div class="wrap">';
+        echo '<div class="wrap xmd-page">';
         printf(
             '<h1>%s <span class="title-count">v%s</span></h1>',
             esc_html__('Xolution MailDelivery', 'xolution-maildelivery'),
@@ -170,7 +180,6 @@ final class SettingsPage
         $o          = $this->plugin->options;
         $configured = $this->plugin->isConfigured();
         $hint       = (string) $o->get('api_key_hint');
-        $enabled    = $this->plugin->registry->enabledMarkers();
         $managerIds = $this->plugin->managers->ids();
 
         if (!Secrets::saltsInConfig()) {
@@ -225,25 +234,7 @@ final class SettingsPage
 
         echo '<h2>' . esc_html__('Email types', 'xolution-maildelivery') . '</h2>';
         echo '<p>' . esc_html__('Only switched-on email types go through AhaSend. All other email is sent the normal way. A switched-on email that AhaSend can\'t accept fails; it is not sent the normal way instead.', 'xolution-maildelivery') . '</p>';
-        echo '<table class="form-table" role="presentation"><tbody>';
-        foreach ($this->plugin->registry->integrations() as $integration) {
-            $cells = [];
-            foreach ($integration->emailTypes() as $type) {
-                $marker = Registry::marker($integration, $type);
-                $cells[] = sprintf(
-                    '<label><input type="checkbox" name="enabled_types[]" value="%s"%s%s> %s</label>%s%s',
-                    esc_attr($marker),
-                    checked(in_array($marker, $enabled, true), true, false),
-                    disabled(!$type->isImplemented() || !$integration->isAvailable(), true, false),
-                    esc_html($type->label()),
-                    $type->isImplemented() ? '' : ' <em>(' . esc_html__('not available yet', 'xolution-maildelivery') . ')</em>',
-                    $type->description() === '' ? '' : '<br><span class="description">' . esc_html($type->description()) . '</span>',
-                );
-            }
-            $label = $integration->label() . ($integration->isAvailable() ? '' : ' (' . __('not active on this site', 'xolution-maildelivery') . ')');
-            $this->row('', $label, '<fieldset>' . implode('<br>', $cells) . '</fieldset>');
-        }
-        echo '</tbody></table>';
+        echo (new EmailTypesField($this->plugin->registry))->render(); // escaped inside
 
         $webhook = $this->plugin->alerts->webhookUrl();
         echo '<h2>' . esc_html__('Alerts', 'xolution-maildelivery') . '</h2>';
@@ -255,7 +246,7 @@ final class SettingsPage
             sprintf(
                 '<input type="password" class="regular-text code" id="xmd-slack-webhook" name="slack_webhook" value="" autocomplete="off" placeholder="%s">%s',
                 esc_attr($webhook === null ? SlackAlerts::WEBHOOK_PREFIX . 'services/…' : SlackAlerts::WEBHOOK_PREFIX . '…' . substr($webhook, -4)),
-                $webhook === null ? '' : '<br><label><input type="checkbox" name="remove_slack_webhook" value="1"> ' . esc_html__('Remove the Slack webhook', 'xolution-maildelivery') . '</label>',
+                $webhook === null ? '' : '<label class="xmd-remove-webhook"><input type="checkbox" name="remove_slack_webhook" value="1"> ' . esc_html__('Remove the Slack webhook', 'xolution-maildelivery') . '</label>',
             ),
             $webhook === null
                 ? __('A Slack incoming webhook URL. Without one, failures only show in the log and as a notice to managers.', 'xolution-maildelivery')
@@ -283,18 +274,36 @@ final class SettingsPage
         submit_button(__('Save settings', 'xolution-maildelivery'));
         echo '</form>';
 
+        $email   = wp_get_current_user()->user_email;
+        $sandbox = (bool) $o->get('sandbox');
+        $from    = $o->get('sending_domain') === '' ? '' : $this->plugin->fromAddress()->email;
+        $host    = (string) wp_parse_url(home_url(), PHP_URL_HOST);
+
         echo '<h2>' . esc_html__('Check', 'xolution-maildelivery') . '</h2>';
         echo '<p>';
-        $this->actionButton(self::ACTION_PING, __('Test connection', 'xolution-maildelivery'), !$configured);
+        $this->actionButton(self::ACTION_PING, __('Test connection', 'xolution-maildelivery'), !$configured, [
+            'title' => __('Test the connection?', 'xolution-maildelivery'),
+            'body'  => __('This asks AhaSend whether it accepts the saved API key from this server. Nothing is sent and no settings change.', 'xolution-maildelivery')
+                . "\n" . __('It checks the key, its IP allow list and the connection. It does not check whether the key may send from the sending domain: the test email does that.', 'xolution-maildelivery'),
+            'ok'    => __('Test connection', 'xolution-maildelivery'),
+        ]);
         echo ' ';
-        $this->actionButton(
-            self::ACTION_TEST,
-            sprintf(__('Send test email to %s', 'xolution-maildelivery'), wp_get_current_user()->user_email),
-            !$configured,
-        );
+        $this->actionButton(self::ACTION_TEST, sprintf(__('Send test email to %s', 'xolution-maildelivery'), $email), !$configured, [
+            'title' => __('Send a test email?', 'xolution-maildelivery'),
+            'body'  => sprintf(__('This sends a real email through AhaSend to %1$s, from %2$s.', 'xolution-maildelivery'), $email, $from)
+                . "\n" . __('It does not depend on the email-type switches, and it appears in the log.', 'xolution-maildelivery')
+                . ($sandbox ? "\n" . __('Sandbox mode is on: AhaSend accepts the email but does not deliver it.', 'xolution-maildelivery') : ''),
+            'ok'    => __('Send test email', 'xolution-maildelivery'),
+        ]);
         echo ' ';
-        $this->actionButton(self::ACTION_ALERT_TEST, __('Send test alert to Slack', 'xolution-maildelivery'), $webhook === null);
+        $this->actionButton(self::ACTION_ALERT_TEST, __('Send test alert to Slack', 'xolution-maildelivery'), $webhook === null, [
+            'title' => __('Post a test alert to Slack?', 'xolution-maildelivery'),
+            'body'  => sprintf(__('This posts a test message to the Slack channel of the saved webhook, saying that alerts from %s arrive there.', 'xolution-maildelivery'), $host)
+                . "\n" . __('Everyone in that channel sees it.', 'xolution-maildelivery'),
+            'ok'    => __('Post test alert', 'xolution-maildelivery'),
+        ]);
         echo '</p>';
+        $this->renderConfirmDialog();
     }
 
     private function renderLog(): void
@@ -377,15 +386,36 @@ final class SettingsPage
         echo '</td></tr>';
     }
 
-    private function actionButton(string $action, string $label, bool $disabled): void
+    /**
+     * @param array{title: string, body: string, ok: string} $confirm Shown in a dialog before the form is sent.
+     *                                                         Lines in body become paragraphs.
+     */
+    private function actionButton(string $action, string $label, bool $disabled, array $confirm): void
     {
         printf(
-            '<form method="post" action="%s" style="display:inline"><input type="hidden" name="action" value="%s">%s<button type="submit" class="button"%s>%s</button></form>',
+            '<form method="post" action="%s" style="display:inline" data-xmd-confirm-title="%s" data-xmd-confirm-body="%s" data-xmd-confirm-ok="%s">'
+            . '<input type="hidden" name="action" value="%s">%s<button type="submit" class="button"%s>%s</button></form>',
             esc_url(admin_url('admin-post.php')),
+            esc_attr($confirm['title']),
+            esc_attr($confirm['body']),
+            esc_attr($confirm['ok']),
             esc_attr($action),
             wp_nonce_field($action, '_wpnonce', true, false),
             disabled($disabled, true, false),
             esc_html($label),
+        );
+    }
+
+    private function renderConfirmDialog(): void
+    {
+        printf(
+            '<dialog id="xmd-confirm" class="xmd-dialog" aria-labelledby="xmd-confirm-title">'
+            . '<form method="dialog" class="xmd-dialog__form">'
+            . '<h2 id="xmd-confirm-title" class="xmd-dialog__title"></h2><div class="xmd-dialog__body"></div>'
+            . '<div class="xmd-dialog__actions"><button type="submit" value="cancel" class="button">%s</button>'
+            . '<button type="submit" value="ok" class="button button-primary"></button></div>'
+            . '</form></dialog>',
+            esc_html__('Cancel', 'xolution-maildelivery'),
         );
     }
 

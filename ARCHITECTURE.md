@@ -270,6 +270,7 @@ webhook**, meant for the #status channel. Configured per site, optional.
 
 ```
 xolution-maildelivery/
+  assets/admin.css, admin.js   settings page: email-type accordion, confirm dialogs
   xolution-maildelivery.php   plugin header, autoloader, boots on `init`
   uninstall.php               drops the log table, settings and cron
   src/
@@ -287,7 +288,7 @@ xolution-maildelivery/
     Settings/Options.php, Secrets.php, Managers.php, Configurator.php
     Cli/Command.php           wp maildelivery …
     Log/LogTable.php
-    Admin/Cloak.php, SettingsPage.php, Notices.php
+    Admin/Cloak.php, SettingsPage.php, Notices.php, EmailTypesField.php (accordion)
     Alerts/SlackAlerts.php      Slack webhook alerts and the health check
     Update/GitHubUpdater.php  update check, View details, auto-update
 .github/workflows/release.yml
