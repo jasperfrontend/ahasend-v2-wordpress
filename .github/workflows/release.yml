@@ -45,6 +45,9 @@ jobs:
       - name: Translation template up to date
         run: php bin/make-pot.php --check
 
+      - name: Compiled translations up to date
+        run: php bin/compile-translations.php --check
+
       - name: Build zip and update.json
         run: |
           MAIN="$PLUGIN/$PLUGIN.php"

@@ -215,7 +215,6 @@ msgstr ""
 msgid "Send test email to %s"
 msgstr ""
 
-#. translators: %s: email address of the current user
 #: src/Admin/SettingsPage.php:292
 msgid "Send a test email?"
 msgstr ""
@@ -226,7 +225,6 @@ msgstr ""
 msgid "This sends a real email through AhaSend to %1$s, from %2$s."
 msgstr ""
 
-#. translators: 1: recipient email address, 2: sender email address
 #: src/Admin/SettingsPage.php:294
 msgid "It does not depend on the email-type switches, and it appears in the log."
 msgstr ""
@@ -281,7 +279,6 @@ msgstr ""
 msgid "This posts a test message to the Slack channel of the saved webhook, saying that alerts from %s arrive there."
 msgstr ""
 
-#. translators: %s: this site's host name
 #: src/Admin/SettingsPage.php:332
 msgid "Everyone in that channel sees it."
 msgstr ""

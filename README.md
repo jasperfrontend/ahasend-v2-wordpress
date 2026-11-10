@@ -170,12 +170,17 @@ Older entries are deleted daily.
 
 ## Translations
 
-All text in WordPress is translatable, with the text domain `xolution-maildelivery`. The template is
-`xolution-maildelivery/languages/xolution-maildelivery.pot`. Put a translation next to it as
-`xolution-maildelivery-<locale>.po` plus `.mo`, or in `wp-content/languages/plugins/`.
+All text in WordPress is translatable, with the text domain `xolution-maildelivery`. **Dutch
+(`nl_NL`) is included**; sites in other languages see English.
 
-After adding or changing strings, run `php bin/make-pot.php` and commit the updated template. The
-release workflow refuses to release when the template is out of date.
+- The template is `xolution-maildelivery/languages/xolution-maildelivery.pot`.
+- A translation is `xolution-maildelivery-<locale>.po` next to it (edit it with Poedit or any text
+  editor), compiled into the `.mo` and `.l10n.php` files WordPress loads by
+  `php bin/compile-translations.php`. It also reports strings that aren't translated yet; those
+  show in English.
+- After adding or changing strings in the code, run `php bin/make-pot.php`, update the `.po`
+  files, compile, and commit all of it. The release workflow refuses to release when the template
+  or the compiled files are out of date.
 
 Slack alerts and WP-CLI output stay in English: one Slack channel serves every site whatever its
 language, and WP-CLI itself is English.

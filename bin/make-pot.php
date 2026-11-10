@@ -141,6 +141,7 @@ foreach ($paths as $path) {
         }
         $line = $token[2];
         $note = $comment !== null && $line - $comment[1] <= 1 ? $comment[0] : null;
+        $comment = null; // a translators comment belongs to the first call after it only
         $add(
             $msgid,
             $pluralArg === null ? null : $literal($args[$pluralArg] ?? null),

@@ -201,6 +201,15 @@ configuration error, the next attempt must use a fresh key. Generating keys per 
 - Shown to managers on a log page, newest first, filterable by status and email type.
 - Recipient addresses are personal data; 7 days keeps that minimal.
 
+## Translations (since v0.0.12)
+
+All WordPress-facing text goes through the `xolution-maildelivery` text domain, loaded on `init`
+before the plugin object is built (it translates the email-type labels). Dutch (`nl_NL`) ships with
+the plugin as `.po` plus the compiled `.mo` and `.l10n.php` (WordPress 6.5+ prefers the latter).
+`bin/make-pot.php` and `bin/compile-translations.php` replace `wp i18n` / `msgfmt`, so no tools are
+needed; the release workflow checks that both outputs are up to date. Slack alerts and WP-CLI output
+stay in English on purpose: one channel serves sites in every language, and WP-CLI is English.
+
 ## Alerts (since v0.0.8)
 
 There is no fallback mailer, so a broken site has to be noticed another way: a **Slack incoming
