@@ -470,27 +470,27 @@ msgstr ""
 msgid "Attachment not readable: %s"
 msgstr ""
 
-#: src/Mail/Sender.php:46
+#: src/Mail/Sender.php:47
 msgid "No recipient address."
 msgstr ""
 
-#: src/Mail/Sender.php:55 src/Mail/Sender.php:104
+#: src/Mail/Sender.php:56 src/Mail/Sender.php:105
 msgid "Invalid recipient address."
 msgstr ""
 
 #. translators: %s: site title
-#: src/Mail/Sender.php:92
+#: src/Mail/Sender.php:93
 #, php-format
 msgid "Test email from %s"
 msgstr ""
 
 #. translators: %s: site URL
-#: src/Mail/Sender.php:97
+#: src/Mail/Sender.php:98
 #, php-format
 msgid "This is a test email from Xolution MailDelivery on %s."
 msgstr ""
 
-#: src/Mail/Sender.php:98
+#: src/Mail/Sender.php:99
 msgid "If you can read this, the site can send email through AhaSend."
 msgstr ""
 

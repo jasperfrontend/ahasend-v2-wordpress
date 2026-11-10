@@ -38,9 +38,9 @@ that.
    silently misses it. `wp_mail()` returns `true` only if every request succeeded.
 5. **Click tracking off.** Every request sends `tracking.click: false`, so no link (a magic login
    link above all) is rewritten through AhaSend's tracking redirect.
-6. **AhaSend keeps no copy of the content.** Every request sends `retention.data: 0`, so the
-   message body, and with it any login link, is not stored at AhaSend. Metadata (delivery status)
-   is still kept, so failures can be traced.
+6. ~~**AhaSend keeps no copy of the content.**~~ **Reversed on 2026-11-11:** content is kept 7 days,
+   because support can then read the exact email a user received. See ARCHITECTURE.md, Sending.
+   (Originally: every request sends `retention.data: 0`, so no login link is stored at AhaSend.)
 
 Decisions 5 and 6 apply to every email the plugin sends, not only Shield's. That means the plugin
 never needs to recognise which email is a magic link.

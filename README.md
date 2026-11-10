@@ -41,8 +41,9 @@ The marker is also the message's tag in AhaSend, so you can filter by email type
 - **From:** `<site-host>@<sending-domain>`, e.g. `client-site.nl@mail-delivery.example.com`, with the
   site title as name. Every site is recognisable in AhaSend's statistics.
 - **Tracking off.** Links are never rewritten, so login links go straight to the site.
-- **Content kept 1 day** at AhaSend (metadata 7 days). Zero content retention needs a Pro or Max
-  plan and approval from AhaSend; without it AhaSend silently keeps content for the account default.
+- **Content and metadata kept 7 days** at AhaSend, so support can read the exact email a user
+  received. Login and reset links in those emails are single-use or expire within a day, but anyone
+  with access to the AhaSend account can read them while they're valid: keep that access tight.
 
 ## Requirements
 

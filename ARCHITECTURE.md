@@ -145,11 +145,13 @@ Every request: `POST /v2/accounts/{account_id}/messages`, Bearer key, and
 
 - exactly one recipient (FINDINGS decisions 2 and 4: one request per To address, CC/BCC dropped);
 - `tracking: { "open": false, "click": false }`;
-- `retention: { "metadata": 7, "data": 1 }`. Found on the first real send (2026-11-10): `data: 0`
-  needs a Pro/Max plan **and approval from AhaSend**. Without approval AhaSend does not reject it but
-  silently keeps the content for the account default (7 days), reset link included. 1 day needs no
-  approval and barely outlives a WordPress reset key (valid 1 day). Switch to 0 once approved
-  (`Sender::DATA_RETENTION_DAYS`);
+- `retention: { "metadata": 7, "data": 7 }` (since v0.0.13). **Decision changed on 2026-11-11:**
+  content is kept 7 days on purpose, because support can then read the exact email a user received.
+  This replaces FINDINGS decision 6 ("AhaSend keeps no copy"). Login and reset links in stored
+  emails are single-use or expire within a day, but while valid anyone with AhaSend account access
+  can read them, so that access stays limited. History: the original `data: 0` turned out to need
+  a Pro/Max plan plus AhaSend's approval (without it AhaSend silently uses the account default);
+  v0.0.1-v0.0.12 sent `data: 1`. Setting: `Sender::DATA_RETENTION_DAYS`;
 - `tags: ["<integration>/<email-type>"]`;
 - an `Idempotency-Key` generated once per address per `wp_mail()` call.
 

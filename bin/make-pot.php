@@ -182,8 +182,10 @@ foreach ($entries as $entry) {
 }
 
 if (in_array('--check', $argv, true)) {
-    // Line endings aside: Git may check the file out with CRLF on Windows.
-    if (!is_file($target) || str_replace("\r\n", "\n", (string) file_get_contents($target)) !== $out) {
+    // Compare the strings only: line endings (Git may use CRLF on Windows) and "#:" source references,
+    // whose line numbers shift with every code change, don't make the template out of date.
+    $strip = static fn (string $pot): string => (string) preg_replace('/^#: .*\n/m', '', str_replace("\r\n", "\n", $pot));
+    if (!is_file($target) || $strip((string) file_get_contents($target)) !== $strip($out)) {
         fwrite(STDERR, "languages/" . DOMAIN . ".pot is out of date: run php bin/make-pot.php and commit it.\n");
         exit(1);
     }

@@ -14,11 +14,12 @@ final class Sender
     public const TEST_MARKER = 'internal/test';
 
     /**
-     * Days AhaSend keeps the content (body, headers). 0 needs a Pro/Max plan plus approval from AhaSend; without
-     * it AhaSend silently falls back to the account default (7 days) instead of rejecting 0. 1 day needs no
-     * approval, and outlives a WordPress password reset key (valid 1 day) only briefly. Set to 0 once approved.
+     * Days AhaSend keeps the content (body, headers), so support can read the email a user actually received.
+     * Same as the metadata and the plugin's own log. Decided 2026-11-11, replacing the original "keep nothing"
+     * (ARCHITECTURE.md, Sending). Note: 0 would need a Pro/Max plan plus AhaSend's approval; without it AhaSend
+     * silently uses the account default instead.
      */
-    private const DATA_RETENTION_DAYS = 1;
+    private const DATA_RETENTION_DAYS = 7;
 
     public function __construct(private readonly Plugin $plugin)
     {
@@ -132,7 +133,7 @@ final class Sender
             'recipients' => [$to->toApi()],
             'subject'    => $subject,
             'text_content' => $contentType === 'text/html' ? HtmlToText::convert($message) : $message,
-            // Never rewrite links (magic login links above all), and keep the content at AhaSend as briefly as allowed.
+            // Never rewrite links (magic login links above all). Content kept 7 days, for support.
             'tracking'   => ['open' => false, 'click' => false],
             'retention'  => ['metadata' => 7, 'data' => self::DATA_RETENTION_DAYS],
             'tags'       => [$marker],
