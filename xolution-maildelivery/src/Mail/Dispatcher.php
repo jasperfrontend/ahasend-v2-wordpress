@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Mail;
 
+defined('ABSPATH') || exit;
+
 use Xolution\MailDelivery\Plugin;
 
 /**

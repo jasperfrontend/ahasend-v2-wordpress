@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery;
 
+defined('ABSPATH') || exit;
+
 use WP_Error;
 use Xolution\MailDelivery\Alerts\SlackAlerts;
 use Xolution\MailDelivery\Admin\Cloak;

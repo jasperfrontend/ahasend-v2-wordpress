@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Mail;
 
+defined('ABSPATH') || exit;
+
 final class Address
 {
     public function __construct(public readonly string $email, public readonly string $name = '')
@@ -28,7 +30,9 @@ final class Address
                 continue;
             }
             if (preg_match('/^(.*)<(.+)>\s*$/', $part, $m) === 1) {
-                $addresses[] = new self(trim($m[2]), trim(trim($m[1]), '"\''));
+                // A display name never needs control characters; drop them so none reach a header.
+                $name        = preg_replace('/[\x00-\x1F\x7F]+/', ' ', $m[1]) ?? '';
+                $addresses[] = new self(trim($m[2]), trim(trim($name), '"\''));
             } else {
                 $addresses[] = new self($part);
             }

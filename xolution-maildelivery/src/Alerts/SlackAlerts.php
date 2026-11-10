@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Alerts;
 
+defined('ABSPATH') || exit;
+
 use WP_Error;
 use Xolution\MailDelivery\Api\SendResult;
 use Xolution\MailDelivery\Plugin;

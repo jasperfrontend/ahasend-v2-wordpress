@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Log;
 
+defined('ABSPATH') || exit;
+
 use Xolution\MailDelivery\Api\SendResult;
 
 /**

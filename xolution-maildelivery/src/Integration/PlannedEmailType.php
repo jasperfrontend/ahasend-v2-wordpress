@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Integration;
 
+defined('ABSPATH') || exit;
+
 /**
  * An email type that is listed in the settings but not implemented yet.
  */

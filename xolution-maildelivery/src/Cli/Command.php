@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Cli;
 
+defined('ABSPATH') || exit;
+
 use InvalidArgumentException;
 use WP_CLI;
 use WP_Error;

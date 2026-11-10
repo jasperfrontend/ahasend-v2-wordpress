@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Mail;
 
+defined('ABSPATH') || exit;
+
 /**
  * The sender for this site: <site-host>@<sending-domain>, e.g. client-site.nl@mail-delivery.example.com, so the
  * AhaSend dashboard shows which site sent what.

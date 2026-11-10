@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Admin;
 
+defined('ABSPATH') || exit;
+
 use Xolution\MailDelivery\Integration\Registry;
 
 /**

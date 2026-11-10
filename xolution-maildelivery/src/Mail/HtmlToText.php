@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Mail;
 
+defined('ABSPATH') || exit;
+
 /**
  * A plain-text version of an HTML email, sent alongside it. Links are kept as visible URLs, so a login link still
  * works in a mail client that shows only text.

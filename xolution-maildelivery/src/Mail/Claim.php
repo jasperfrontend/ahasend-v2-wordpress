@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Mail;
 
+defined('ABSPATH') || exit;
+
 /**
  * Marks an email as taken over. The marker is a header that travels with the email's own wp_mail() arguments,
  * so there is no shared state between integrations.

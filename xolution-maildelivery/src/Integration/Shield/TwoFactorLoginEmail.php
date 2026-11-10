@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Integration\Shield;
 
+defined('ABSPATH') || exit;
+
 use WP_User;
 use Xolution\MailDelivery\Integration\EmailType;
 use Xolution\MailDelivery\Mail\Address;

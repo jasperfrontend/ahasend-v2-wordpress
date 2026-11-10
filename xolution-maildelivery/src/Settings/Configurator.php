@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Settings;
 
+defined('ABSPATH') || exit;
+
 use InvalidArgumentException;
 use WP_Error;
 use Xolution\MailDelivery\Alerts\SlackAlerts;

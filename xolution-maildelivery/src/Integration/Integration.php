@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Integration;
 
+defined('ABSPATH') || exit;
+
 /**
  * A source of email (WordPress Core, Shield, WooCommerce, ...) that this plugin can take over.
  */

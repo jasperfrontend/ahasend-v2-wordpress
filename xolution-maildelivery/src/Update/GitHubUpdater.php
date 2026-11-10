@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Update;
 
+defined('ABSPATH') || exit;
+
 use Xolution\MailDelivery\Plugin;
 
 /**
@@ -86,9 +88,17 @@ final class GitHubUpdater
         ];
     }
 
+    /**
+     * Auto-updates are forced on, unless wp-config.php defines XMD_DISABLE_AUTO_UPDATE as true: then the site's own
+     * auto-update setting applies, e.g. for a staged rollout.
+     */
     public function enableAutoUpdate(mixed $update, object $item): mixed
     {
-        return ($item->plugin ?? '') === Plugin::basename() ? true : $update;
+        if (($item->plugin ?? '') !== Plugin::basename()) {
+            return $update;
+        }
+
+        return defined('XMD_DISABLE_AUTO_UPDATE') && constant('XMD_DISABLE_AUTO_UPDATE') === true ? $update : true;
     }
 
     public function clearCache(): void

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Settings;
 
+defined('ABSPATH') || exit;
+
 /**
  * The users who may see and change the plugin. Stored as user IDs, so no user name ever lives in the code.
  *

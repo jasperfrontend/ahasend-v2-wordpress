@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Integration;
 
+defined('ABSPATH') || exit;
+
 /**
  * One kind of email from an integration, switched on or off on its own.
  */

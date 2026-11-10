@@ -73,6 +73,10 @@ The marker is also the message's tag in AhaSend, so you can filter by email type
 After that the plugin updates itself from this repository's releases, like any other plugin. Your
 own management tool (MainWP, ManageWP, ...) sees the updates the normal way.
 
+Auto-updates are switched on for this plugin regardless of the site's setting. To roll updates out
+yourself instead, add `define('XMD_DISABLE_AUTO_UPDATE', true);` to `wp-config.php`: the site's own
+auto-update setting then applies.
+
 ### 3. Configure
 
 Go to **Settings → MailDelivery**:

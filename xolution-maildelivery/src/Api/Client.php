@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Api;
 
+defined('ABSPATH') || exit;
+
 use WP_Error;
 
 final class Client
 {
     private const BASE_URL = 'https://api.ahasend.com';
 
-    /** A user is waiting on wp-login.php: keep a request and its one retry short. */
-    private const TIMEOUT         = 10;
-    private const MAX_RETRY_WAIT  = 3;
-    private const SUCCESS_STATUSES = ['queued', 'scheduled'];
+    /**
+     * A user is waiting on wp-login.php: keep a request and its one retry short. Only a first attempt that failed
+     * fast is retried, and the retry gets a shorter timeout, so one email never holds a PHP worker for much more
+     * than TIMEOUT seconds, even while AhaSend is slow (a logged-out visitor can trigger password reset emails).
+     */
+    private const TIMEOUT           = 10;
+    private const RETRY_TIMEOUT     = 5;
+    private const RETRY_ONLY_WITHIN = 3;
+    private const MAX_RETRY_WAIT    = 3;
+    private const SUCCESS_STATUSES  = ['queued', 'scheduled'];
 
     public function __construct(private readonly string $apiKey, private readonly string $accountId)
     {
@@ -40,7 +48,8 @@ final class Client
 
     /**
      * Sends one message to one recipient. Retries once, with the same idempotency key, on a network error,
-     * 429 or 5xx, so a retry can never deliver the email twice.
+     * 429 or 5xx, so a retry can never deliver the email twice. No retry when the first attempt took longer than
+     * RETRY_ONLY_WITHIN seconds (a timeout above all): the user has waited long enough.
      *
      * @param array<string, mixed> $payload
      */
@@ -58,11 +67,14 @@ final class Client
         ];
 
         for ($attempt = 1; ; $attempt++) {
-            $response = wp_remote_post($url, $args);
-            $result   = $this->sendResult($response);
-            $wait     = $this->retryWait($response);
+            $args['timeout'] = $attempt === 1 ? self::TIMEOUT : self::RETRY_TIMEOUT;
+            $started         = microtime(true);
+            $response        = wp_remote_post($url, $args);
+            $elapsed         = microtime(true) - $started;
+            $result          = $this->sendResult($response);
+            $wait            = $this->retryWait($response);
 
-            if ($result->ok || $wait === null || $attempt >= 2) {
+            if ($result->ok || $wait === null || $attempt >= 2 || $elapsed > self::RETRY_ONLY_WITHIN) {
                 return $result;
             }
             sleep($wait);

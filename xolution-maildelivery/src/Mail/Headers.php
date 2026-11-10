@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Mail;
 
+defined('ABSPATH') || exit;
+
 /**
  * Turns wp_mail()'s $headers (a string or an array of lines) into what the AhaSend API takes.
  */
@@ -58,9 +60,13 @@ final class Headers
             $value = trim(substr($line, $colon + 1));
             $lower = strtolower($name);
 
+            // A CR or other control character left in a value could start a new header further down the line.
+            if (preg_match('/[\x00-\x1F\x7F]/', $value) === 1) {
+                continue;
+            }
             if ($lower === 'reply-to') {
                 $first   = Address::parseList($value)[0] ?? null;
-                $replyTo = $first?->toApi();
+                $replyTo = $first !== null && $first->isValid() ? $first->toApi() : null;
                 continue;
             }
             if (in_array($lower, self::RESERVED, true) || strcasecmp($name, Claim::HEADER) === 0) {

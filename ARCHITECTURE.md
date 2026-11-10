@@ -158,8 +158,10 @@ Every request: `POST /v2/accounts/{account_id}/messages`, Bearer key, and
 Success means HTTP 202 **and** the single item in `data` has status `queued` or `scheduled`.
 
 **Timeout and retry.** Timeout 10 s. One automatic retry, with the same idempotency key, on a
-network timeout, `429` or `5xx`, waiting for `Retry-After` up to 3 s. A user is waiting on
-wp-login.php, so it doesn't retry longer than that. No retry on `400`, `401`, `403`, `422`.
+network error, `429` or `5xx`, waiting for `Retry-After` up to 3 s, with a 5 s timeout. Only a first
+attempt that failed within 3 s is retried, so a timeout is not: a user is waiting on wp-login.php,
+and a logged-out visitor can trigger password reset emails, so one email never holds a PHP worker for
+much more than 10 s. No retry on `400`, `401`, `403`, `422`.
 
 Found in testing: **AhaSend replays error responses for an idempotency key too.** A `403` sent
 with key K comes back again for every later request with K (and the same body gives `422` if
@@ -276,6 +278,10 @@ webhook**, meant for the #status channel. Configured per site, optional.
 - **The repository must be public**: release files of a private repo can't be downloaded anonymously.
 - Auto-updates are switched on for this plugin through the `auto_update_plugin` filter, so sites
   update themselves on WordPress's twice-daily update run. MainWP sees the update the normal way.
+  `define('XMD_DISABLE_AUTO_UPDATE', true)` in `wp-config.php` stops forcing it: the site's own
+  setting applies.
+- The release workflow pins its actions to commit SHAs: it publishes what every site installs, so a
+  moved tag upstream must not change it.
 - "View details" is answered by the plugin itself (`plugins_api`), not by wordpress.org.
 - Non-managers don't see the update on Dashboard → Updates (cloaking).
 - `.github/workflows/release.yml`, on every `v*` tag: checks the tag matches the plugin header

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Settings;
 
+defined('ABSPATH') || exit;
+
 /**
  * Encrypts the API key at rest. The encryption key is derived from the site's salts, which normally live in
  * wp-config.php, so a database dump or backup on its own does not reveal the API key.

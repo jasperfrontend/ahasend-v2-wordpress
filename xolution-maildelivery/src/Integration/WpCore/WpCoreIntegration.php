@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Integration\WpCore;
 
+defined('ABSPATH') || exit;
+
 use Xolution\MailDelivery\Integration\FilteredEmailType;
 use Xolution\MailDelivery\Integration\Integration;
 

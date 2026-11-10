@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Api;
 
+defined('ABSPATH') || exit;
+
 final class SendResult
 {
     private function __construct(

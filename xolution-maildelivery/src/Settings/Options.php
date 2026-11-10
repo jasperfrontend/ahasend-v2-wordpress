@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xolution\MailDelivery\Settings;
 
+defined('ABSPATH') || exit;
+
 /**
  * All settings live in one option, never autoloaded.
  */
