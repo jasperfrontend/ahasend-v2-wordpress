@@ -139,7 +139,11 @@ final class SettingsPage
         $tab = ($_GET['tab'] ?? '') === 'log' ? 'log' : 'settings';
 
         echo '<div class="wrap">';
-        echo '<h1>' . esc_html__('Xolution MailDelivery', 'xolution-maildelivery') . '</h1>';
+        printf(
+            '<h1>%s <span class="title-count" style="font-size:13px;font-weight:400;color:#646970">v%s</span></h1>',
+            esc_html__('Xolution MailDelivery', 'xolution-maildelivery'),
+            esc_html(\Xolution\MailDelivery\VERSION),
+        );
         $this->renderFlash();
         echo '<nav class="nav-tab-wrapper">';
         foreach (['settings' => __('Settings', 'xolution-maildelivery'), 'log' => __('Log', 'xolution-maildelivery')] as $id => $label) {
