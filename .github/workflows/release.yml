@@ -42,6 +42,9 @@ jobs:
       - name: Lint
         run: find "$PLUGIN" -name '*.php' -print0 | xargs -0 -n1 php -l
 
+      - name: Translation template up to date
+        run: php bin/make-pot.php --check
+
       - name: Build zip and update.json
         run: |
           MAIN="$PLUGIN/$PLUGIN.php"

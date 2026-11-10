@@ -43,7 +43,7 @@ final class Sender
         $failures    = [];
 
         if ($recipients === []) {
-            $result = SendResult::failure('No recipient address.');
+            $result = SendResult::failure(__('No recipient address.', 'xolution-maildelivery'));
             $this->plugin->log->record($marker, '', $subject, $result, $this->sandbox());
             do_action('xolution_maildelivery/send_failed', $marker, '', $result);
             $failures[] = $result->error;
@@ -52,7 +52,7 @@ final class Sender
         foreach ($recipients as $to) {
             $result = match (true) {
                 $client instanceof WP_Error      => SendResult::failure($client->get_error_message()),
-                !$to->isValid()                  => SendResult::failure('Invalid recipient address.'),
+                !$to->isValid()                  => SendResult::failure(__('Invalid recipient address.', 'xolution-maildelivery')),
                 $attachments instanceof WP_Error => SendResult::failure($attachments->get_error_message()),
                 default                          => $this->sendOne($client, $to, $subject, $message, $contentType, $parsed, $attachments, $marker),
             };
@@ -87,15 +87,21 @@ final class Sender
     {
         $client  = $this->plugin->client();
         $to      = new Address($email);
-        $subject = sprintf('Test email from %s', wp_specialchars_decode((string) get_bloginfo('name'), ENT_QUOTES));
+        $subject = sprintf(
+            /* translators: %s: site title */
+            __('Test email from %s', 'xolution-maildelivery'),
+            wp_specialchars_decode((string) get_bloginfo('name'), ENT_QUOTES),
+        );
         $message = sprintf(
-            "This is a test email from Xolution MailDelivery on %s.\n\nIf you can read this, the site can send email through AhaSend.\n",
+            /* translators: %s: site URL */
+            __('This is a test email from Xolution MailDelivery on %s.', 'xolution-maildelivery') . "\n\n"
+            . __('If you can read this, the site can send email through AhaSend.', 'xolution-maildelivery') . "\n",
             home_url(),
         );
 
         $result = match (true) {
             $client instanceof WP_Error => SendResult::failure($client->get_error_message()),
-            !$to->isValid()             => SendResult::failure('Invalid recipient address.'),
+            !$to->isValid()             => SendResult::failure(__('Invalid recipient address.', 'xolution-maildelivery')),
             default                     => $this->sendOne($client, $to, $subject, $message, 'text/plain', ['reply_to' => null, 'headers' => []], [], self::TEST_MARKER),
         };
         $this->plugin->log->record(self::TEST_MARKER, $email, $subject, $result, $this->sandbox());

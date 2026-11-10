@@ -149,7 +149,7 @@ final class SettingsPage
         $result = $client->ping();
         $result->ok
             ? $this->redirect('settings', [__('Connection OK: AhaSend accepted the API key from this server.', 'xolution-maildelivery')], [])
-            : $this->redirect('settings', [], [sprintf(__('Connection failed: %s', 'xolution-maildelivery'), $result->error)]);
+            : $this->redirect('settings', [], [sprintf(/* translators: %s: error message */ __('Connection failed: %s', 'xolution-maildelivery'), $result->error)]);
     }
 
     public function handleTest(): void
@@ -158,8 +158,8 @@ final class SettingsPage
         $email  = wp_get_current_user()->user_email;
         $result = (new Sender($this->plugin))->sendTest($email);
         $result->ok
-            ? $this->redirect('settings', [sprintf(__('Test email accepted by AhaSend for %1$s (message %2$s).', 'xolution-maildelivery'), $email, (string) $result->messageId)], [])
-            : $this->redirect('settings', [], [sprintf(__('Test email failed: %s', 'xolution-maildelivery'), $result->error)]);
+            ? $this->redirect('settings', [sprintf(/* translators: 1: recipient email address, 2: AhaSend message ID */ __('Test email accepted by AhaSend for %1$s (message %2$s).', 'xolution-maildelivery'), $email, (string) $result->messageId)], [])
+            : $this->redirect('settings', [], [sprintf(/* translators: %s: error message */ __('Test email failed: %s', 'xolution-maildelivery'), $result->error)]);
     }
 
     public function handleAlertTest(): void
@@ -168,7 +168,7 @@ final class SettingsPage
         $result = $this->plugin->alerts->sendTest();
         $result === true
             ? $this->redirect('alerts', [__('Test alert posted to Slack.', 'xolution-maildelivery')], [])
-            : $this->redirect('alerts', [], [sprintf(__('Test alert failed: %s', 'xolution-maildelivery'), $result)]);
+            : $this->redirect('alerts', [], [sprintf(/* translators: %s: error message */ __('Test alert failed: %s', 'xolution-maildelivery'), $result)]);
     }
 
     // ---------------------------------------------------------------- rendering
@@ -288,9 +288,9 @@ final class SettingsPage
             'ok'    => __('Test connection', 'xolution-maildelivery'),
         ]);
         echo ' ';
-        $this->actionButton(self::ACTION_TEST, sprintf(__('Send test email to %s', 'xolution-maildelivery'), $email), !$configured, [
+        $this->actionButton(self::ACTION_TEST, sprintf(/* translators: %s: email address of the current user */ __('Send test email to %s', 'xolution-maildelivery'), $email), !$configured, [
             'title' => __('Send a test email?', 'xolution-maildelivery'),
-            'body'  => sprintf(__('This sends a real email through AhaSend to %1$s, from %2$s.', 'xolution-maildelivery'), $email, $from)
+            'body'  => sprintf(/* translators: 1: recipient email address, 2: sender email address */ __('This sends a real email through AhaSend to %1$s, from %2$s.', 'xolution-maildelivery'), $email, $from)
                 . "\n" . __('It does not depend on the email-type switches, and it appears in the log.', 'xolution-maildelivery')
                 . ($sandbox ? "\n" . __('Sandbox mode is on: AhaSend accepts the email but does not deliver it.', 'xolution-maildelivery') : ''),
             'ok'    => __('Send test email', 'xolution-maildelivery'),
@@ -328,7 +328,7 @@ final class SettingsPage
         echo '<p>';
         $this->actionButton(self::ACTION_ALERT_TEST, __('Send test alert to Slack', 'xolution-maildelivery'), $webhook === null, [
             'title' => __('Post a test alert to Slack?', 'xolution-maildelivery'),
-            'body'  => sprintf(__('This posts a test message to the Slack channel of the saved webhook, saying that alerts from %s arrive there.', 'xolution-maildelivery'), $host)
+            'body'  => sprintf(/* translators: %s: this site's host name */ __('This posts a test message to the Slack channel of the saved webhook, saying that alerts from %s arrive there.', 'xolution-maildelivery'), $host)
                 . "\n" . __('Everyone in that channel sees it.', 'xolution-maildelivery'),
             'ok'    => __('Post test alert', 'xolution-maildelivery'),
         ]);
@@ -372,6 +372,7 @@ final class SettingsPage
         printf(
             '<p>%s</p>',
             esc_html(sprintf(
+                /* translators: %d: number of days the log is kept */
                 __('Every email this plugin handled in the last %d days. Recipient, subject and outcome only; no content.', 'xolution-maildelivery'),
                 LogTable::RETENTION_DAYS,
             )),
@@ -380,8 +381,8 @@ final class SettingsPage
         echo '<form method="get" style="margin:1em 0">';
         echo '<input type="hidden" name="page" value="' . esc_attr(Plugin::SLUG) . '"><input type="hidden" name="tab" value="log">';
         echo '<select name="status"><option value="">' . esc_html__('All statuses', 'xolution-maildelivery') . '</option>';
-        foreach (['sent', 'failed', 'sandbox'] as $s) {
-            printf('<option value="%1$s"%2$s>%1$s</option>', esc_attr($s), selected($status, $s, false));
+        foreach (self::statusLabels() as $s => $label) {
+            printf('<option value="%1$s"%2$s>%3$s</option>', esc_attr($s), selected($status, $s, false), esc_html($label));
         }
         echo '</select> <select name="email_type"><option value="">' . esc_html__('All email types', 'xolution-maildelivery') . '</option>';
         foreach ($this->plugin->log->emailTypes() as $t) {
@@ -410,7 +411,7 @@ final class SettingsPage
                 esc_html($row->email_type),
                 esc_html($row->recipient),
                 esc_html($row->subject),
-                esc_html($row->status),
+                esc_html(self::statusLabels()[$row->status] ?? $row->status),
                 $detail,
             );
         }
@@ -430,6 +431,18 @@ final class SettingsPage
     }
 
     // ---------------------------------------------------------------- helpers
+
+    /**
+     * @return array<string, string> log status => label
+     */
+    private static function statusLabels(): array
+    {
+        return [
+            'sent'    => _x('sent', 'log status', 'xolution-maildelivery'),
+            'failed'  => _x('failed', 'log status', 'xolution-maildelivery'),
+            'sandbox' => _x('sandbox', 'log status', 'xolution-maildelivery'),
+        ];
+    }
 
     private function openForm(string $section): void
     {

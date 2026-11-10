@@ -10,6 +10,7 @@
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       xolution-maildelivery
+ * Domain Path:       /languages
  * Update URI:        https://github.com/jasperfrontend/ahasend-v2-wordpress
  */
 
@@ -39,5 +40,7 @@ register_deactivation_hook(__FILE__, [Plugin::class, 'deactivate']);
 // On init, not plugins_loaded: labels are translated, and WordPress warns about translations loaded before init.
 // No email this plugin claims is sent earlier than that.
 add_action('init', static function (): void {
+    // Before the plugin object is built: it translates the email-type labels.
+    load_plugin_textdomain('xolution-maildelivery', false, dirname(plugin_basename(__FILE__)) . '/languages');
     Plugin::instance()->boot();
 }, 1);

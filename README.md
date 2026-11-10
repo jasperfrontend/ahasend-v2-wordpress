@@ -168,6 +168,18 @@ Older entries are deleted daily.
 - The Slack webhook is stored **unencrypted on purpose**, so the alert still arrives in exactly that
   situation. A leaked webhook can only post messages to the channel.
 
+## Translations
+
+All text in WordPress is translatable, with the text domain `xolution-maildelivery`. The template is
+`xolution-maildelivery/languages/xolution-maildelivery.pot`. Put a translation next to it as
+`xolution-maildelivery-<locale>.po` plus `.mo`, or in `wp-content/languages/plugins/`.
+
+After adding or changing strings, run `php bin/make-pot.php` and commit the updated template. The
+release workflow refuses to release when the template is out of date.
+
+Slack alerts and WP-CLI output stay in English: one Slack channel serves every site whatever its
+language, and WP-CLI itself is English.
+
 ## Releasing (maintainers)
 
 Bump `Version:` and `VERSION` in `xolution-maildelivery/xolution-maildelivery.php`, commit, then:

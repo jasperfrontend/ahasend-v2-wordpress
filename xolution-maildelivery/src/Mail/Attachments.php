@@ -26,11 +26,13 @@ final class Attachments
                 continue;
             }
             if (!is_file($path) || !is_readable($path)) {
-                return new WP_Error('xmd_attachment', sprintf('Attachment not readable: %s', basename($path)));
+                /* translators: %s: file name */
+                return new WP_Error('xmd_attachment', sprintf(__('Attachment not readable: %s', 'xolution-maildelivery'), basename($path)));
             }
             $data = file_get_contents($path);
             if ($data === false) {
-                return new WP_Error('xmd_attachment', sprintf('Attachment not readable: %s', basename($path)));
+                /* translators: %s: file name */
+                return new WP_Error('xmd_attachment', sprintf(__('Attachment not readable: %s', 'xolution-maildelivery'), basename($path)));
             }
             $fileName = is_string($name) && $name !== '' ? $name : basename($path);
             $type     = wp_check_filetype($fileName)['type'] ?: 'application/octet-stream';

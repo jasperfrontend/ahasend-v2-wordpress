@@ -83,13 +83,13 @@ final class Client
         $body = json_decode((string) wp_remote_retrieve_body($response), true);
         $item = is_array($body) && isset($body['data'][0]) && is_array($body['data'][0]) ? $body['data'][0] : null;
         if ($item === null) {
-            return SendResult::failure('AhaSend answered 202 without a message in "data".', $code);
+            return SendResult::failure(__('AhaSend answered 202 without a message in "data".', 'xolution-maildelivery'), $code);
         }
         if (in_array($item['status'] ?? null, self::SUCCESS_STATUSES, true)) {
             return SendResult::success(isset($item['id']) ? (string) $item['id'] : null, $code);
         }
 
-        return SendResult::failure((string) ($item['error'] ?? 'AhaSend did not accept the message.'), $code);
+        return SendResult::failure((string) ($item['error'] ?? __('AhaSend did not accept the message.', 'xolution-maildelivery')), $code);
     }
 
     /**

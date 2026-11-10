@@ -1,0 +1,542 @@
+# Copyright (C) Team Xolution
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Xolution MailDelivery\n"
+"Report-Msgid-Bugs-To: https://github.com/jasperfrontend/ahasend-v2-wordpress/issues\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: xolution-maildelivery\n"
+
+#. Name of the plugin
+#: xolution-maildelivery.php src/Admin/SettingsPage.php:62 src/Admin/SettingsPage.php:193
+msgid "Xolution MailDelivery"
+msgstr ""
+
+#. Description of the plugin
+#: xolution-maildelivery.php src/Update/GitHubUpdater.php:79
+msgid "Sends selected WordPress emails through the AhaSend API instead of the server's own mailer."
+msgstr ""
+
+#: src/Admin/Cloak.php:66 src/Admin/SettingsPage.php:182
+msgid "Settings"
+msgstr ""
+
+#. translators: 1: switched-on email types, 2: all email types
+#: src/Admin/EmailTypesField.php:34
+#, php-format
+msgid "%1$d of %2$d on"
+msgstr ""
+
+#: src/Admin/EmailTypesField.php:38
+msgid "not active on this site"
+msgstr ""
+
+#: src/Admin/EmailTypesField.php:56
+msgid "not available yet"
+msgstr ""
+
+#: src/Admin/Notices.php:35
+msgid "Xolution MailDelivery:"
+msgstr ""
+
+#: src/Admin/Notices.php:36
+msgid "Emails it takes over are failing until this is fixed."
+msgstr ""
+
+#: src/Admin/Notices.php:38
+msgid "Open settings"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:63
+msgid "MailDelivery"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:93
+msgid "Alerts saved."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:94
+msgid "Managers saved."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:95
+msgid "Settings saved."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:120
+msgid "All email types are off."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:151
+msgid "Connection OK: AhaSend accepted the API key from this server."
+msgstr ""
+
+#. translators: %s: error message
+#: src/Admin/SettingsPage.php:152
+#, php-format
+msgid "Connection failed: %s"
+msgstr ""
+
+#. translators: 1: recipient email address, 2: AhaSend message ID
+#: src/Admin/SettingsPage.php:161
+#, php-format
+msgid "Test email accepted by AhaSend for %1$s (message %2$s)."
+msgstr ""
+
+#. translators: %s: error message
+#: src/Admin/SettingsPage.php:162
+#, php-format
+msgid "Test email failed: %s"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:170
+msgid "Test alert posted to Slack."
+msgstr ""
+
+#. translators: %s: error message
+#: src/Admin/SettingsPage.php:171
+#, php-format
+msgid "Test alert failed: %s"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:179
+msgid "Sorry, you are not allowed to access this page."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:183
+msgid "Alerts"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:184 src/Admin/SettingsPage.php:355 src/Admin/SettingsPage.php:358
+msgid "Managers"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:185
+msgid "Log"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:225
+msgid "wp-config.php does not define its own salts, so WordPress keeps them in the database. The API key is encrypted with them, which protects nothing while they sit next to it. Add salts to wp-config.php, then re-enter the API key."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:230
+msgid "AhaSend"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:234
+msgid "Account ID"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:236
+msgid "From the AhaSend dashboard, account settings."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:240
+msgid "API key"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:246
+msgid "An AhaSend API v2 key with only the messages:send scope for the sending domain, locked to this server's IP. API v1 keys do not work."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:247
+msgid "Saved and encrypted. Leave empty to keep it; type a new key to replace it."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:251
+msgid "Sending domain"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:253
+msgid "A domain verified in AhaSend."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:257
+msgid "From"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:259
+msgid "Set a sending domain first."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:261
+msgid "Worked out from this site's address and the sending domain."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:265
+msgid "Sandbox mode"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:266
+msgid "AhaSend accepts emails but delivers nothing"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:267
+msgid "For testing only. While this is on, password reset emails and the like never arrive."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:271
+msgid "Email types"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:272
+msgid "Only switched-on email types go through AhaSend. All other email is sent the normal way. A switched-on email that AhaSend can't accept fails; it is not sent the normal way instead."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:275
+msgid "Save settings"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:282 src/Admin/SettingsPage.php:327
+msgid "Check"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:284 src/Admin/SettingsPage.php:288
+msgid "Test connection"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:285
+msgid "Test the connection?"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:286
+msgid "This asks AhaSend whether it accepts the saved API key from this server. Nothing is sent and no settings change."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:287
+msgid "It checks the key, its IP allow list and the connection. It does not check whether the key may send from the sending domain: the test email does that."
+msgstr ""
+
+#. translators: %s: email address of the current user
+#: src/Admin/SettingsPage.php:291
+#, php-format
+msgid "Send test email to %s"
+msgstr ""
+
+#. translators: %s: email address of the current user
+#: src/Admin/SettingsPage.php:292
+msgid "Send a test email?"
+msgstr ""
+
+#. translators: 1: recipient email address, 2: sender email address
+#: src/Admin/SettingsPage.php:293
+#, php-format
+msgid "This sends a real email through AhaSend to %1$s, from %2$s."
+msgstr ""
+
+#. translators: 1: recipient email address, 2: sender email address
+#: src/Admin/SettingsPage.php:294
+msgid "It does not depend on the email-type switches, and it appears in the log."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:295
+msgid "Sandbox mode is on: AhaSend accepts the email but does not deliver it."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:296
+msgid "Send test email"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:308
+msgid "Slack"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:309
+msgid "Posts to Slack when an email this plugin takes over can't be sent, when the twice-daily check of the API key fails, and once when it works again. Recipients are masked; no content is posted."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:313
+msgid "Slack webhook"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:317
+msgid "Remove the Slack webhook"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:320
+msgid "A Slack incoming webhook URL. Without one, failures only show in the log and as a notice to managers."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:321
+msgid "Saved. Leave empty to keep it; type a new URL to replace it."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:324
+msgid "Save alerts"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:329
+msgid "Send test alert to Slack"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:330
+msgid "Post a test alert to Slack?"
+msgstr ""
+
+#. translators: %s: this site's host name
+#: src/Admin/SettingsPage.php:331
+#, php-format
+msgid "This posts a test message to the Slack channel of the saved webhook, saying that alerts from %s arrive there."
+msgstr ""
+
+#. translators: %s: this site's host name
+#: src/Admin/SettingsPage.php:332
+msgid "Everyone in that channel sees it."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:333
+msgid "Post test alert"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:356
+msgid "Only managers see this plugin: in the Plugins list, here, and in notices. Other administrators don't."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:360
+msgid "Save managers"
+msgstr ""
+
+#. translators: %d: number of days the log is kept
+#: src/Admin/SettingsPage.php:376
+#, php-format
+msgid "Every email this plugin handled in the last %d days. Recipient, subject and outcome only; no content."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:383
+msgid "All statuses"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:387
+msgid "All email types"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:392
+msgid "Filter"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:396
+msgid "Time"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:396
+msgid "Email type"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:396
+msgid "Recipient"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:396
+msgid "Subject"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:396
+msgid "Status"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:396
+msgid "AhaSend message / error"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:401
+msgid "Nothing logged."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:441
+msgctxt "log status"
+msgid "sent"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:442
+msgctxt "log status"
+msgid "failed"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:443
+msgctxt "log status"
+msgid "sandbox"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:494
+msgid "Cancel"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:501
+msgid "Sorry, you are not allowed to do that."
+msgstr ""
+
+#: src/Alerts/SlackAlerts.php:122
+msgid "No Slack webhook is saved."
+msgstr ""
+
+#: src/Api/Client.php:86
+msgid "AhaSend answered 202 without a message in \"data\"."
+msgstr ""
+
+#: src/Api/Client.php:92
+msgid "AhaSend did not accept the message."
+msgstr ""
+
+#: src/Integration/Shield/EmailSendingVerification.php:31
+msgid "Email sending verification"
+msgstr ""
+
+#: src/Integration/Shield/EmailSendingVerification.php:36
+msgid "The one-time email Shield sends before Email Authentication can be switched on. Switch this on too, so Shield tests the same route its 2FA emails will take."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:21
+msgid "Shield Security"
+msgstr ""
+
+#: src/Integration/Shield/TwoFactorLoginEmail.php:36
+msgid "Email 2FA login (code and auto-login link)"
+msgstr ""
+
+#: src/Integration/Shield/TwoFactorLoginEmail.php:41
+msgid "The \"Two-Factor Login Verification\" email Shield sends at every login when Email Authentication is on."
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:22
+msgid "WordPress Core"
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:35
+msgid "Password reset"
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:36
+msgid "The reset link sent from the \"Lost your password?\" form."
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:41
+msgid "New user: login details (to the user)"
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:42
+msgid "Sent to a new user, with the link to set their password."
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:47
+msgid "New user registration (to the site admin)"
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:48
+msgid "Tells the site admin email address that a user registered."
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:53
+msgid "Password changed (to the user)"
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:54
+msgid "Confirms to a user that their password was changed."
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:59
+msgid "Password reset by a user (to the site admin)"
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:60
+msgid "Tells the site admin email address that a user reset their password."
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:65
+msgid "Email address changed (to the old address)"
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:66
+msgid "Tells a user, at their old address, that their email address was changed."
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:71
+msgid "Email change confirmation (to the new address)"
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:72
+msgid "The link a user must click before a new email address on their profile takes effect."
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:77
+msgid "Admin email change confirmation (to the new address)"
+msgstr ""
+
+#: src/Integration/WpCore/WpCoreIntegration.php:78
+msgid "The link that must be clicked before a new site admin email address takes effect."
+msgstr ""
+
+#. translators: %s: file name
+#: src/Mail/Attachments.php:30 src/Mail/Attachments.php:35
+#, php-format
+msgid "Attachment not readable: %s"
+msgstr ""
+
+#: src/Mail/Sender.php:46
+msgid "No recipient address."
+msgstr ""
+
+#: src/Mail/Sender.php:55 src/Mail/Sender.php:104
+msgid "Invalid recipient address."
+msgstr ""
+
+#. translators: %s: site title
+#: src/Mail/Sender.php:92
+#, php-format
+msgid "Test email from %s"
+msgstr ""
+
+#. translators: %s: site URL
+#: src/Mail/Sender.php:97
+#, php-format
+msgid "This is a test email from Xolution MailDelivery on %s."
+msgstr ""
+
+#: src/Mail/Sender.php:98
+msgid "If you can read this, the site can send email through AhaSend."
+msgstr ""
+
+#: src/Plugin.php:119
+msgid "Xolution MailDelivery is not configured: the AhaSend account ID, API key or sending domain is missing."
+msgstr ""
+
+#: src/Plugin.php:127
+msgid "The stored AhaSend API key can no longer be decrypted, probably because the salts in wp-config.php changed. Re-enter the API key."
+msgstr ""
+
+#: src/Settings/Configurator.php:30
+msgid "The account ID is not a valid UUID. It was not saved."
+msgstr ""
+
+#: src/Settings/Configurator.php:39
+msgid "The API key must be an AhaSend API v2 key, starting with \"aha-sk-\". Keys from API v1 do not work. It was not saved."
+msgstr ""
+
+#: src/Settings/Configurator.php:52
+msgid "The sending domain is not a valid domain name. It was not saved."
+msgstr ""
+
+#. translators: %s: the required URL prefix, https://hooks.slack.com/
+#: src/Settings/Configurator.php:69
+#, php-format
+msgid "The Slack webhook must start with %s. It was not saved."
+msgstr ""
+
+#. translators: %s: comma-separated email type markers
+#: src/Settings/Configurator.php:90
+#, php-format
+msgid "Unknown or not yet available email types: %s. Nothing was changed."
+msgstr ""
+
+#: src/Settings/Configurator.php:95
+msgid "Email types can only be switched on once the account ID, a working API key and the sending domain are saved."
+msgstr ""
+
+#: src/Settings/Configurator.php:110
+msgid "At least one manager is needed, and managers must be administrators. The managers were not changed."
+msgstr ""
+
+#: src/Update/GitHubUpdater.php:83
+msgid "Release notes on GitHub"
+msgstr ""

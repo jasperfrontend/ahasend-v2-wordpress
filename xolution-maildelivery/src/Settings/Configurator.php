@@ -65,6 +65,7 @@ final class Configurator
         $url = trim($url);
         if ($url !== '' && (!str_starts_with($url, SlackAlerts::WEBHOOK_PREFIX) || wp_http_validate_url($url) === false)) {
             throw new InvalidArgumentException(sprintf(
+                /* translators: %s: the required URL prefix, https://hooks.slack.com/ */
                 __('The Slack webhook must start with %s. It was not saved.', 'xolution-maildelivery'),
                 SlackAlerts::WEBHOOK_PREFIX,
             ));
@@ -85,6 +86,7 @@ final class Configurator
         $refused    = array_diff($markers, $switchable);
         if ($refused !== []) {
             throw new InvalidArgumentException(sprintf(
+                /* translators: %s: comma-separated email type markers */
                 __('Unknown or not yet available email types: %s. Nothing was changed.', 'xolution-maildelivery'),
                 implode(', ', $refused),
             ));
