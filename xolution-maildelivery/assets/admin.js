@@ -106,6 +106,41 @@
 		});
 	});
 
+	// ------------------------------------------------------------ select all + live status
+
+	document.querySelectorAll('[data-xmd-accordion] .xmd-acc__item').forEach((item) => {
+		const panel = item.querySelector('.xmd-acc__panel');
+		const status = item.querySelector('.xmd-acc__status[data-format]');
+		const tools = item.querySelector('.xmd-acc__tools');
+		const button = tools && tools.querySelector('.xmd-select-all');
+		const boxes = [...panel.querySelectorAll('input[type="checkbox"]')];
+		const selectable = boxes.filter((box) => !box.disabled);
+
+		const refresh = () => {
+			if (status) {
+				const on = boxes.filter((box) => box.checked).length;
+				status.textContent = status.dataset.format.replace('{on}', on).replace('{total}', boxes.length);
+				status.classList.toggle('has-on', on > 0);
+			}
+			if (button) {
+				button.textContent = selectable.every((box) => box.checked) ? button.dataset.deselect : button.dataset.select;
+			}
+		};
+
+		if (button) {
+			tools.hidden = false;
+			button.addEventListener('click', () => {
+				const check = !selectable.every((box) => box.checked);
+				selectable.forEach((box) => {
+					box.checked = check;
+				});
+				refresh();
+			});
+		}
+		panel.addEventListener('change', refresh);
+		refresh();
+	});
+
 	// ------------------------------------------------------------ confirm dialog
 
 	const dialog = document.getElementById('xmd-confirm');

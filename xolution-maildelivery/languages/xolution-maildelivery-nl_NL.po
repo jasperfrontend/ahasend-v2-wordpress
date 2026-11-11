@@ -38,6 +38,14 @@ msgstr "niet actief op deze site"
 msgid "not available yet"
 msgstr "nog niet beschikbaar"
 
+#: src/Admin/EmailTypesField.php:68
+msgid "Select all"
+msgstr "Alles selecteren"
+
+#: src/Admin/EmailTypesField.php:69
+msgid "Deselect all"
+msgstr "Alles deselecteren"
+
 #: src/Admin/Notices.php:35
 msgid "Xolution MailDelivery:"
 msgstr "Xolution MailDelivery:"

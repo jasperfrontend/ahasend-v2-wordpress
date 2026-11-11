@@ -239,7 +239,7 @@ webhook**, meant for the #status channel. Configured per site, optional.
 - **Settings page** (managers only), Settings → MailDelivery, with tabs (since v0.0.11):
   - **Settings:** account ID, API key, sending domain, the computed From address (read-only),
     sandbox mode, and the email types as an accordion per integration (one section open at a time,
-    whole rows clickable); "Test connection" (`GET /v2/ping`) and "Send test email".
+    whole rows clickable, a "Select all" per section, live "x of y on" count); "Test connection" (`GET /v2/ping`) and "Send test email".
   - **Alerts:** the Slack webhook and "Send test alert to Slack".
   - **Managers:** who sees the plugin.
   - **Log:** the 7-day log.

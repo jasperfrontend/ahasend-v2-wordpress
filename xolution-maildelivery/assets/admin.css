@@ -86,6 +86,27 @@
 	transition: height var(--xmd-duration) var(--xmd-ease);
 }
 
+/* "Select all", right-aligned under the status count it changes. */
+.xmd-acc__tools {
+	display: flex;
+	justify-content: flex-end;
+	padding: 8px 16px;
+	border-bottom: 1px solid var(--xmd-border-light);
+}
+
+.xmd-acc__tools[hidden] {
+	display: none;
+}
+
+.xmd-select-all.button-link {
+	font-size: 13px;
+	text-decoration: none;
+}
+
+.xmd-select-all.button-link:hover {
+	text-decoration: underline;
+}
+
 /* ---------------------------------------------------------------- email type rows */
 
 .xmd-type-list {
