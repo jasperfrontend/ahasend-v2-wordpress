@@ -43,6 +43,28 @@ final class Registry
         return $this->integrations;
     }
 
+    /**
+     * True when the marker can be switched on and take effect on this site now: known, implemented, and its
+     * source (Shield, Gravity Forms, ...) active.
+     */
+    public function isAvailable(string $marker): bool
+    {
+        $entry = $this->types[$marker] ?? null;
+
+        return $entry !== null && $entry['type']->isImplemented() && $entry['integration']->isAvailable();
+    }
+
+    /**
+     * The integration's name for a marker, or its ID when this site doesn't know it (e.g. an add-on that isn't
+     * installed).
+     */
+    public function integrationLabel(string $marker): string
+    {
+        $entry = $this->types[$marker] ?? null;
+
+        return $entry !== null ? $entry['integration']->label() : explode('/', $marker)[0];
+    }
+
     /** True for an integration an add-on plugin added (shown as "PRO" in the settings). */
     public function isAddon(Integration $integration): bool
     {

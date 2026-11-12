@@ -1,4 +1,4 @@
-/* Xolution MailDelivery settings page: email-type accordion, confirm dialogs for the check buttons. */
+/* Xolution MailDelivery settings page: email-type accordion, the setup wizard, confirm dialogs for the check buttons. */
 (() => {
 	'use strict';
 
@@ -150,6 +150,169 @@
 		panel.addEventListener('change', refresh);
 		refresh();
 	});
+
+	// ------------------------------------------------------------ setup: checklist
+
+	document.querySelectorAll('[data-xmd-check]').forEach((item) => {
+		const all = item.querySelector('.xmd-check__all');
+		const count = item.querySelector('.xmd-check__count');
+		const more = item.querySelector('.xmd-check__more');
+		const list = item.querySelector('.xmd-check__types');
+		const boxes = [...list.querySelectorAll('input[type="checkbox"]')].filter((box) => !box.disabled);
+
+		const refresh = () => {
+			const on = boxes.filter((box) => box.checked).length;
+			all.checked = boxes.length > 0 && on === boxes.length;
+			all.indeterminate = on > 0 && on < boxes.length;
+			item.classList.toggle('has-on', on > 0);
+			if (count) {
+				count.textContent = boxes.length ? count.dataset.format.replace('{on}', on).replace('{total}', boxes.length) : '';
+			}
+		};
+		item._xmdRefresh = refresh;
+
+		// Folded away until asked for: ticking the integration is the normal way.
+		if (more) {
+			list.hidden = true;
+			more.hidden = false;
+			more.addEventListener('click', () => {
+				const open = list.hidden;
+				list.hidden = !open;
+				more.setAttribute('aria-expanded', String(open));
+				more.textContent = open ? more.dataset.close : more.dataset.open;
+			});
+		} else {
+			list.hidden = true;
+		}
+
+		all.addEventListener('change', () => {
+			boxes.forEach((box) => {
+				box.checked = all.checked;
+			});
+			refresh();
+		});
+		list.addEventListener('change', refresh);
+		refresh();
+	});
+
+	// ------------------------------------------------------------ setup: config file
+
+	const setup = document.querySelector('[data-xmd-setup]');
+	if (setup) {
+		const drop = setup.querySelector('.xmd-drop');
+		const input = setup.querySelector('.xmd-drop__input');
+		const status = setup.querySelector('.xmd-drop__status');
+		const skippedBox = setup.querySelector('[data-xmd-skipped]');
+		const field = (name) => setup.querySelector(`[data-xmd-field="${name}"]`);
+
+		const say = (lines, isError) => {
+			status.replaceChildren(
+				...lines.map((line) => {
+					const p = document.createElement('p');
+					p.textContent = line;
+					return p;
+				})
+			);
+			status.classList.toggle('is-error', Boolean(isError));
+		};
+
+		/** Fills the form from a config the server read and checked, and marks what changed. */
+		const apply = (config) => {
+			const set = (name, value) => {
+				const el = field(name);
+				if (!el) {
+					return;
+				}
+				if (el.type === 'checkbox') {
+					el.checked = Boolean(value);
+				} else if (value !== '' || name !== 'slack_webhook') {
+					el.value = value; // an empty webhook keeps the saved one
+				}
+				el.classList.remove('xmd-filled');
+				void el.offsetWidth;
+				el.classList.add('xmd-filled');
+			};
+			set('account_id', config.account_id);
+			set('sending_domain', config.sending_domain);
+			set('server_ips', config.server_ips.join('\n'));
+			set('slack_webhook', config.slack_webhook);
+			set('sandbox', config.sandbox);
+
+			const wanted = new Set(config.enabled_types);
+			const present = new Set();
+			setup.querySelectorAll('input[name="enabled_types[]"]').forEach((box) => {
+				present.add(box.value);
+				if (!box.disabled) {
+					box.checked = wanted.has(box.value);
+				}
+			});
+			// Emails this site can't switch on go along, only to be reported as skipped.
+			skippedBox.replaceChildren(
+				...config.enabled_types
+					.filter((marker) => !present.has(marker) || setup.querySelector(`input[name="enabled_types[]"][value="${CSS.escape(marker)}"]:disabled`))
+					.map((marker) => Object.assign(document.createElement('input'), { type: 'hidden', name: 'skipped_types[]', value: marker }))
+			);
+			setup.querySelectorAll('[data-xmd-check]').forEach((item) => item._xmdRefresh && item._xmdRefresh());
+		};
+
+		const read = (file) => {
+			if (!file) {
+				return;
+			}
+			file.text()
+				.then((text) => {
+					const body = new FormData();
+					body.append('action', 'xmd_read_config');
+					body.append('_wpnonce', setup.dataset.readNonce);
+					body.append('config', text);
+					return fetch(setup.dataset.readUrl, { method: 'POST', body, credentials: 'same-origin' });
+				})
+				.then((response) => response.json())
+				.then((json) => {
+					if (!json || !json.success) {
+						say([(json && json.data && json.data.message) || setup.dataset.readFailed], true);
+						return;
+					}
+					apply(json.data.config);
+					say([setup.dataset.readOk.replace('%s', file.name), ...json.data.notes], false);
+					drop.classList.add('is-loaded');
+				})
+				.catch(() => say([setup.dataset.readFailed], true));
+		};
+
+		drop.hidden = false;
+		input.addEventListener('change', () => read(input.files[0]));
+		['dragenter', 'dragover'].forEach((type) =>
+			drop.addEventListener(type, (event) => {
+				event.preventDefault();
+				drop.classList.add('is-over');
+			})
+		);
+		['dragleave', 'dragend', 'drop'].forEach((type) => drop.addEventListener(type, () => drop.classList.remove('is-over')));
+		drop.addEventListener('drop', (event) => {
+			event.preventDefault();
+			read(event.dataTransfer.files[0]);
+		});
+
+		// No second run while the first is still talking to AhaSend.
+		setup.addEventListener('submit', () => {
+			setup.querySelector('.xmd-setup__submit').disabled = true;
+			setup.classList.add('is-busy');
+		});
+	}
+
+	// ------------------------------------------------------------ setup: report
+
+	const report = document.querySelector('[data-xmd-report]');
+	if (report && typeof report.showModal === 'function') {
+		report.close();
+		report.showModal();
+		report.addEventListener('click', (event) => {
+			if (event.target === report) {
+				report.close();
+			}
+		});
+	}
 
 	// ------------------------------------------------------------ confirm dialog
 

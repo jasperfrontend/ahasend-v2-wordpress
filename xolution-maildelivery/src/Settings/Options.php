@@ -22,6 +22,7 @@ final class Options
         'enabled_types'  => [], // markers, e.g. 'wp-core/password-reset'
         'managers'       => [], // user IDs
         'slack_webhook'  => '', // plain on purpose, see SlackAlerts
+        'server_ips'     => [], // IP allow list of the key the setup created; exported in the config file
     ];
 
     /** @var array<string, mixed>|null */

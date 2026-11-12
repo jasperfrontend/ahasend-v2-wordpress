@@ -108,7 +108,25 @@ auto-update setting then applies.
 
 ### 3. Configure
 
-Go to **Settings → MailDelivery**:
+**Quickest: the Setup tab** (Settings → MailDelivery → Setup, which opens by itself on a site that isn't
+set up yet):
+
+1. Drop an `.xmd` config file on it, or fill in the account ID, sending domain and server IPs by hand.
+   The emails it lists are ticked in the checklist below; emails of plugins that aren't active on
+   this site are skipped and reported.
+2. Fill in a **setup key**: an AhaSend API key with only the scopes `api-keys:write` and
+   `domains:read`. It's used once and never saved. Lock it to your servers' IPs with its IP allow
+   list: anyone holding it can create keys.
+3. Click **Set up MailDelivery**. The plugin checks the sending domain, creates this site's own key
+   (it may only send from the sending domain, and only from the server IPs), tests it, and only then
+   saves everything, switches the emails on and sends you a test email. A dialog shows every step.
+
+**Download config file**, on the same tab, saves a site's setup as an `.xmd` file for the next site:
+account ID, sending domain, server IPs, Slack webhook, sandbox mode and the switched-on emails. Never
+an API key. Re-running the setup on a site creates a new key; the old one stays in AhaSend until you
+delete it there.
+
+**By hand**, on the Settings tab:
 
 1. Fill in the account ID, the API key and the sending domain, then save. The page shows the From
    address it will use.

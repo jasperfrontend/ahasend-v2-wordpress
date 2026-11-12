@@ -328,3 +328,332 @@
 		animation: none;
 	}
 }
+
+/* ---------------------------------------------------------------- setup wizard */
+
+.xmd-setup__intro {
+	max-width: 720px;
+	font-size: 14px;
+}
+
+.xmd-steps {
+	max-width: 880px;
+	margin: 16px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.xmd-step {
+	margin: 0 0 16px;
+	padding: 4px 20px 16px;
+	border: 1px solid var(--xmd-border);
+	background: var(--xmd-surface);
+}
+
+.xmd-step__title {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 14px 0 10px;
+	font-size: 15px;
+}
+
+.xmd-step__num {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: none;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: var(--xmd-accent);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.xmd-step__help {
+	margin: 0 0 12px;
+	color: var(--xmd-muted);
+}
+
+.xmd-step .form-table {
+	margin-top: 0;
+}
+
+.xmd-step .form-table th {
+	width: 160px;
+	padding-left: 0;
+}
+
+/* Drop zone for the .xmd file. The file input stays focusable but invisible; the label is the target. */
+.xmd-drop {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 18px 20px;
+	border: 2px dashed var(--xmd-border);
+	border-radius: 4px;
+	background: var(--xmd-surface-alt);
+	cursor: pointer;
+	transition: border-color 150ms, background-color 150ms;
+}
+
+.xmd-drop[hidden] {
+	display: none;
+}
+
+.xmd-drop:hover,
+.xmd-drop.is-over {
+	border-color: var(--xmd-accent);
+	background: #f0f6fc;
+}
+
+.xmd-drop.is-loaded {
+	border-style: solid;
+}
+
+.xmd-drop:focus-within {
+	outline: 2px solid var(--xmd-accent);
+	outline-offset: 2px;
+}
+
+.xmd-drop__input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+}
+
+.xmd-drop__icon.dashicons {
+	width: 32px;
+	height: 32px;
+	color: var(--xmd-muted);
+	font-size: 32px;
+}
+
+.xmd-drop__text {
+	font-size: 14px;
+}
+
+.xmd-drop__status p {
+	margin: 8px 0 0;
+}
+
+.xmd-drop__status.is-error {
+	color: #b32d2e;
+}
+
+/* A value the config file just filled in lights up briefly. */
+.xmd-filled {
+	animation: xmd-filled 1.4s ease-out;
+}
+
+@keyframes xmd-filled {
+	from {
+		background-color: #fff3bf;
+	}
+}
+
+/* The emails: one row per integration, its emails folded away below it. */
+.xmd-checklist {
+	margin: 0;
+	border: 1px solid var(--xmd-border);
+	list-style: none;
+}
+
+.xmd-check {
+	margin: 0;
+}
+
+.xmd-check + .xmd-check {
+	border-top: 1px solid var(--xmd-border-light);
+}
+
+.xmd-check__row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 14px;
+}
+
+.xmd-check.is-pro .xmd-check__row {
+	background: #e7f8fa;
+}
+
+.xmd-check__main {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.xmd-check__main input[type="checkbox"] {
+	margin: 0;
+}
+
+/* Some of the integration's emails on: a dash, which WordPress's checkbox style doesn't have. */
+.xmd-check__main input[type="checkbox"]:indeterminate::before {
+	content: "";
+	display: block;
+	width: 8px;
+	height: 2px;
+	margin: 6px auto 0;
+	background: var(--xmd-accent);
+}
+
+.xmd-check__main .xmd-acc__badge {
+	margin-left: 0;
+}
+
+.xmd-check__count {
+	margin-left: auto;
+	color: var(--xmd-muted);
+	font-size: 13px;
+}
+
+.xmd-check.has-on .xmd-check__count {
+	color: var(--xmd-accent);
+}
+
+.xmd-check__more.button-link {
+	font-size: 13px;
+	text-decoration: none;
+}
+
+.xmd-check__note {
+	margin-left: auto;
+	color: var(--xmd-muted);
+	font-size: 13px;
+	font-style: italic;
+}
+
+.xmd-check.is-unavailable .xmd-check__main {
+	color: var(--xmd-muted);
+	cursor: default;
+}
+
+.xmd-check__types {
+	margin: 0;
+	padding: 6px 14px 12px 40px;
+	border-top: 1px solid var(--xmd-border-light);
+	list-style: none;
+}
+
+.xmd-check__types[hidden] {
+	display: none;
+}
+
+.xmd-check__types li {
+	margin: 0;
+	padding: 3px 0;
+}
+
+.xmd-check__types label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.xmd-check__group {
+	padding-top: 10px !important;
+	color: var(--xmd-muted);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.xmd-setup .submit {
+	max-width: 880px;
+	padding-top: 0;
+}
+
+.xmd-setup.is-busy .xmd-setup__submit {
+	cursor: progress;
+}
+
+/* The report after a run. */
+.xmd-report {
+	width: min(560px, calc(100vw - 32px));
+}
+
+.xmd-report .xmd-dialog__title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.xmd-report .xmd-dialog__title .dashicons {
+	width: 26px;
+	height: 26px;
+	font-size: 26px;
+}
+
+.xmd-report.is-ok .xmd-dialog__title .dashicons {
+	color: #00a32a;
+}
+
+.xmd-report.is-failed .xmd-dialog__title .dashicons {
+	color: #d63638;
+}
+
+.xmd-report__steps,
+.xmd-report__skipped {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.xmd-report__step {
+	display: grid;
+	grid-template-columns: 24px 1fr;
+	column-gap: 6px;
+	margin: 0;
+	padding: 6px 0;
+	font-size: 14px;
+}
+
+.xmd-report__step + .xmd-report__step {
+	border-top: 1px solid var(--xmd-border-light);
+}
+
+.xmd-report__step .dashicons {
+	grid-row: span 2;
+}
+
+.xmd-report__step.is-ok .dashicons {
+	color: #00a32a;
+}
+
+.xmd-report__step.is-failed .dashicons {
+	color: #d63638;
+}
+
+.xmd-report__step.is-skipped .dashicons {
+	color: var(--xmd-muted);
+}
+
+.xmd-report__step.is-failed .xmd-report__label {
+	font-weight: 600;
+}
+
+.xmd-report__detail {
+	grid-column: 2;
+	color: var(--xmd-muted);
+	font-size: 12px;
+	overflow-wrap: anywhere;
+}
+
+.xmd-report__skipped-title {
+	margin: 16px 0 4px;
+	font-weight: 600;
+}
+
+.xmd-report__skipped li {
+	margin: 0;
+	padding: 2px 0;
+	color: var(--xmd-muted);
+}

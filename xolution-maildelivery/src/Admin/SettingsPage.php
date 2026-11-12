@@ -181,13 +181,15 @@ final class SettingsPage
             wp_die(esc_html__('Sorry, you are not allowed to access this page.', 'xolution-maildelivery'), 403);
         }
         $tabs = [
+            'setup'    => __('Setup', 'xolution-maildelivery'),
             'settings' => __('Settings', 'xolution-maildelivery'),
             'alerts'   => __('Alerts', 'xolution-maildelivery'),
             'managers' => __('Managers', 'xolution-maildelivery'),
             'log'      => __('Log', 'xolution-maildelivery'),
         ];
         $tab = sanitize_key((string) ($_GET['tab'] ?? ''));
-        $tab = isset($tabs[$tab]) ? $tab : 'settings';
+        // A site that isn't set up yet opens on the setup.
+        $tab = isset($tabs[$tab]) ? $tab : ($this->plugin->isConfigured() ? 'settings' : 'setup');
 
         echo '<div class="wrap xmd-page">';
         printf(
@@ -209,6 +211,7 @@ final class SettingsPage
         echo '</nav>';
 
         match ($tab) {
+            'setup'    => (new SetupWizard($this->plugin))->render(),
             'alerts'   => $this->renderAlerts(),
             'managers' => $this->renderManagers(),
             'log'      => $this->renderLog(),
@@ -520,7 +523,7 @@ final class SettingsPage
 
     private function url(string $tab): string
     {
-        return admin_url('options-general.php?page=' . Plugin::SLUG . ($tab === 'settings' ? '' : '&tab=' . $tab));
+        return admin_url('options-general.php?page=' . Plugin::SLUG . '&tab=' . $tab);
     }
 
     /**

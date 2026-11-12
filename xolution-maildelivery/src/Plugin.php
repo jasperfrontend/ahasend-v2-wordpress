@@ -11,6 +11,7 @@ use Xolution\MailDelivery\Alerts\SlackAlerts;
 use Xolution\MailDelivery\Admin\Cloak;
 use Xolution\MailDelivery\Admin\Notices;
 use Xolution\MailDelivery\Admin\SettingsPage;
+use Xolution\MailDelivery\Admin\SetupWizard;
 use Xolution\MailDelivery\Api\Client;
 use Xolution\MailDelivery\Integration\GravityForms\GravityFormsIntegration;
 use Xolution\MailDelivery\Integration\Integration;
@@ -114,6 +115,7 @@ final class Plugin
         if (is_admin()) {
             (new Cloak($this->managers))->register();
             (new SettingsPage($this))->register();
+            (new SetupWizard($this))->register();
             (new Notices($this))->register();
         }
     }

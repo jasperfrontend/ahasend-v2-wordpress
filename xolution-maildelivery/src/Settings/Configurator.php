@@ -27,11 +27,20 @@ final class Configurator
     /** An empty value clears it. */
     public function setAccountId(string $accountId): void
     {
+        $this->plugin->options->update(['account_id' => self::validAccountId($accountId)]);
+    }
+
+    /**
+     * The account ID normalised, or an exception when it isn't one. Empty stays empty.
+     */
+    public static function validAccountId(string $accountId): string
+    {
         $accountId = strtolower(trim($accountId));
         if ($accountId !== '' && preg_match(self::UUID_PATTERN, $accountId) !== 1) {
             throw new InvalidArgumentException(__('The account ID is not a valid UUID. It was not saved.', 'xolution-maildelivery'));
         }
-        $this->plugin->options->update(['account_id' => $accountId]);
+
+        return $accountId;
     }
 
     public function setApiKey(string $apiKey): void
@@ -49,11 +58,20 @@ final class Configurator
     /** An empty value clears it. */
     public function setSendingDomain(string $domain): void
     {
+        $this->plugin->options->update(['sending_domain' => self::validSendingDomain($domain)]);
+    }
+
+    /**
+     * The domain normalised, or an exception when it isn't one. Empty stays empty.
+     */
+    public static function validSendingDomain(string $domain): string
+    {
         $domain = strtolower(trim($domain));
         if ($domain !== '' && preg_match(self::DOMAIN_PATTERN, $domain) !== 1) {
             throw new InvalidArgumentException(__('The sending domain is not a valid domain name. It was not saved.', 'xolution-maildelivery'));
         }
-        $this->plugin->options->update(['sending_domain' => $domain]);
+
+        return $domain;
     }
 
     public function setSandbox(bool $sandbox): void
@@ -64,6 +82,14 @@ final class Configurator
     /** An empty value removes it. */
     public function setSlackWebhook(string $url): void
     {
+        $this->plugin->options->update(['slack_webhook' => self::validSlackWebhook($url)]);
+    }
+
+    /**
+     * The webhook URL trimmed, or an exception when it isn't a Slack webhook. Empty stays empty.
+     */
+    public static function validSlackWebhook(string $url): string
+    {
         $url = trim($url);
         if ($url !== '' && (!str_starts_with($url, SlackAlerts::WEBHOOK_PREFIX) || wp_http_validate_url($url) === false)) {
             throw new InvalidArgumentException(sprintf(
@@ -72,7 +98,57 @@ final class Configurator
                 SlackAlerts::WEBHOOK_PREFIX,
             ));
         }
-        $this->plugin->options->update(['slack_webhook' => $url]);
+
+        return $url;
+    }
+
+    /**
+     * @param list<string> $ips
+     */
+    public function setServerIps(array $ips): void
+    {
+        $this->plugin->options->update(['server_ips' => self::validServerIps($ips)]);
+    }
+
+    /**
+     * IPv4 or IPv6 addresses, or CIDR blocks of them, each once. AhaSend refuses an allow list that allows every
+     * address, and more than 100 entries.
+     *
+     * @param list<string> $ips
+     * @return list<string>
+     */
+    public static function validServerIps(array $ips): array
+    {
+        $valid   = [];
+        $refused = [];
+        foreach ($ips as $ip) {
+            $ip = trim((string) $ip);
+            if ($ip === '') {
+                continue;
+            }
+            [$address, $prefix] = array_pad(explode('/', $ip, 2), 2, null);
+            $isV4    = filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false;
+            $isV6    = filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false;
+            $max     = $isV4 ? 32 : 128;
+            $prefixOk = $prefix === null || (ctype_digit($prefix) && (int) $prefix >= 1 && (int) $prefix <= $max);
+            if (($isV4 || $isV6) && $prefixOk) {
+                $valid[strtolower($ip)] = strtolower($ip);
+            } else {
+                $refused[] = $ip;
+            }
+        }
+        if ($refused !== []) {
+            throw new InvalidArgumentException(sprintf(
+                /* translators: %s: comma-separated values */
+                __('Not an IP address or CIDR block: %s.', 'xolution-maildelivery'),
+                implode(', ', $refused),
+            ));
+        }
+        if (count($valid) > 100) {
+            throw new InvalidArgumentException(__('AhaSend allows at most 100 server IPs per key.', 'xolution-maildelivery'));
+        }
+
+        return array_values($valid);
     }
 
     /**

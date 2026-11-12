@@ -330,6 +330,7 @@ webhook**, meant for the #status channel. Configured per site, optional.
 ## Setup and administration
 
 - **Settings page** (managers only), Settings → MailDelivery, with tabs (since v0.0.11):
+  - **Setup (since v0.0.19):** see "Setup wizard" below.
   - **Settings:** account ID, API key, sending domain, the computed From address (read-only),
     sandbox mode, and the email types as an accordion per integration (one section open at a time,
     whole rows clickable, a "Select all" per section, live "x of y on" count); "Test connection" (`GET /v2/ping`) and "Send test email".
@@ -350,6 +351,39 @@ webhook**, meant for the #status channel. Configured per site, optional.
   refuse the same invalid input and both refuse switching email types on before the plugin can send.
 - **MainWP** installs and updates the plugin. A MainWP dashboard extension for settings is a
   possible later step, not part of v0.0.1.
+
+### Setup wizard (since v0.0.19)
+
+The idea: whoever sets up a site enters a **setup key** once (an AhaSend key with only
+`api-keys:write` and `domains:read`, locked to the servers' IPs), and the plugin sets the site up with
+it and forgets it. No sysadmin or WP-CLI needed, and every step shows whether it worked.
+
+- **`.xmd` config file** (`Settings\ConfigFile`): JSON with `format`, `version` (1), `account_id`,
+  `sending_domain`, `server_ips`, `slack_webhook`, `sandbox` and `enabled_types`. Never an API key; the
+  Slack webhook is in it on purpose (one file sets up everything; a leaked webhook can only post).
+  Unknown fields are ignored, a newer version is refused. "Download config file" exports the current
+  site. A dropped file is read by the server (`wp_ajax_xmd_read_config`), which checks it with the
+  same rules as the settings and fills the form; nothing is saved by dropping it.
+- **The run** (`Settings\Setup`), each step reported, a failed step stopping the rest:
+  details checked → sending domain checked (`GET /v2/accounts/{account}/domains/{domain}`, must exist
+  with `dns_valid`) → a key created for this site (`POST …/api-keys`, label `WordPress: <host>`, scope
+  `messages:send:{<domain>}` with literal braces, `ip_allow_list` = every server IP) → that key
+  tested (`GET /v2/ping`) → only then saved → emails switched on → optional test email.
+  Without a setup key the saved key is kept and tested, so the wizard also re-applies a config file
+  to a working site.
+- **Nothing half-done:** nothing is saved before the new key works, so a failed run leaves a working
+  site as it was. A key created in a failed run stays in AhaSend.
+- **One key per site**, not per server: one site can be revoked alone, and AhaSend's `last_used_at`
+  shows which site still sends. Re-running creates a new key; cleaning up old keys in AhaSend is
+  the account owner's job, not the plugin's (decided 2026-11-12).
+- **Emails the site can't switch on** (plugin not active, add-on not installed) are skipped and
+  reported, never stored for later: installing WooCommerce later must not start sending through
+  AhaSend by surprise.
+- **The setup key** only lives in the one request: not in the options, transients, log or report.
+  After a failed run the form is filled again with what was entered, except the key.
+- **The server's outgoing IP** isn't detected (PHP can't know it behind NAT, and AhaSend doesn't echo
+  it): the config file lists every server IP, and the connection test proves the key works from
+  this one.
 
 ## From address
 

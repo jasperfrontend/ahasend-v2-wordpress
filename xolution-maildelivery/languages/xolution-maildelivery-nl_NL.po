@@ -706,3 +706,171 @@ msgstr "Save and Continue-link"
 #: src/Integration/GravityForms/GravityFormsIntegration.php:44
 msgid "The notifications for \"Form is saved\" and \"Save and continue email is requested\": the link to resume a saved form."
 msgstr "De meldingen voor \"Form is saved\" en \"Save and continue email is requested\": de link om een opgeslagen formulier verder in te vullen."
+
+msgid "Setup"
+msgstr "Instellen"
+
+msgid "%1$s is not active on this site: %2$d emails skipped."
+msgstr "%1$s is niet actief op deze site: %2$d e-mails overgeslagen."
+
+msgid "Set this site up in one go: drop a config file, check the emails, fill in the setup key. Every step is checked, and nothing is saved until the new key works."
+msgstr "Stel deze site in één keer in: sleep een configuratiebestand hierheen, controleer de e-mails en vul de setup-sleutel in. Elke stap wordt gecontroleerd, en er wordt niets opgeslagen voordat de nieuwe sleutel werkt."
+
+msgid "This file could not be read."
+msgstr "Dit bestand kon niet worden gelezen."
+
+msgid "Loaded %s."
+msgstr "%s geladen."
+
+msgid "Config file"
+msgstr "Configuratiebestand"
+
+msgid "Drop an .xmd file here"
+msgstr "Sleep een .xmd-bestand hierheen"
+
+msgid "or click to choose one. It fills in everything below."
+msgstr "of klik om er een te kiezen. Het vult alles hieronder in."
+
+msgid "Server IPs"
+msgstr "Server-IP's"
+
+msgid "One per line. The new key only works from these addresses, so list every server this site may run on."
+msgstr "Eén per regel. De nieuwe sleutel werkt alleen vanaf deze adressen, dus zet elke server erin waarop deze site kan draaien."
+
+msgid "Optional."
+msgstr "Optioneel."
+
+msgid "Saved. Leave empty to keep it."
+msgstr "Opgeslagen. Laat leeg om hem te houden."
+
+msgid "Emails"
+msgstr "E-mails"
+
+msgid "Ticking an integration switches on all of its emails. Emails of plugins that aren't active on this site are skipped."
+msgstr "Een integratie aanvinken zet al haar e-mails aan. E-mails van plugins die niet actief zijn op deze site worden overgeslagen."
+
+msgid "Setup key"
+msgstr "Setup-sleutel"
+
+msgid "Leave empty to keep this site's current key and only apply the rest."
+msgstr "Laat leeg om de huidige sleutel van deze site te houden en alleen de rest toe te passen."
+
+msgid "An AhaSend API key with the scopes api-keys:write and domains:read. It is used once, to create this site's own key, and never saved."
+msgstr "Een AhaSend-API-sleutel met de scopes api-keys:write en domains:read. Hij wordt één keer gebruikt, om de eigen sleutel van deze site aan te maken, en nooit opgeslagen."
+
+msgid "Test email"
+msgstr "Testmail"
+
+msgid "Send a test email to %s when it's done"
+msgstr "Stuur een testmail naar %s als het klaar is"
+
+msgid "Set up MailDelivery"
+msgstr "MailDelivery instellen"
+
+msgid "Config file of this site"
+msgstr "Configuratiebestand van deze site"
+
+msgid "Saves this site's setup as an .xmd file, to set up the next site the same way. It contains the account ID, the sending domain, the server IPs, the Slack webhook and the switched-on emails. Never an API key."
+msgstr "Slaat de instellingen van deze site op als .xmd-bestand, om de volgende site op dezelfde manier in te stellen. Het bevat het account-ID, het verzenddomein, de server-IP's, de Slack-webhook en de ingeschakelde e-mails. Nooit een API-sleutel."
+
+msgid "Download config file"
+msgstr "Configuratiebestand downloaden"
+
+msgid "Select individual emails"
+msgstr "Losse e-mails kiezen"
+
+msgid "Hide emails"
+msgstr "E-mails verbergen"
+
+msgid "Done"
+msgstr "Gelukt"
+
+msgid "Failed"
+msgstr "Mislukt"
+
+msgid "Skipped"
+msgstr "Overgeslagen"
+
+msgid "MailDelivery is set up"
+msgstr "MailDelivery is ingesteld"
+
+msgid "The setup stopped"
+msgstr "Het instellen is gestopt"
+
+msgid "Close"
+msgstr "Sluiten"
+
+msgid "Back to the setup"
+msgstr "Terug naar het instellen"
+
+msgid "The domain %s is not in this AhaSend account."
+msgstr "Het domein %s staat niet in dit AhaSend-account."
+
+msgid "The domain %s is in this AhaSend account, but its DNS records are not verified yet."
+msgstr "Het domein %s staat in dit AhaSend-account, maar de DNS-records zijn nog niet geverifieerd."
+
+msgid "AhaSend created the key but did not return its secret."
+msgstr "AhaSend heeft de sleutel aangemaakt, maar het geheim niet teruggestuurd."
+
+msgid "This file is too large to be a MailDelivery config file."
+msgstr "Dit bestand is te groot voor een MailDelivery-configuratiebestand."
+
+msgid "This is not a MailDelivery config file."
+msgstr "Dit is geen MailDelivery-configuratiebestand."
+
+msgid "This config file was made by a newer version of MailDelivery. Update the plugin first."
+msgstr "Dit configuratiebestand is gemaakt met een nieuwere versie van MailDelivery. Werk de plugin eerst bij."
+
+msgid "Not an IP address or CIDR block: %s."
+msgstr "Geen IP-adres of CIDR-blok: %s."
+
+msgid "AhaSend allows at most 100 server IPs per key."
+msgstr "AhaSend staat maximaal 100 server-IP's per sleutel toe."
+
+msgid "The account ID and the sending domain are both needed."
+msgstr "Het account-ID en het verzenddomein zijn allebei nodig."
+
+msgid "At least one server IP is needed: the new key only works from those addresses."
+msgstr "Er is minstens één server-IP nodig: de nieuwe sleutel werkt alleen vanaf die adressen."
+
+msgid "The setup key must be an AhaSend API v2 key, starting with \"aha-sk-\"."
+msgstr "De setup-sleutel moet een AhaSend API v2-sleutel zijn, beginnend met \"aha-sk-\"."
+
+msgid "Details checked"
+msgstr "Gegevens gecontroleerd"
+
+msgid "Sending domain checked"
+msgstr "Verzenddomein gecontroleerd"
+
+msgid "API key created"
+msgstr "API-sleutel aangemaakt"
+
+msgid "\"%1$s\", only for sending from this domain, only from %2$s"
+msgstr "\"%1$s\", alleen voor verzenden vanaf dit domein, alleen vanaf %2$s"
+
+msgid "This site has no working API key yet: fill in a setup key."
+msgstr "Deze site heeft nog geen werkende API-sleutel: vul een setup-sleutel in."
+
+msgid "The saved key is kept."
+msgstr "De opgeslagen sleutel blijft behouden."
+
+msgid "AhaSend refused the key from this server. Is this server's outgoing IP in the server IPs?"
+msgstr "AhaSend weigerde de sleutel vanaf deze server. Staat het uitgaande IP-adres van deze server bij de server-IP's?"
+
+msgid "Connection tested"
+msgstr "Verbinding getest"
+
+msgid "Settings saved"
+msgstr "Instellingen opgeslagen"
+
+msgid "Sandbox mode is on."
+msgstr "Sandboxmodus staat aan."
+
+msgid "Emails switched on"
+msgstr "E-mails ingeschakeld"
+
+msgid "Email types going through AhaSend: %d."
+msgstr "E-mailtypes die via AhaSend gaan: %d."
+
+msgid "Test email sent"
+msgstr "Testmail verstuurd"
