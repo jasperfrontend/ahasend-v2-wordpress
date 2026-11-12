@@ -117,7 +117,7 @@ address and the hash that ends up in the link, so `EmailChangeConfirmation` clai
 
 ### Shield Security integration (since v0.0.5)
 
-Available when Shield is active. Two email types. The one that has to arrive: **Email 2FA login**
+Available when Shield is active. The email type that has to arrive: **Email 2FA login**
 ("Two-Factor Login Verification", with the auto-login link when "Enable Auto-Login Links" is on).
 That is how Shield's "magic link" login works: Email Authentication enforced for the roles, plus
 auto-login links. Shield has no email-only (passwordless) login; its passwordless option is passkeys.
@@ -138,6 +138,33 @@ Since v0.0.6 also **Email sending verification**: the one-time email Shield send
 Authentication can be switched on. It tests the route the 2FA emails will take, so it takes that
 route too. Shield announces nothing before it, but its verify link is a Shield action URL with
 `ex=email_send_verify` (next to `shield_action`), which no other email contains; that is the claim.
+
+Since v0.0.16 also Shield's **instant alerts, reports and security notices** (14 types, see the
+README). Shield sends all of them through one mailer, `EmailCon::sendVO()`, which calls a bare
+`wp_mail()`: no hook before it, and nothing in the content to match on like a code or a link. What
+tells them apart is the method that called `sendVO()` (checked against 22.3.4):
+
+| Email | Caller of `sendVO()` | Also checks |
+|---|---|---|
+| The seven instant alerts | `InstantAlertsCon::sendAlert($handler, $data)` | `$handler` is `AlertHandlerShieldDeactivated`, `…CloakedPlugins`, `…Admins`, `…AdminLogin`, `…FirewallBlock`, `…Vulnerabilities` or `…FileLocker` |
+| Alert / info report | `ReportGenerator::sendNotificationEmail($report)` | `$report->type` is `alt` / `nfo` |
+| Login notice | `UserSessionHandler::sendLoginNotifications()` | |
+| Backup login code used | `BackupCodes::sendBackupCodeUsedEmail()` | |
+| IP unblock link | `AutoUnblockMagicLink::processEmailSend()` | |
+| Security Admin removal confirmation / removed | `RemoveSecAdmin::sendConfirmationEmail()` / `sendNotificationEmail()` | |
+
+`ShieldMailerEmailType` finds `EmailCon::sendVO` in `debug_backtrace()` at `wp_mail` and claims
+the email when the frame right above it (the direct caller, so never an outer one) is that method
+and its arguments match. One generic class, like `FilteredEmailType` for core. If Shield renames a
+method, its email no longer matches and goes through the normal mailer again: nothing is lost,
+but recheck these names against each new major Shield version.
+
+Not covered: Shield's license emails ("Pro License Has Been Deactivated" and similar, to the Report
+Email), which are about Shield's own account.
+
+Admin login, firewall blocks, Shield deactivated and cloaked plugins are sent right away, one
+email per event. Admin accounts, vulnerabilities and FileLocker changes are collected and sent
+about 30 seconds later from a WP-Cron event, so those are claimed in a cron request.
 
 ## Sending
 

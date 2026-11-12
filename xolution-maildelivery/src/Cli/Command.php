@@ -9,6 +9,8 @@ defined('ABSPATH') || exit;
 use InvalidArgumentException;
 use WP_CLI;
 use WP_Error;
+use Xolution\MailDelivery\Integration\EmailTypeGroup;
+use Xolution\MailDelivery\Integration\GroupsEmailTypes;
 use Xolution\MailDelivery\Integration\Registry;
 use Xolution\MailDelivery\Mail\Sender;
 use Xolution\MailDelivery\Plugin;
@@ -197,14 +199,20 @@ final class Command
         $enabled = $plugin->registry->enabledMarkers();
         $rows    = [];
         foreach ($plugin->registry->integrations() as $integration) {
-            foreach ($integration->emailTypes() as $type) {
-                $marker = Registry::marker($integration, $type);
-                $rows[] = [
-                    'marker'    => $marker,
-                    'email'     => $type->label(),
-                    'available' => !$type->isImplemented() ? 'not yet' : ($integration->isAvailable() ? 'yes' : 'source not active'),
-                    'on'        => in_array($marker, $enabled, true) ? 'on' : 'off',
-                ];
+            // In a grouped integration a label is short ("Admin login"); the group name says what it is.
+            $groups = $integration instanceof GroupsEmailTypes
+                ? $integration->emailTypeGroups()
+                : [new EmailTypeGroup('', $integration->emailTypes())];
+            foreach ($groups as $group) {
+                foreach ($group->types as $type) {
+                    $marker = Registry::marker($integration, $type);
+                    $rows[] = [
+                        'marker'    => $marker,
+                        'email'     => ($group->label === '' ? '' : $group->label . ': ') . $type->label(),
+                        'available' => !$type->isImplemented() ? 'not yet' : ($integration->isAvailable() ? 'yes' : 'source not active'),
+                        'on'        => in_array($marker, $enabled, true) ? 'on' : 'off',
+                    ];
+                }
             }
         }
         format_items((string) ($assoc['format'] ?? 'table'), $rows, ['marker', 'email', 'available', 'on']);

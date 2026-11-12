@@ -107,6 +107,52 @@
 	text-decoration: underline;
 }
 
+.xmd-select-all[hidden] {
+	display: none;
+}
+
+/* ---------------------------------------------------------------- groups within a section */
+
+/* A sub-heading band: quieter than the section trigger, but clearly a break between sets of switches. */
+.xmd-group + .xmd-group {
+	border-top: 1px solid var(--xmd-border-light);
+}
+
+.xmd-group__heading {
+	display: flex;
+	align-items: baseline;
+	gap: 12px;
+	padding: 14px 16px 8px;
+	background: var(--xmd-surface-alt);
+	border-bottom: 1px solid var(--xmd-border-light);
+}
+
+.xmd-group__text {
+	min-width: 0;
+}
+
+.xmd-group__title {
+	margin: 0;
+	color: #1d2327;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	line-height: 1.4;
+	text-transform: uppercase;
+}
+
+.xmd-group__description {
+	margin: 2px 0 0;
+	color: var(--xmd-muted);
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.xmd-group__heading .xmd-select-all {
+	flex: none;
+	margin-left: auto;
+}
+
 /* ---------------------------------------------------------------- email type rows */
 
 .xmd-type-list {

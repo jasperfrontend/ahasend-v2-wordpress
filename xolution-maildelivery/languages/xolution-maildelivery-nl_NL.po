@@ -397,6 +397,138 @@ msgstr "De eenmalige e-mail die Shield verstuurt voordat Email Authentication aa
 msgid "Shield Security"
 msgstr "Shield Security"
 
+#: src/Integration/Shield/ShieldIntegration.php
+msgid "Two-factor login"
+msgstr "Tweestapsverificatie bij inloggen"
+
+#: src/Integration/Shield/ShieldIntegration.php
+msgid "Instant alerts"
+msgstr "Directe meldingen"
+
+#: src/Integration/Shield/ShieldIntegration.php
+msgid "Reports"
+msgstr "Rapporten"
+
+#: src/Integration/Shield/ShieldIntegration.php
+msgid "Security notices"
+msgstr "Beveiligingsberichten"
+
+#: src/Integration/Shield/ShieldIntegration.php
+msgid "To Shield's Report Email, or the site admin email when that is empty."
+msgstr "Aan het Report Email-adres van Shield, of aan het e-mailadres van de sitebeheerder als dat leeg is."
+
+#: src/Integration/Shield/ShieldIntegration.php:48
+msgid "Shield deactivated"
+msgstr "Shield gedeactiveerd"
+
+#: src/Integration/Shield/ShieldIntegration.php:49
+msgid "Sent when Shield is deactivated."
+msgstr "Verstuurd als Shield gedeactiveerd wordt."
+
+#: src/Integration/Shield/ShieldIntegration.php:54
+msgid "Cloaked plugins"
+msgstr "Verborgen plugins"
+
+#: src/Integration/Shield/ShieldIntegration.php:55
+msgid "Sent when a plugin is hidden from the WordPress plugin list."
+msgstr "Verstuurd als een plugin verborgen wordt in de WordPress-pluginlijst."
+
+#: src/Integration/Shield/ShieldIntegration.php:60
+msgid "Admin accounts"
+msgstr "Beheerdersaccounts"
+
+#: src/Integration/Shield/ShieldIntegration.php:61
+msgid "Sent when an administrator account is added, deleted, demoted or promoted, or its password or email address changes. ShieldPRO."
+msgstr "Verstuurd als een beheerdersaccount toegevoegd, verwijderd, gedegradeerd of gepromoveerd wordt, of als het wachtwoord of e-mailadres ervan verandert. ShieldPRO."
+
+#: src/Integration/Shield/ShieldIntegration.php:66
+msgid "Admin login"
+msgstr "Beheerderslogin"
+
+#: src/Integration/Shield/ShieldIntegration.php:67
+msgid "Sent when an administrator logs in."
+msgstr "Verstuurd als een beheerder inlogt."
+
+#: src/Integration/Shield/ShieldIntegration.php:72
+msgid "Firewall blocks"
+msgstr "Firewallblokkades"
+
+#: src/Integration/Shield/ShieldIntegration.php:73
+msgid "Sent when the firewall blocks a request: one email per block."
+msgstr "Verstuurd als de firewall een verzoek blokkeert: één e-mail per blokkade."
+
+#: src/Integration/Shield/ShieldIntegration.php:78
+msgid "Vulnerabilities"
+msgstr "Kwetsbaarheden"
+
+#: src/Integration/Shield/ShieldIntegration.php:79
+msgid "Sent when the vulnerability scanner finds a vulnerable plugin or theme. ShieldPRO."
+msgstr "Verstuurd als de kwetsbaarheidsscanner een kwetsbare plugin of thema vindt. ShieldPRO."
+
+#: src/Integration/Shield/ShieldIntegration.php:84
+msgid "FileLocker changes"
+msgstr "FileLocker-wijzigingen"
+
+#: src/Integration/Shield/ShieldIntegration.php:85
+msgid "Sent when a file protected by FileLocker changes. ShieldPRO."
+msgstr "Verstuurd als een bestand dat FileLocker beschermt verandert. ShieldPRO."
+
+#: src/Integration/Shield/ShieldIntegration.php:92
+msgid "Alert report"
+msgstr "Meldingenrapport"
+
+#: src/Integration/Shield/ShieldIntegration.php:93
+msgid "The \"Security Alert\" email, sent at the Alert Reports Frequency."
+msgstr "De e-mail \"Security Alert\", verstuurd volgens de Alert Reports Frequency."
+
+#: src/Integration/Shield/ShieldIntegration.php:100
+msgid "Info report"
+msgstr "Informatierapport"
+
+#: src/Integration/Shield/ShieldIntegration.php:101
+msgid "The \"Security Report\" email, sent at the Info Reports Frequency."
+msgstr "De e-mail \"Security Report\", verstuurd volgens de Info Reports Frequency."
+
+#: src/Integration/Shield/ShieldIntegration.php:110
+msgid "Login notice (to the user)"
+msgstr "Loginmelding (aan de gebruiker)"
+
+#: src/Integration/Shield/ShieldIntegration.php:111
+msgid "\"A login to your WordPress account just occurred\", sent at every login when User Login Notification Email is on."
+msgstr "\"A login to your WordPress account just occurred\", verstuurd bij elke login als User Login Notification Email aan staat."
+
+#: src/Integration/Shield/ShieldIntegration.php:117
+msgid "Backup login code used (to the user)"
+msgstr "Back-up-inlogcode gebruikt (aan de gebruiker)"
+
+#: src/Integration/Shield/ShieldIntegration.php:118
+msgid "Sent to a user who just logged in with their 2FA backup code."
+msgstr "Verstuurd aan een gebruiker die net met zijn 2FA-back-upcode heeft ingelogd."
+
+#: src/Integration/Shield/ShieldIntegration.php:124
+msgid "IP unblock link (to the user)"
+msgstr "Link om IP te deblokkeren (aan de gebruiker)"
+
+#: src/Integration/Shield/ShieldIntegration.php:125
+msgid "The link a logged-in user can request to unblock their own blocked IP address."
+msgstr "De link die een ingelogde gebruiker kan aanvragen om zijn eigen geblokkeerde IP-adres te deblokkeren."
+
+#: src/Integration/Shield/ShieldIntegration.php:131
+msgid "Security Admin removal confirmation"
+msgstr "Bevestiging verwijderen Security Admin"
+
+#: src/Integration/Shield/ShieldIntegration.php:132
+msgid "The link that must be clicked before Security Admin is removed by email. Sent to the Report Email."
+msgstr "De link waarop geklikt moet worden voordat Security Admin per e-mail verwijderd wordt. Gaat naar het Report Email-adres."
+
+#: src/Integration/Shield/ShieldIntegration.php:138
+msgid "Security Admin removed"
+msgstr "Security Admin verwijderd"
+
+#: src/Integration/Shield/ShieldIntegration.php:139
+msgid "Tells the Report Email that the Security Admin restrictions were removed."
+msgstr "Laat het Report Email-adres weten dat de Security Admin-beperkingen verwijderd zijn."
+
 #: src/Integration/Shield/TwoFactorLoginEmail.php:36
 msgid "Email 2FA login (code and auto-login link)"
 msgstr "2FA-login per e-mail (code en automatische inloglink)"

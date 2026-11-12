@@ -111,10 +111,16 @@
 	document.querySelectorAll('[data-xmd-accordion] .xmd-acc__item').forEach((item) => {
 		const panel = item.querySelector('.xmd-acc__panel');
 		const status = item.querySelector('.xmd-acc__status[data-format]');
-		const tools = item.querySelector('.xmd-acc__tools');
-		const button = tools && tools.querySelector('.xmd-select-all');
 		const boxes = [...panel.querySelectorAll('input[type="checkbox"]')];
-		const selectable = boxes.filter((box) => !box.disabled);
+
+		// Each "Select all" works on its own group, or on the whole section when it has no groups.
+		const buttons = [...item.querySelectorAll('.xmd-select-all')].map((button) => ({
+			button,
+			selectable: [...button.closest('[data-xmd-select-scope]').querySelectorAll('input[type="checkbox"]')].filter(
+				(box) => !box.disabled
+			),
+		}));
+		const allChecked = (selectable) => selectable.every((box) => box.checked);
 
 		const refresh = () => {
 			if (status) {
@@ -122,21 +128,25 @@
 				status.textContent = status.dataset.format.replace('{on}', on).replace('{total}', boxes.length);
 				status.classList.toggle('has-on', on > 0);
 			}
-			if (button) {
-				button.textContent = selectable.every((box) => box.checked) ? button.dataset.deselect : button.dataset.select;
-			}
+			buttons.forEach(({ button, selectable }) => {
+				button.textContent = allChecked(selectable) ? button.dataset.deselect : button.dataset.select;
+			});
 		};
 
-		if (button) {
-			tools.hidden = false;
+		buttons.forEach(({ button, selectable }) => {
+			const tools = button.closest('.xmd-acc__tools');
+			if (tools) {
+				tools.hidden = false;
+			}
+			button.hidden = false;
 			button.addEventListener('click', () => {
-				const check = !selectable.every((box) => box.checked);
+				const check = !allChecked(selectable);
 				selectable.forEach((box) => {
 					box.checked = check;
 				});
 				refresh();
 			});
-		}
+		});
 		panel.addEventListener('change', refresh);
 		refresh();
 	});

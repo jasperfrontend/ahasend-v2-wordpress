@@ -33,6 +33,25 @@ a user who can't log in. It is public so you can use it too. Questions: contact@
 | | Admin email change confirmation (to the new address) | `wp-core/admin-email-change` |
 | Shield Security | Email 2FA login (code and auto-login link) | `shield/two-factor-login` |
 | | Email sending verification | `shield/email-verification` |
+| | Instant alert: Shield deactivated | `shield/alert-shield-deactivated` |
+| | Instant alert: cloaked plugins | `shield/alert-cloaked-plugins` |
+| | Instant alert: admin accounts (ShieldPRO) | `shield/alert-admin-accounts` |
+| | Instant alert: admin login | `shield/alert-admin-login` |
+| | Instant alert: firewall blocks | `shield/alert-firewall-block` |
+| | Instant alert: vulnerabilities (ShieldPRO) | `shield/alert-vulnerabilities` |
+| | Instant alert: FileLocker changes (ShieldPRO) | `shield/alert-filelocker` |
+| | Alert report ("Security Alert") | `shield/report-alert` |
+| | Info report ("Security Report") | `shield/report-info` |
+| | Login notice (to the user) | `shield/login-notice` |
+| | Backup login code used (to the user) | `shield/backup-code-used` |
+| | IP unblock link (to the user) | `shield/ip-unblock` |
+| | Security Admin removal confirmation | `shield/security-admin-removal-confirm` |
+| | Security Admin removed | `shield/security-admin-removed` |
+
+Shield's alerts, reports and Security Admin emails go to Shield's **Report Email** (Reports →
+Reporting & Alerts Configuration), or to the site admin email when that is empty. Switching a type
+on here doesn't switch the email on in Shield: it only changes the route of emails Shield already
+sends.
 
 The marker is also the message's tag in AhaSend, so you can filter by email type in the dashboard.
 

@@ -24,24 +24,24 @@ msgid "Settings"
 msgstr ""
 
 #. translators: 1: switched-on email types, 2: all email types
-#: src/Admin/EmailTypesField.php:36 src/Admin/EmailTypesField.php:74
+#: src/Admin/EmailTypesField.php:46 src/Admin/EmailTypesField.php:60
 #, php-format
 msgid "%1$d of %2$d on"
 msgstr ""
 
-#: src/Admin/EmailTypesField.php:40
+#: src/Admin/EmailTypesField.php:50
 msgid "not active on this site"
 msgstr ""
 
-#: src/Admin/EmailTypesField.php:60
+#: src/Admin/EmailTypesField.php:113
 msgid "not available yet"
 msgstr ""
 
-#: src/Admin/EmailTypesField.php:68
+#: src/Admin/EmailTypesField.php:151
 msgid "Select all"
 msgstr ""
 
-#: src/Admin/EmailTypesField.php:69
+#: src/Admin/EmailTypesField.php:152
 msgid "Deselect all"
 msgstr ""
 
@@ -392,8 +392,140 @@ msgstr ""
 msgid "The one-time email Shield sends before Email Authentication can be switched on. Switch this on too, so Shield tests the same route its 2FA emails will take."
 msgstr ""
 
-#: src/Integration/Shield/ShieldIntegration.php:23
+#: src/Integration/Shield/ShieldIntegration.php:31
 msgid "Shield Security"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:49
+msgid "Two-factor login"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:55
+msgid "Instant alerts"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:59
+msgid "Shield deactivated"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:60
+msgid "Sent when Shield is deactivated."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:65
+msgid "Cloaked plugins"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:66
+msgid "Sent when a plugin is hidden from the WordPress plugin list."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:71
+msgid "Admin accounts"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:72
+msgid "Sent when an administrator account is added, deleted, demoted or promoted, or its password or email address changes. ShieldPRO."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:77
+msgid "Admin login"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:78
+msgid "Sent when an administrator logs in."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:83
+msgid "Firewall blocks"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:84
+msgid "Sent when the firewall blocks a request: one email per block."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:89
+msgid "Vulnerabilities"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:90
+msgid "Sent when the vulnerability scanner finds a vulnerable plugin or theme. ShieldPRO."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:95
+msgid "FileLocker changes"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:96
+msgid "Sent when a file protected by FileLocker changes. ShieldPRO."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:100 src/Integration/Shield/ShieldIntegration.php:123
+msgid "To Shield's Report Email, or the site admin email when that is empty."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:104
+msgid "Reports"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:108
+msgid "Alert report"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:109
+msgid "The \"Security Alert\" email, sent at the Alert Reports Frequency."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:116
+msgid "Info report"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:117
+msgid "The \"Security Report\" email, sent at the Info Reports Frequency."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:126
+msgid "Security notices"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:129
+msgid "Login notice (to the user)"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:130
+msgid "\"A login to your WordPress account just occurred\", sent at every login when User Login Notification Email is on."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:136
+msgid "Backup login code used (to the user)"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:137
+msgid "Sent to a user who just logged in with their 2FA backup code."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:143
+msgid "IP unblock link (to the user)"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:144
+msgid "The link a logged-in user can request to unblock their own blocked IP address."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:150
+msgid "Security Admin removal confirmation"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:151
+msgid "The link that must be clicked before Security Admin is removed by email. Sent to the Report Email."
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:157
+msgid "Security Admin removed"
+msgstr ""
+
+#: src/Integration/Shield/ShieldIntegration.php:158
+msgid "Tells the Report Email that the Security Admin restrictions were removed."
 msgstr ""
 
 #: src/Integration/Shield/TwoFactorLoginEmail.php:38
