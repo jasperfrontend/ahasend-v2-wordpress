@@ -39,6 +39,7 @@ final class EmailTypesField
             $on      = count(array_intersect($markers, $enabled));
             $panelId = 'xmd-types-' . sanitize_html_class($integration->id());
             $open    = $index === 0;
+            $pro     = $this->registry->isAddon($integration);
 
             $status = $integration->isAvailable()
                 ? sprintf(
@@ -61,17 +62,20 @@ final class EmailTypesField
                 : '';
 
             $html .= sprintf(
-                '<div class="xmd-acc__item%s" data-xmd-select-scope>'
+                '<div class="xmd-acc__item%s%s" data-xmd-select-scope>'
                 . '<h3 class="xmd-acc__heading"><button type="button" class="xmd-acc__trigger" aria-expanded="%s" aria-controls="%s">'
-                . '<span class="xmd-acc__title">%s</span><span class="xmd-acc__status%s"%s>%s</span>'
+                . '<span class="xmd-acc__title">%s</span>%s<span class="xmd-acc__status%s"%s>%s</span>'
                 . '<span class="xmd-acc__chevron dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>'
                 . '</button></h3>'
                 . '<div class="xmd-acc__panel" id="%s" role="region"%s>%s</div>'
                 . '</div>',
                 $open ? ' is-open' : '',
+                $pro ? ' is-pro' : '',
                 $open ? 'true' : 'false',
                 esc_attr($panelId),
                 esc_html($integration->label()),
+                // A product name, not translated.
+                $pro ? '<span class="xmd-acc__badge">PRO</span>' : '',
                 $on > 0 ? ' has-on' : '',
                 $statusFormat,
                 esc_html($status),

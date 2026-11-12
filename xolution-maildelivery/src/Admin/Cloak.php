@@ -10,7 +10,7 @@ use Xolution\MailDelivery\Plugin;
 use Xolution\MailDelivery\Settings\Managers;
 
 /**
- * Hides the plugin from everyone who isn't a manager. Not a security boundary (an administrator can always run
+ * Hides the plugin, and add-ons that ask for it, from everyone who isn't a manager. Not a security boundary (an administrator can always run
  * code); it keeps the plugin out of sight and out of reach of normal clicking.
  */
 final class Cloak
@@ -38,7 +38,9 @@ final class Cloak
             return $transient;
         }
         if (isset($transient->response) && is_array($transient->response)) {
-            unset($transient->response[Plugin::basename()]);
+            foreach (self::basenames() as $basename) {
+                unset($transient->response[$basename]);
+            }
         }
 
         return $transient;
@@ -51,10 +53,33 @@ final class Cloak
     public function hideFromPluginList(array $plugins): array
     {
         if (!$this->managers->isManager()) {
-            unset($plugins[Plugin::basename()]);
+            foreach (self::basenames() as $basename) {
+                unset($plugins[$basename]);
+            }
         }
 
         return $plugins;
+    }
+
+    /**
+     * This plugin and the add-ons that asked to be hidden with it.
+     *
+     * @return list<string> Plugin basenames: 'folder/file.php'.
+     */
+    private static function basenames(): array
+    {
+        /**
+         * Lets an add-on plugin be hidden from non-managers, like this plugin itself.
+         *
+         * @since 0.0.18
+         * @param list<string> $basenames Plugin basenames, e.g. from plugin_basename(__FILE__).
+         */
+        $basenames = apply_filters('xolution_maildelivery_cloaked_plugins', [Plugin::basename()]);
+
+        return array_values(array_unique(array_merge(
+            [Plugin::basename()],
+            array_filter(is_array($basenames) ? $basenames : [], 'is_string'),
+        )));
     }
 
     /**

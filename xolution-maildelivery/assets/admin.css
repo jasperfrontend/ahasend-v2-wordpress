@@ -98,6 +98,45 @@
 	display: none;
 }
 
+/* ---------------------------------------------------------------- add-on ("PRO") sections */
+
+/* A light cyan section with a PRO badge next to the title, open or closed. */
+.xmd-acc__item.is-pro {
+	--xmd-pro: #0891b2;
+	--xmd-pro-tint: rgba(6, 182, 212, 0.08);
+	background: #e7f8fa;
+}
+
+/* The switches themselves stay white; only the header and the group headings are cyan. */
+.xmd-acc__item.is-pro .xmd-type-list {
+	background: var(--xmd-surface);
+}
+
+.xmd-acc__item.is-pro .xmd-acc__trigger:hover,
+.xmd-acc__item.is-pro .xmd-type:hover {
+	background: var(--xmd-pro-tint);
+}
+
+.xmd-acc__item.is-pro .xmd-type.is-disabled:hover {
+	background: none;
+}
+
+.xmd-acc__item.is-pro .xmd-group__heading {
+	background: var(--xmd-pro-tint);
+}
+
+.xmd-acc__badge {
+	margin-left: -4px;
+	padding: 2px 4px;
+	border-radius: 2px;
+	background: var(--xmd-pro, #0891b2);
+	color: #fff;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 1.3;
+	letter-spacing: 0.06em;
+}
+
 .xmd-select-all.button-link {
 	font-size: 13px;
 	text-decoration: none;

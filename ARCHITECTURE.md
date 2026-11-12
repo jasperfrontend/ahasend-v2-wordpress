@@ -79,16 +79,17 @@ interface Integration {
     public function id(): string;            // 'wp-core'
     public function label(): string;         // 'WordPress Core'
     public function isAvailable(): bool;     // e.g. Shield: is Shield active?
-    /** @return EmailType[] */
+    /** @return list<EmailType> */
     public function emailTypes(): array;
 }
 
 interface EmailType {
     public function id(): string;            // 'password-reset' → marker 'wp-core/password-reset'
     public function label(): string;
+    public function description(): string;
     public function isImplemented(): bool;   // shown but not switchable while false
     public function contentType(): string;   // 'text/plain' | 'text/html'
-    public function register(Claim $claim): void; // hooks the source, calls $claim->mark($atts)
+    public function register(string $marker): void; // hooks the source, which calls Claim::mark($atts, $marker)
 }
 ```
 
@@ -207,6 +208,28 @@ types, decided with Jasper on 2026-11-12:
 Gravity SMTP (2.3.4) was studied for comparison: it replaces `wp_mail()` itself and only uses
 `gform_pre_send_email` and `gform_notification_note` to link its log to the entry.
 
+### Add-ons (since v0.0.18)
+
+An add-on is a separate plugin that adds integrations. It adds them on the filter
+`xolution_maildelivery_integrations`, which runs once, on `init` at priority 1, when the plugin object is
+built, so the add-on hooks it as soon as its main file loads. The built-in integrations come first and can't
+be replaced or removed: of two integrations with the same ID, only the first counts. From there an add-on's
+integration is like any other: its switches in the settings and in `wp maildelivery`, its markers in the
+log and in Slack alerts. In the settings it gets a "PRO" badge and a light cyan background
+(`Registry::isAddon()`), because add-ons are what clients pay extra for.
+
+What an add-on may use, versioned as `Xolution\MailDelivery\ADDON_API` (now 1; raised only when a change
+breaks an add-on, so check it before relying on anything below):
+
+- the filters `xolution_maildelivery_integrations` and `xolution_maildelivery_cloaked_plugins` (a list of
+  plugin basenames to hide from non-managers, like this plugin itself);
+- `Integration`, `GroupsEmailTypes`, `EmailTypeGroup`, `EmailType` and `PerEmailOptions`;
+- `Mail\Claim::mark()` and `find()`, `Mail\Headers::toLines()`, and `Mail\Address`.
+
+An add-on loads its own text domain inside its filter callback: the labels are translated when the plugin
+object is built. Without the core plugin, an add-on must do nothing at all, so its source's emails keep
+going through the normal mailer.
+
 ## Sending
 
 Every request: `POST /v2/accounts/{account_id}/messages`, Bearer key, and
@@ -264,6 +287,7 @@ configuration error, the next attempt must use a fresh key. Generating keys per 
   an administrator), every administrator counts as a manager, so the plugin can always be recovered.
 - Not watertight, and not meant to be: an administrator can always run code. It keeps the plugin out
   of sight and out of reach of normal clicking.
+- Add-ons can ask to be hidden the same way, with the filter `xolution_maildelivery_cloaked_plugins`.
 - To verify: that MainWP still sees the plugin for updates and its plugin list while it is cloaked.
 
 ## Local log

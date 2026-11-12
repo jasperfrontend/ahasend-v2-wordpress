@@ -238,7 +238,8 @@ An integration implements `Integration` (in `src/Integration/`) and lists its `E
 type hooks into its source in `register()` and marks the email with `Claim::mark()`. When the source
 hands its `wp_mail()` arguments to a filter, `FilteredEmailType` does it all. When it doesn't, match
 the next `wp_mail()` call on something only that email contains, as `Shield\TwoFactorLoginEmail` and
-`WpCore\EmailChangeConfirmation` do. See [ARCHITECTURE.md](ARCHITECTURE.md) for the design and every
+`WpCore\EmailChangeConfirmation` do. A separate plugin can add integrations too, with the filter
+`xolution_maildelivery_integrations` (see "Add-ons" in ARCHITECTURE.md). See [ARCHITECTURE.md](ARCHITECTURE.md) for the design and every
 decision behind it, and [FINDINGS.md](FINDINGS.md) for the comparison with AhaSend's original plugin.
 
 ## License

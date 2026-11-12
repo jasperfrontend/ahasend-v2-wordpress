@@ -13,6 +13,7 @@ use Xolution\MailDelivery\Admin\Notices;
 use Xolution\MailDelivery\Admin\SettingsPage;
 use Xolution\MailDelivery\Api\Client;
 use Xolution\MailDelivery\Integration\GravityForms\GravityFormsIntegration;
+use Xolution\MailDelivery\Integration\Integration;
 use Xolution\MailDelivery\Integration\Registry;
 use Xolution\MailDelivery\Integration\Shield\ShieldIntegration;
 use Xolution\MailDelivery\Integration\WpCore\WpCoreIntegration;
@@ -41,11 +42,8 @@ final class Plugin
     {
         $this->options  = new Options();
         $this->managers = new Managers($this->options);
-        $this->registry = new Registry($this->options, [
-            new WpCoreIntegration(),
-            new ShieldIntegration(),
-            new GravityFormsIntegration(),
-        ]);
+        [$integrations, $addonIds] = self::integrations();
+        $this->registry            = new Registry($this->options, $integrations, $addonIds);
         $this->log    = new LogTable();
         $this->alerts = new SlackAlerts($this);
     }
@@ -53,6 +51,45 @@ final class Plugin
     public static function instance(): self
     {
         return self::$instance ??= new self();
+    }
+
+    /**
+     * The built-in integrations, then those added by add-ons. An add-on can't replace or remove a built-in one,
+     * and of two integrations with the same ID only the first counts.
+     *
+     * @return array{0: list<Integration>, 1: list<string>} The integrations, and the IDs of those from add-ons.
+     */
+    private static function integrations(): array
+    {
+        $builtIn = [
+            new WpCoreIntegration(),
+            new ShieldIntegration(),
+            new GravityFormsIntegration(),
+        ];
+
+        /**
+         * Lets an add-on plugin add integrations. Runs once, on init at priority 1, when the plugin object is
+         * built; hook it when the add-on's main file loads. See ADDON_API and ARCHITECTURE.md, "Add-ons".
+         *
+         * @since 0.0.18
+         * @param list<Integration> $integrations
+         */
+        $all = apply_filters('xolution_maildelivery_integrations', $builtIn);
+
+        $seen         = [];
+        $integrations = [];
+        $addonIds     = [];
+        foreach (array_merge($builtIn, is_array($all) ? $all : []) as $index => $integration) {
+            if ($integration instanceof Integration && !isset($seen[$integration->id()])) {
+                $seen[$integration->id()] = true;
+                $integrations[]           = $integration;
+                if ($index >= count($builtIn)) {
+                    $addonIds[] = $integration->id();
+                }
+            }
+        }
+
+        return [$integrations, $addonIds];
     }
 
     public function boot(): void

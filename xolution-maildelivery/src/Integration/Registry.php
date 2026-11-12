@@ -15,9 +15,13 @@ final class Registry
 
     /**
      * @param list<Integration> $integrations
+     * @param list<string>      $addonIds     IDs of the integrations an add-on plugin added.
      */
-    public function __construct(private readonly Options $options, private readonly array $integrations)
-    {
+    public function __construct(
+        private readonly Options $options,
+        private readonly array $integrations,
+        private readonly array $addonIds = [],
+    ) {
         foreach ($integrations as $integration) {
             foreach ($integration->emailTypes() as $type) {
                 $this->types[self::marker($integration, $type)] = [
@@ -37,6 +41,12 @@ final class Registry
     public function integrations(): array
     {
         return $this->integrations;
+    }
+
+    /** True for an integration an add-on plugin added (shown as "PRO" in the settings). */
+    public function isAddon(Integration $integration): bool
+    {
+        return in_array($integration->id(), $this->addonIds, true);
     }
 
     /**
