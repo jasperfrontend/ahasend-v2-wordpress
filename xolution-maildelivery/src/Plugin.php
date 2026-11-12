@@ -12,6 +12,7 @@ use Xolution\MailDelivery\Admin\Cloak;
 use Xolution\MailDelivery\Admin\Notices;
 use Xolution\MailDelivery\Admin\SettingsPage;
 use Xolution\MailDelivery\Api\Client;
+use Xolution\MailDelivery\Integration\GravityForms\GravityFormsIntegration;
 use Xolution\MailDelivery\Integration\Registry;
 use Xolution\MailDelivery\Integration\Shield\ShieldIntegration;
 use Xolution\MailDelivery\Integration\WpCore\WpCoreIntegration;
@@ -43,6 +44,7 @@ final class Plugin
         $this->registry = new Registry($this->options, [
             new WpCoreIntegration(),
             new ShieldIntegration(),
+            new GravityFormsIntegration(),
         ]);
         $this->log    = new LogTable();
         $this->alerts = new SlackAlerts($this);

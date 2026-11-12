@@ -31,15 +31,22 @@ final class Sender
      * Sends a claimed wp_mail() call: one request per To address, each with exactly one recipient.
      * True only when every address was accepted.
      *
-     * @param array<string, mixed> $atts wp_mail() arguments
+     * @param array<string, mixed> $atts     wp_mail() arguments
+     * @param string               $fromName   Display name for this email; '' for the site title.
+     * @param list<Address>|null   $recipients Who gets a copy; null for the To addresses.
      */
-    public function sendWpMail(array $atts, string $marker, string $contentType): bool
-    {
+    public function sendWpMail(
+        array $atts,
+        string $marker,
+        string $contentType,
+        string $fromName = '',
+        ?array $recipients = null,
+    ): bool {
         $atts['headers'] = Claim::strip($atts['headers'] ?? []);
 
         $subject     = (string) ($atts['subject'] ?? '');
         $message     = (string) ($atts['message'] ?? '');
-        $recipients  = Address::parseList($atts['to'] ?? []);
+        $recipients ??= Address::parseList($atts['to'] ?? []);
         $parsed      = Headers::parse($atts['headers']);
         $attachments = Attachments::fromWpMail($atts['attachments'] ?? []);
         $client      = $this->plugin->client();
@@ -57,7 +64,7 @@ final class Sender
                 $client instanceof WP_Error      => SendResult::failure($client->get_error_message()),
                 !$to->isValid()                  => SendResult::failure(__('Invalid recipient address.', 'xolution-maildelivery')),
                 $attachments instanceof WP_Error => SendResult::failure($attachments->get_error_message()),
-                default                          => $this->sendOne($client, $to, $subject, $message, $contentType, $parsed, $attachments, $marker),
+                default                          => $this->sendOne($client, $to, $subject, $message, $contentType, $parsed, $attachments, $marker, $fromName),
             };
             $this->plugin->log->record($marker, $to->email, $subject, $result, $this->sandbox());
             if ($result->ok) {
@@ -129,9 +136,11 @@ final class Sender
         array $parsed,
         array $attachments,
         string $marker,
+        string $fromName = '',
     ): SendResult {
+        $from    = $this->plugin->fromAddress();
         $payload = [
-            'from'       => $this->plugin->fromAddress()->toApi(),
+            'from'       => ($fromName === '' ? $from : $from->withName($fromName))->toApi(),
             'recipients' => [$to->toApi()],
             'subject'    => $subject,
             'text_content' => $contentType === 'text/html' ? HtmlToText::convert($message) : $message,

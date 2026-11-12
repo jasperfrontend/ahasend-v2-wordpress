@@ -6,6 +6,7 @@ namespace Xolution\MailDelivery\Mail;
 
 defined('ABSPATH') || exit;
 
+use Xolution\MailDelivery\Integration\PerEmailOptions;
 use Xolution\MailDelivery\Plugin;
 
 /**
@@ -53,7 +54,15 @@ final class Dispatcher
             return null;
         }
 
+        $perEmail = $type instanceof PerEmailOptions;
+
         // No fallback to the normal mailer: a claimed email is sent by AhaSend or it fails (ARCHITECTURE decision 2).
-        return (new Sender($this->plugin))->sendWpMail($atts, $marker, $type->contentType());
+        return (new Sender($this->plugin))->sendWpMail(
+            $atts,
+            $marker,
+            $perEmail ? $type->contentTypeFor($atts) : $type->contentType(),
+            $perEmail ? $type->fromNameFor($atts) : '',
+            $perEmail ? $type->recipientsFor($atts) : null,
+        );
     }
 }

@@ -14,6 +14,9 @@ final class FromAddress
 {
     private const MAX_LOCAL_PART = 64;
 
+    /** Long enough for any real sender name; keeps a runaway merge tag out of the From header. */
+    private const MAX_NAME_LENGTH = 100;
+
     private function __construct(public readonly string $email, public readonly string $name)
     {
     }
@@ -26,6 +29,19 @@ final class FromAddress
             self::localPart($host) . '@' . strtolower($sendingDomain),
             wp_specialchars_decode((string) get_bloginfo('name'), ENT_QUOTES),
         );
+    }
+
+    /**
+     * The same address with another display name, e.g. a Gravity Forms notification's From Name. Falls back to
+     * the site title when nothing printable is left.
+     */
+    public function withName(string $name): self
+    {
+        // A display name never needs control characters; drop them so none reach a header.
+        $name = trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', wp_specialchars_decode($name, ENT_QUOTES)) ?? '');
+        $name = mb_substr($name, 0, self::MAX_NAME_LENGTH);
+
+        return $name === '' ? $this : new self($this->email, $name);
     }
 
     public static function localPart(string $host): string
