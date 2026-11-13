@@ -17,8 +17,7 @@ a user who can't log in. It is public so you can use it too. Questions: contact@
   `wp_mail_failed` fires, and an optional Slack alert goes out. It is never handed to the server's
   mailer instead, because that is the unreliable route this plugin replaces.
 - **One recipient per request.** An email to several addresses becomes one request per address;
-  CC and BCC are dropped. Gravity Forms is the exception: there every CC and BCC address gets its
-  own copy, because a notification's BCC field is a real recipient.
+  CC and BCC are dropped.
 
 ### Supported emails
 
@@ -48,20 +47,16 @@ a user who can't log in. It is public so you can use it too. Questions: contact@
 | | IP unblock link (to the user) | `shield/ip-unblock` |
 | | Security Admin removal confirmation | `shield/security-admin-removal-confirm` |
 | | Security Admin removed | `shield/security-admin-removed` |
-| Gravity Forms | Form notifications (every form, except Save and Continue) | `gravityforms/notifications` |
-| | Save and Continue link | `gravityforms/save-and-continue` |
-| | Entry note emailed | `gravityforms/entry-note` |
 
 Shield's alerts, reports and Security Admin emails go to Shield's **Report Email** (Reports →
 Reporting & Alerts Configuration), or to the site admin email when that is empty. Switching a type
 on here doesn't switch the email on in Shield: it only changes the route of emails Shield already
 sends.
 
-Gravity Forms notifications keep what the notification says, except the sender address: they're
-sent from the site's own address with the notification's **From Name**, its **From Email** becomes
-the Reply-To when the notification has none, and every To, CC and BCC address gets its own copy.
-HTML, text and multipart notifications are all supported (multipart is sent as HTML with a text
-version made from it).
+**Gravity Forms and WooCommerce** are in the private Pro add-on (Gravity Forms since v0.0.22; it was
+built in before). On a site without Pro their emails go through the server's mailer. Switches saved
+before v0.0.22 stay stored and work again once Pro is installed, unless the Settings tab is saved
+without Pro in the meantime, which drops them.
 
 The marker is also the message's tag in AhaSend, so you can filter by email type in the dashboard.
 

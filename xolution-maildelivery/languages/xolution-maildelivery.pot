@@ -600,34 +600,6 @@ msgstr ""
 msgid "AhaSend did not accept the message."
 msgstr ""
 
-#: src/Integration/GravityForms/EntryNoteEmail.php:34
-msgid "Entry note emailed"
-msgstr ""
-
-#: src/Integration/GravityForms/EntryNoteEmail.php:39
-msgid "A note added to an entry and emailed from the entry screen. Replies go to the admin who wrote it."
-msgstr ""
-
-#: src/Integration/GravityForms/GravityFormsIntegration.php:23
-msgid "Gravity Forms"
-msgstr ""
-
-#: src/Integration/GravityForms/GravityFormsIntegration.php:37
-msgid "Form notifications"
-msgstr ""
-
-#: src/Integration/GravityForms/GravityFormsIntegration.php:38
-msgid "Every notification of every form, except Save and Continue. CC and BCC addresses each get their own copy. The notification's From Name is kept, and its From Email becomes the Reply-To when none is set."
-msgstr ""
-
-#: src/Integration/GravityForms/GravityFormsIntegration.php:43
-msgid "Save and Continue link"
-msgstr ""
-
-#: src/Integration/GravityForms/GravityFormsIntegration.php:44
-msgid "The notifications for \"Form is saved\" and \"Save and continue email is requested\": the link to resume a saved form."
-msgstr ""
-
 #: src/Integration/Shield/EmailSendingVerification.php:33
 msgid "Email sending verification"
 msgstr ""
@@ -896,11 +868,11 @@ msgstr ""
 msgid "If you can read this, the site can send email through AhaSend."
 msgstr ""
 
-#: src/Plugin.php:165
+#: src/Plugin.php:164
 msgid "Xolution MailDelivery is not configured: the AhaSend account ID, API key or sending domain is missing."
 msgstr ""
 
-#: src/Plugin.php:173
+#: src/Plugin.php:172
 msgid "The stored AhaSend API key can no longer be decrypted, probably because the salts in wp-config.php changed. Re-enter the API key."
 msgstr ""
 

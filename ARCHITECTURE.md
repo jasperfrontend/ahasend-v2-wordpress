@@ -179,46 +179,11 @@ The text is fixed in code and translated, not a setting: a release changes it on
 once, while a per-site setting would mean 600 copies to keep in step. Everything beyond one sentence
 lives in the help article behind `HELP_URL` (source in `docs/help/`), which is edited in one place.
 
-### Gravity Forms integration (since v0.0.17)
+### Gravity Forms (v0.0.17 to v0.0.21)
 
-Available when Gravity Forms is active. Hooks checked against Gravity Forms 3.2.2. Three email
-types, decided with Jasper on 2026-11-12:
-
-| Email type | Marker | Claimed through |
-|---|---|---|
-| Form notifications | `gravityforms/notifications` | `gform_pre_send_email`, every event except the two below |
-| Save and Continue link | `gravityforms/save-and-continue` | `gform_pre_send_email`, events `form_saved` and `form_save_email_requested` |
-| Entry note emailed | `gravityforms/entry-note` | `wp_mail()` called directly by `GFEntryDetail::lead_detail_page()` |
-
-- **One switch for all forms**, not one per form or a GF "notification service": the marker is the
-  same on every site (WP-CLI/MainWP), and a service would show this plugin in each notification's
-  settings, past the cloak.
-- **Every notification goes through `GFCommon::send_email()`**: submissions, payments, resends,
-  the REST API and background processing. It hands the finished email (to, subject, message,
-  headers keyed by name, attachments, `abort_email`) plus the notification to
-  `gform_pre_send_email`. The claim runs last on it (`PHP_INT_MAX`) and leaves an aborted email
-  alone. Save and Continue emails are ordinary notifications in GF 3.x; the old
-  `GFCommon::send_resume_link()` has no callers left but is covered (it has no notification).
-- **Per email, not per type** (`PerEmailOptions`): the content type follows the notification's
-  format, the From Name is the notification's, and the recipients are To + CC + BCC, each once.
-  The address stays `<site-host>@<sending-domain>` (decision 7).
-- **CC and BCC: one copy each.** An exception to FINDINGS decision 2, because a notification's BCC
-  is a real recipient. Each copy is still one email to one person, and nobody sees the others.
-  The addresses are only read at send time; `to` and the Cc/Bcc headers are left as GF built them,
-  so a BCC address can never end up visible in a To header.
-- **Reply-To.** The From Email (often the site admin, or the visitor's address through a merge tag)
-  becomes the Reply-To when the notification has none, because replies to the sending address
-  would go nowhere useful. Same for the entry note: replies reach the admin who wrote it.
-- **Multipart** notifications arrive as a body GF built by hand around `GFCommon::$email_boundary`.
-  The claim keeps the HTML part (AhaSend gets a text version through `HtmlToText`). A body that
-  can't be taken apart is not claimed, so it goes through the normal mailer intact.
-- **Entry notes stay as GF writes them.** GF notes "WordPress successfully passed the notification
-  email…" or "…was unable to send…" from `wp_mail()`'s result, which is ours. AhaSend's error is not
-  added to the note (Gravity SMTP does add its own log reference): client admins read entry notes,
-  and the plugin is cloaked. The failure is in this plugin's log and Slack alert instead.
-
-Gravity SMTP (2.3.4) was studied for comparison: it replaces `wp_mail()` itself and only uses
-`gform_pre_send_email` and `gform_notification_note` to link its log to the entry.
+Built in from v0.0.17, moved to the private Pro add-on in v0.0.22 (its README has the design). The
+markers stayed `gravityforms/...`, so switches saved on a site keep working once Pro is installed. Without
+Pro they are stored but unused, and saving the Settings tab drops them.
 
 ### Add-ons (since v0.0.18)
 
@@ -247,7 +212,8 @@ going through the normal mailer.
 Every request: `POST /v2/accounts/{account_id}/messages`, Bearer key, and
 
 - exactly one recipient (FINDINGS decisions 2 and 4: one request per To address, CC/BCC dropped;
-  for Gravity Forms one request per To, CC and BCC address, see below);
+  an integration that implements `PerEmailOptions` may list CC and BCC as recipients too, as Pro's
+  Gravity Forms and WooCommerce integrations do, one request each);
 - `tracking: { "open": false, "click": false }`;
 - `retention: { "metadata": 7, "data": 7 }` (since v0.0.13). **Decision changed on 2026-11-11:**
   content is kept 7 days on purpose, because support can then read the exact email a user received.
