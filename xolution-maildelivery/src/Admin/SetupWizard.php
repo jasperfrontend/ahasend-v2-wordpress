@@ -12,16 +12,19 @@ use Xolution\MailDelivery\Integration\Registry;
 use Xolution\MailDelivery\Plugin;
 use Xolution\MailDelivery\Settings\ConfigFile;
 use Xolution\MailDelivery\Settings\Setup;
+use Xolution\MailDelivery\Settings\Uninstall;
 
 /**
- * The Setup tab: set a site up in one go from an .xmd config file and a setup key, and download a site's setup as
- * an .xmd file. The work itself is in Settings\Setup; this is the screen, the handlers and the report.
+ * The Setup tab: set a site up in one go from an .xmd config file and a setup key, download a site's setup as an
+ * .xmd file, and uninstall everything. The work itself is in Settings\Setup and Settings\Uninstall; this is the
+ * screen, the handlers and the report.
  */
 final class SetupWizard
 {
     public const ACTION_SETUP  = 'xmd_setup';
     public const ACTION_EXPORT = 'xmd_export';
     public const ACTION_READ   = 'xmd_read_config';
+    public const ACTION_REMOVE = 'xmd_uninstall';
 
     public function __construct(private readonly Plugin $plugin)
     {
@@ -32,6 +35,7 @@ final class SetupWizard
         add_action('admin_post_' . self::ACTION_SETUP, [$this, 'handleSetup']);
         add_action('admin_post_' . self::ACTION_EXPORT, [$this, 'handleExport']);
         add_action('wp_ajax_' . self::ACTION_READ, [$this, 'handleRead']);
+        add_action('admin_post_' . self::ACTION_REMOVE, [$this, 'handleUninstall']);
     }
 
     // ---------------------------------------------------------------- handlers
@@ -61,6 +65,39 @@ final class SetupWizard
         set_transient(self::reportKey(), $report, 300);
         wp_safe_redirect(admin_url('options-general.php?page=' . Plugin::SLUG . '&tab=setup'));
         exit;
+    }
+
+    public function handleUninstall(): void
+    {
+        $this->guard(self::ACTION_REMOVE);
+
+        // The setup key goes straight to the uninstall and nowhere else.
+        $report = (new Uninstall($this->plugin))->run($this->post('setup_key'));
+
+        if (!$report['ok']) {
+            // Stopped before anything changed: back to the tab, with the report.
+            set_transient(self::reportKey(), $report, 300);
+            wp_safe_redirect(admin_url('options-general.php?page=' . Plugin::SLUG . '&tab=setup'));
+            exit;
+        }
+
+        // The plugin is gone, so its screen is too: the report is this response.
+        wp_die(
+            '<h1>' . esc_html__('MailDelivery is uninstalled', 'xolution-maildelivery') . '</h1>'
+            . '<ul>' . implode('', array_map(static fn (array $step): string => sprintf(
+                '<li>%s <strong>%s</strong>%s</li>',
+                match ($step['status']) {
+                    Setup::STATUS_OK     => '&#10003;',
+                    Setup::STATUS_FAILED => '&#10007;',
+                    default              => '&ndash;',
+                },
+                esc_html($step['label']),
+                $step['detail'] === '' ? '' : ': ' . esc_html($step['detail']),
+            ), $report['steps'])) . '</ul>'
+            . sprintf('<p><a class="button" href="%s">%s</a></p>', esc_url(admin_url('plugins.php')), esc_html__('Go to Plugins', 'xolution-maildelivery')),
+            esc_html__('MailDelivery is uninstalled', 'xolution-maildelivery'),
+            ['response' => 200],
+        );
     }
 
     public function handleExport(): void
@@ -220,9 +257,53 @@ final class SetupWizard
             esc_html__('Download config file', 'xolution-maildelivery'),
         );
 
+        $this->renderUninstall();
+
         if ($report !== null) {
             $this->renderReport($report);
         }
+    }
+
+    private function renderUninstall(): void
+    {
+        $o        = $this->plugin->options;
+        $hasKey   = $o->get('api_key') !== '' || $o->get('api_key_id') !== '';
+        $savedId  = $o->get('api_key_id') !== '';
+        $keyLabel = Setup::keyLabel();
+
+        echo '<h2 class="xmd-uninstall__title">' . esc_html__('Uninstall MailDelivery', 'xolution-maildelivery') . '</h2>';
+        echo '<p>' . esc_html__('Removes MailDelivery from this site completely: first this site\'s API key in AhaSend, then all settings and the log, then the plugin itself. Emails go the normal way again, without AhaSend.', 'xolution-maildelivery') . '</p>';
+
+        printf(
+            '<form method="post" action="%s" class="xmd-uninstall" data-xmd-confirm-title="%s" data-xmd-confirm-body="%s" data-xmd-confirm-ok="%s">',
+            esc_url(admin_url('admin-post.php')),
+            esc_attr__('Uninstall MailDelivery?', 'xolution-maildelivery'),
+            esc_attr(
+                __('This removes all MailDelivery settings and the log, then the plugin itself. With a setup key, it first deletes this site\'s API key in AhaSend. It can\'t be undone.', 'xolution-maildelivery')
+                . "\n" . __('If deleting the key fails, nothing on this site is removed.', 'xolution-maildelivery')
+            ),
+            esc_attr__('Uninstall', 'xolution-maildelivery'),
+        );
+        echo '<input type="hidden" name="action" value="' . esc_attr(self::ACTION_REMOVE) . '">';
+        wp_nonce_field(self::ACTION_REMOVE);
+        echo '<table class="form-table" role="presentation"><tbody>';
+        $this->row(
+            'xmd-uninstall-key',
+            __('Setup key', 'xolution-maildelivery'),
+            '<input type="password" class="regular-text code" id="xmd-uninstall-key" name="setup_key" value="" autocomplete="off" placeholder="aha-sk-…">',
+            !$hasKey
+                ? __('This site has no API key, so nothing is deleted in AhaSend.', 'xolution-maildelivery')
+                : sprintf(
+                    /* translators: %s: the key's label in AhaSend */
+                    __('Deletes "%s" in AhaSend. Needs the scope api-keys:delete, and api-keys:read to also find keys from earlier setups of this site.', 'xolution-maildelivery'),
+                    $keyLabel,
+                ) . ' '
+                . ($savedId ? '' : __('This site was set up with an older version that didn\'t save the key\'s ID, so api-keys:read is required here.', 'xolution-maildelivery') . ' ')
+                . __('Never saved. Leave empty to keep the key in AhaSend.', 'xolution-maildelivery'),
+        );
+        echo '</tbody></table>';
+        printf('<p class="submit"><button type="submit" class="button xmd-button-danger">%s</button></p>', esc_html__('Uninstall MailDelivery', 'xolution-maildelivery'));
+        echo '</form>';
     }
 
     /**
@@ -325,7 +406,13 @@ final class SetupWizard
                 (int) $item['count'],
             )) . '</li>';
         }
-        $ok = !empty($report['ok']);
+        $ok        = !empty($report['ok']);
+        $uninstall = ($report['kind'] ?? '') === 'uninstall';
+        $title     = match (true) {
+            $uninstall => __('The uninstall stopped', 'xolution-maildelivery'),
+            $ok        => __('MailDelivery is set up', 'xolution-maildelivery'),
+            default    => __('The setup stopped', 'xolution-maildelivery'),
+        };
 
         printf(
             '<dialog class="xmd-dialog xmd-report%s" aria-labelledby="xmd-report-title" data-xmd-report open>'
@@ -336,11 +423,11 @@ final class SetupWizard
             . '</form></dialog>',
             $ok ? ' is-ok' : ' is-failed',
             $ok ? 'dashicons-yes-alt' : 'dashicons-warning',
-            esc_html($ok ? __('MailDelivery is set up', 'xolution-maildelivery') : __('The setup stopped', 'xolution-maildelivery')),
+            esc_html($title),
             $steps,
             $skipped === '' ? '' : '<p class="xmd-report__skipped-title">' . esc_html__('Skipped', 'xolution-maildelivery') . '</p><ul class="xmd-report__skipped">' . $skipped . '</ul>',
             $ok ? sprintf('<a class="button" href="%s">%s</a>', esc_url(admin_url('options-general.php?page=' . Plugin::SLUG)), esc_html__('Open settings', 'xolution-maildelivery')) : '',
-            esc_html($ok ? __('Close', 'xolution-maildelivery') : __('Back to the setup', 'xolution-maildelivery')),
+            esc_html($ok ? __('Close', 'xolution-maildelivery') : ($uninstall ? __('Back', 'xolution-maildelivery') : __('Back to the setup', 'xolution-maildelivery'))),
         );
     }
 

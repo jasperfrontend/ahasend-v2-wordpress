@@ -96,12 +96,13 @@ final class Setup
             }
             $step(__('Sending domain checked', 'xolution-maildelivery'), self::STATUS_OK, $domain);
 
-            $apiKey = $account->createSendKey(self::keyLabel(), $domain, $ips, wp_generate_uuid4());
-            if ($apiKey instanceof WP_Error) {
-                $step(__('API key created', 'xolution-maildelivery'), self::STATUS_FAILED, $apiKey->get_error_message());
+            $created = $account->createSendKey(self::keyLabel(), $domain, $ips, wp_generate_uuid4());
+            if ($created instanceof WP_Error) {
+                $step(__('API key created', 'xolution-maildelivery'), self::STATUS_FAILED, $created->get_error_message());
 
                 return $report;
             }
+            ['secret' => $apiKey, 'id' => $apiKeyId] = $created;
             $step(__('API key created', 'xolution-maildelivery'), self::STATUS_OK, sprintf(
                 /* translators: 1: key label, 2: comma-separated IP addresses */
                 __('"%1$s", only for sending from this domain, only from %2$s', 'xolution-maildelivery'),
@@ -109,7 +110,8 @@ final class Setup
                 implode(', ', $ips),
             ));
         } else {
-            $apiKey = Secrets::decrypt((string) $this->plugin->options->get('api_key'));
+            $apiKeyId = '';
+            $apiKey   = Secrets::decrypt((string) $this->plugin->options->get('api_key'));
             if ($apiKey === null || $apiKey === '') {
                 $step(__('API key', 'xolution-maildelivery'), self::STATUS_FAILED, __('This site has no working API key yet: fill in a setup key.', 'xolution-maildelivery'));
 
@@ -136,7 +138,7 @@ final class Setup
         $configurator->setSendingDomain($domain);
         $configurator->setSandbox($config['sandbox']);
         if ($setupKey !== '') {
-            $configurator->setApiKey($apiKey);
+            $configurator->setApiKey($apiKey, $apiKeyId);
             $configurator->setServerIps($ips);
         } elseif ($ips !== []) {
             $configurator->setServerIps($ips);

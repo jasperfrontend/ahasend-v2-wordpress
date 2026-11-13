@@ -43,7 +43,10 @@ final class Configurator
         return $accountId;
     }
 
-    public function setApiKey(string $apiKey): void
+    /**
+     * @param string $keyId AhaSend's ID of the key, when the setup created it. A key entered by hand has none.
+     */
+    public function setApiKey(string $apiKey, string $keyId = ''): void
     {
         $apiKey = trim($apiKey);
         if (!str_starts_with($apiKey, 'aha-sk-') || strlen($apiKey) <= 20) {
@@ -52,6 +55,7 @@ final class Configurator
         $this->plugin->options->update([
             'api_key'      => Secrets::encrypt($apiKey),
             'api_key_hint' => substr($apiKey, -4),
+            'api_key_id'   => preg_match(self::UUID_PATTERN, $keyId) === 1 ? $keyId : '',
         ]);
     }
 

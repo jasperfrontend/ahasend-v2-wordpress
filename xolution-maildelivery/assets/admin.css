@@ -657,3 +657,32 @@
 	padding: 2px 0;
 	color: var(--xmd-muted);
 }
+
+/* ---------------------------------------------------------------- uninstall */
+
+.xmd-uninstall__title {
+	margin-top: 40px;
+	padding-top: 24px;
+	border-top: 1px solid var(--xmd-border);
+}
+
+.xmd-uninstall,
+.xmd-uninstall__title + p {
+	max-width: 880px;
+}
+
+.wp-core-ui .button.xmd-button-danger {
+	color: #b32d2e;
+	border-color: #b32d2e;
+}
+
+.wp-core-ui .button.xmd-button-danger:hover,
+.wp-core-ui .button.xmd-button-danger:focus {
+	color: #fff;
+	background: #b32d2e;
+	border-color: #b32d2e;
+}
+
+.wp-core-ui .button.xmd-button-danger:focus {
+	box-shadow: 0 0 0 1px #fff, 0 0 0 3px #b32d2e;
+}

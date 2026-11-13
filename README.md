@@ -124,7 +124,14 @@ set up yet):
 **Download config file**, on the same tab, saves a site's setup as an `.xmd` file for the next site:
 account ID, sending domain, server IPs, Slack webhook, sandbox mode and the switched-on emails. Never
 an API key. Re-running the setup on a site creates a new key; the old one stays in AhaSend until you
-delete it there.
+delete it there, or until you uninstall.
+
+**Uninstall MailDelivery**, at the bottom of the same tab, removes everything: first this site's key
+in AhaSend, then all settings and the log, then the plugin itself. It takes a setup key with the
+scope `api-keys:delete`, plus `api-keys:read` to also find keys from earlier setups of this site
+(required for sites set up with v0.0.19, which didn't save the key's ID). If deleting the key fails,
+nothing on the site is removed. Without a setup key the key stays in AhaSend and the rest goes.
+Deleting the plugin on the Plugins screen removes the site's data too, but never the key in AhaSend.
 
 **By hand**, on the Settings tab:
 

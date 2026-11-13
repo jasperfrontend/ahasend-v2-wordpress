@@ -874,3 +874,84 @@ msgstr "E-mailtypes die via AhaSend gaan: %d."
 
 msgid "Test email sent"
 msgstr "Testmail verstuurd"
+
+msgid "API key deleted in AhaSend"
+msgstr "API-sleutel verwijderd in AhaSend"
+
+msgid "AhaSend has no key \"%s\" (anymore)."
+msgstr "AhaSend heeft geen sleutel \"%s\" (meer)."
+
+msgid "AhaSend returned an unexpected list of keys."
+msgstr "AhaSend gaf een onverwachte lijst met sleutels terug."
+
+msgid "Back"
+msgstr "Terug"
+
+msgid "Deactivated. Delete it on the Plugins screen."
+msgstr "Gedeactiveerd. Verwijder hem via het scherm Plugins."
+
+msgid "Deletes \"%s\" in AhaSend. Needs the scope api-keys:delete, and api-keys:read to also find keys from earlier setups of this site."
+msgstr "Verwijdert \"%s\" in AhaSend. Heeft de scope api-keys:delete nodig, en api-keys:read om ook sleutels van eerdere installaties van deze site te vinden."
+
+msgid "Deleting the key failed after %1$d deleted. Nothing on this site was removed. AhaSend said: %2$s"
+msgstr "Het verwijderen van de sleutel mislukte, na %1$d verwijderd. Er is niets van deze site verwijderd. AhaSend zei: %2$s"
+
+msgid "Go to Plugins"
+msgstr "Naar Plugins"
+
+msgid "If deleting the key fails, nothing on this site is removed."
+msgstr "Lukt het verwijderen van de sleutel niet, dan wordt er niets van deze site verwijderd."
+
+msgid "MailDelivery is uninstalled"
+msgstr "MailDelivery is verwijderd"
+
+msgid "Never saved. Leave empty to keep the key in AhaSend."
+msgstr "Wordt nooit opgeslagen. Laat leeg om de sleutel in AhaSend te laten staan."
+
+msgid "No setup key: \"%s\" stays in AhaSend. Delete it there by hand."
+msgstr "Geen setup-sleutel: \"%s\" blijft in AhaSend staan. Verwijder hem daar met de hand."
+
+msgid "Older keys of this site could not be looked up without the scope api-keys:read."
+msgstr "Oudere sleutels van deze site konden niet worden opgezocht zonder de scope api-keys:read."
+
+msgid "Plugin deactivated and deleted"
+msgstr "Plugin gedeactiveerd en verwijderd"
+
+msgid "Removes MailDelivery from this site completely: first this site's API key in AhaSend, then all settings and the log, then the plugin itself. Emails go the normal way again, without AhaSend."
+msgstr "Verwijdert MailDelivery helemaal van deze site: eerst de API-sleutel van deze site in AhaSend, dan alle instellingen en het log, dan de plugin zelf. E-mails gaan daarna weer op de normale manier, zonder AhaSend."
+
+msgid "Settings and log removed"
+msgstr "Instellingen en log verwijderd"
+
+msgid "The uninstall stopped"
+msgstr "Het verwijderen is gestopt"
+
+msgid "This is not an AhaSend key ID."
+msgstr "Dit is geen ID van een AhaSend-sleutel."
+
+msgid "This removes all MailDelivery settings and the log, then the plugin itself. With a setup key, it first deletes this site's API key in AhaSend. It can't be undone."
+msgstr "Hiermee verwijder je alle instellingen van MailDelivery en het log, en daarna de plugin zelf. Met een setup-sleutel wordt eerst de API-sleutel van deze site in AhaSend verwijderd. Dit kan niet ongedaan worden gemaakt."
+
+msgid "This site has no API key, so nothing is deleted in AhaSend."
+msgstr "Deze site heeft geen API-sleutel, dus er wordt niets verwijderd in AhaSend."
+
+msgid "This site has no API key."
+msgstr "Deze site heeft geen API-sleutel."
+
+msgid "This site was set up with an older version that didn't save the key's ID, so api-keys:read is required here."
+msgstr "Deze site is ingesteld met een oudere versie die het ID van de sleutel niet bewaarde, dus api-keys:read is hier nodig."
+
+msgid "This site's key ID isn't saved (it was set up with an older version), so \"%1$s\" has to be looked up, which needs the scope api-keys:read. Nothing was removed. AhaSend said: %2$s"
+msgstr "Het ID van de sleutel van deze site is niet bewaard (de site is ingesteld met een oudere versie), dus \"%1$s\" moet worden opgezocht, en daarvoor is de scope api-keys:read nodig. Er is niets verwijderd. AhaSend zei: %2$s"
+
+msgid "Uninstall"
+msgstr "Verwijderen"
+
+msgid "Uninstall MailDelivery"
+msgstr "MailDelivery verwijderen"
+
+msgid "Uninstall MailDelivery?"
+msgstr "MailDelivery verwijderen?"
+
+msgid "\"%1$s\", keys deleted: %2$d"
+msgstr "\"%1$s\", sleutels verwijderd: %2$d"

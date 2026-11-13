@@ -181,10 +181,10 @@ final class SettingsPage
             wp_die(esc_html__('Sorry, you are not allowed to access this page.', 'xolution-maildelivery'), 403);
         }
         $tabs = [
-            'setup'    => __('Setup', 'xolution-maildelivery'),
             'settings' => __('Settings', 'xolution-maildelivery'),
             'alerts'   => __('Alerts', 'xolution-maildelivery'),
             'managers' => __('Managers', 'xolution-maildelivery'),
+            'setup'    => __('Setup', 'xolution-maildelivery'),
             'log'      => __('Log', 'xolution-maildelivery'),
         ];
         $tab = sanitize_key((string) ($_GET['tab'] ?? ''));
@@ -211,13 +211,19 @@ final class SettingsPage
         echo '</nav>';
 
         match ($tab) {
-            'setup'    => (new SetupWizard($this->plugin))->render(),
+            'setup'    => $this->renderSetup(),
             'alerts'   => $this->renderAlerts(),
             'managers' => $this->renderManagers(),
             'log'      => $this->renderLog(),
             default    => $this->renderSettings(),
         };
         echo '</div>';
+    }
+
+    private function renderSetup(): void
+    {
+        (new SetupWizard($this->plugin))->render();
+        $this->renderConfirmDialog(); // for the Uninstall button
     }
 
     private function renderSettings(): void

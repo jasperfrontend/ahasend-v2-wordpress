@@ -330,12 +330,13 @@ webhook**, meant for the #status channel. Configured per site, optional.
 ## Setup and administration
 
 - **Settings page** (managers only), Settings → MailDelivery, with tabs (since v0.0.11):
-  - **Setup (since v0.0.19):** see "Setup wizard" below.
   - **Settings:** account ID, API key, sending domain, the computed From address (read-only),
     sandbox mode, and the email types as an accordion per integration (one section open at a time,
     whole rows clickable, a "Select all" per section, live "x of y on" count); "Test connection" (`GET /v2/ping`) and "Send test email".
   - **Alerts:** the Slack webhook and "Send test alert to Slack".
   - **Managers:** who sees the plugin.
+  - **Setup (since v0.0.19):** see "Setup wizard" and "Uninstall" below. Between Managers and Log
+    since v0.0.20, so the log stays the rightmost tab; a site that isn't set up still opens on it.
   - **Log:** the 7-day log.
   Each tab has its own form and saves only its own section, since an unchecked checkbox isn't
   posted at all: one shared form would let a save on one tab clear another tab's switches. The check
@@ -375,7 +376,9 @@ it and forgets it. No sysadmin or WP-CLI needed, and every step shows whether it
   site as it was. A key created in a failed run stays in AhaSend.
 - **One key per site**, not per server: one site can be revoked alone, and AhaSend's `last_used_at`
   shows which site still sends. Re-running creates a new key; cleaning up old keys in AhaSend is
-  the account owner's job, not the plugin's (decided 2026-11-12).
+  the account owner's job, not the plugin's (decided 2026-11-12). The uninstall does clean them up.
+- **The key's ID** (since v0.0.20) is saved as `api_key_id`, not secret, so the uninstall can delete
+  exactly this key. A key entered by hand on the Settings tab or through WP-CLI has no ID.
 - **Emails the site can't switch on** (plugin not active, add-on not installed) are skipped and
   reported, never stored for later: installing WooCommerce later must not start sending through
   AhaSend by surprise.
@@ -384,6 +387,32 @@ it and forgets it. No sysadmin or WP-CLI needed, and every step shows whether it
 - **The server's outgoing IP** isn't detected (PHP can't know it behind NAT, and AhaSend doesn't echo
   it): the config file lists every server IP, and the connection test proves the key works from
   this one.
+
+### Uninstall (since v0.0.20)
+
+The **Uninstall MailDelivery** button at the bottom of the Setup tab removes everything, with the
+same kind of setup key (`Settings\Uninstall`), in this order:
+
+1. **The key in AhaSend:** the saved `api_key_id`, plus every key labelled `WordPress: <host>`
+   (`GET …/api-keys`, all pages), which also catches keys left by earlier setups of this site.
+   `DELETE …/api-keys/{id}`; a 404 counts as already gone. Needs `api-keys:delete`, and
+   `api-keys:read` for the label lookup. A site set up with v0.0.19 has no saved ID, so there the
+   lookup is required. AhaSend has no "which key am I" call, and the docs don't say how
+   `public_key` relates to the secret, so the label is the only way to find an older site's key.
+2. **The site's data** (`Settings\Cleanup`, shared with `uninstall.php`): log table, options,
+   transients, cron.
+3. **The plugin:** deactivated, then deleted with `delete_plugins()` (which runs `uninstall.php`
+   again, harmlessly). Only with direct file access: other methods need an FTP form this request
+   can't show, so then it stays deactivated and the report says to delete it on the Plugins screen.
+
+If step 1 fails, nothing else runs, so a failed run changes nothing on the site and can be retried.
+Without a setup key step 1 is skipped and the report names the key to delete by hand. The setup
+key is handled like in the wizard: never stored, logged or reported. The report is shown on the
+response itself, since the plugin's own screen is gone by then.
+
+A copy of a site on the same host (a clone before its URL is changed) shares the label and the
+saved ID, so uninstalling the copy also deletes the original's key. The confirm dialog says what
+will be deleted.
 
 ## From address
 
@@ -423,7 +452,7 @@ it and forgets it. No sysadmin or WP-CLI needed, and every step shows whether it
 xolution-maildelivery/
   assets/admin.css, admin.js   settings page: email-type accordion, confirm dialogs
   xolution-maildelivery.php   plugin header, autoloader, boots on `init`
-  uninstall.php               drops the log table, settings and cron
+  uninstall.php               drops the log table, settings, transients and cron (Settings/Cleanup.php)
   src/
     Plugin.php                wiring, configuration check, API client factory
     Api/Client.php            HTTP, one retry, per-recipient result check
@@ -437,6 +466,8 @@ xolution-maildelivery/
     Integration/WpCore/WpCoreIntegration.php, EmailChangeConfirmation.php
     Integration/Shield/ShieldIntegration.php, TwoFactorLoginEmail.php, EmailSendingVerification.php
     Settings/Options.php, Secrets.php, Managers.php, Configurator.php
+    Settings/ConfigFile.php, Setup.php, Uninstall.php, Cleanup.php
+    Api/AccountClient.php     setup-key calls: domain check, create, list and delete keys
     Cli/Command.php           wp maildelivery …
     Log/LogTable.php
     Admin/Cloak.php, SettingsPage.php, Notices.php, EmailTypesField.php (accordion)

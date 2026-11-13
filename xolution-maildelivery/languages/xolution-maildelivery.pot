@@ -19,17 +19,17 @@ msgstr ""
 msgid "Sends selected WordPress emails through the AhaSend API instead of the server's own mailer."
 msgstr ""
 
-#: src/Admin/Cloak.php:93 src/Admin/SettingsPage.php:185
+#: src/Admin/Cloak.php:93 src/Admin/SettingsPage.php:184
 msgid "Settings"
 msgstr ""
 
 #. translators: 1: switched-on email types, 2: all email types
-#: src/Admin/EmailTypesField.php:47 src/Admin/EmailTypesField.php:61 src/Admin/SetupWizard.php:279
+#: src/Admin/EmailTypesField.php:47 src/Admin/EmailTypesField.php:61 src/Admin/SetupWizard.php:360
 #, php-format
 msgid "%1$d of %2$d on"
 msgstr ""
 
-#: src/Admin/EmailTypesField.php:51 src/Admin/SetupWizard.php:288
+#: src/Admin/EmailTypesField.php:51 src/Admin/SetupWizard.php:369
 msgid "not active on this site"
 msgstr ""
 
@@ -53,7 +53,7 @@ msgstr ""
 msgid "Emails it takes over are failing until this is fixed."
 msgstr ""
 
-#: src/Admin/Notices.php:40 src/Admin/SetupWizard.php:342
+#: src/Admin/Notices.php:40 src/Admin/SetupWizard.php:429
 msgid "Open settings"
 msgstr ""
 
@@ -113,396 +113,454 @@ msgstr ""
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:184
-msgid "Setup"
-msgstr ""
-
-#: src/Admin/SettingsPage.php:186
+#: src/Admin/SettingsPage.php:185
 msgid "Alerts"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:187 src/Admin/SettingsPage.php:360 src/Admin/SettingsPage.php:363
+#: src/Admin/SettingsPage.php:186 src/Admin/SettingsPage.php:366 src/Admin/SettingsPage.php:369
 msgid "Managers"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:187
+msgid "Setup"
 msgstr ""
 
 #: src/Admin/SettingsPage.php:188
 msgid "Log"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:230
+#: src/Admin/SettingsPage.php:236
 msgid "wp-config.php does not define its own salts, so WordPress keeps them in the database. The API key is encrypted with them, which protects nothing while they sit next to it. Add salts to wp-config.php, then re-enter the API key."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:235
+#: src/Admin/SettingsPage.php:241
 msgid "AhaSend"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:239 src/Admin/SetupWizard.php:159
+#: src/Admin/SettingsPage.php:245 src/Admin/SetupWizard.php:196
 msgid "Account ID"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:241
+#: src/Admin/SettingsPage.php:247
 msgid "From the AhaSend dashboard, account settings."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:245 src/Settings/Setup.php:114 src/Settings/Setup.php:118
+#: src/Admin/SettingsPage.php:251 src/Settings/Setup.php:116 src/Settings/Setup.php:120
 msgid "API key"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:251
+#: src/Admin/SettingsPage.php:257
 msgid "An AhaSend API v2 key with only the messages:send scope for the sending domain, locked to this server's IP. API v1 keys do not work."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:252
+#: src/Admin/SettingsPage.php:258
 msgid "Saved and encrypted. Leave empty to keep it; type a new key to replace it."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:256 src/Admin/SetupWizard.php:160
+#: src/Admin/SettingsPage.php:262 src/Admin/SetupWizard.php:197
 msgid "Sending domain"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:258
+#: src/Admin/SettingsPage.php:264
 msgid "A domain verified in AhaSend."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:262
+#: src/Admin/SettingsPage.php:268
 msgid "From"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:264
+#: src/Admin/SettingsPage.php:270
 msgid "Set a sending domain first."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:266
+#: src/Admin/SettingsPage.php:272
 msgid "Worked out from this site's address and the sending domain."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:270 src/Admin/SetupWizard.php:173
+#: src/Admin/SettingsPage.php:276 src/Admin/SetupWizard.php:210
 msgid "Sandbox mode"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:271 src/Admin/SetupWizard.php:173
+#: src/Admin/SettingsPage.php:277 src/Admin/SetupWizard.php:210
 msgid "AhaSend accepts emails but delivers nothing"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:272
+#: src/Admin/SettingsPage.php:278
 msgid "For testing only. While this is on, password reset emails and the like never arrive."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:276
+#: src/Admin/SettingsPage.php:282
 msgid "Email types"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:277
+#: src/Admin/SettingsPage.php:283
 msgid "Only switched-on email types go through AhaSend. All other email is sent the normal way. A switched-on email that AhaSend can't accept fails; it is not sent the normal way instead."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:280
+#: src/Admin/SettingsPage.php:286
 msgid "Save settings"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:287 src/Admin/SettingsPage.php:332
+#: src/Admin/SettingsPage.php:293 src/Admin/SettingsPage.php:338
 msgid "Check"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:289 src/Admin/SettingsPage.php:293
+#: src/Admin/SettingsPage.php:295 src/Admin/SettingsPage.php:299
 msgid "Test connection"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:290
+#: src/Admin/SettingsPage.php:296
 msgid "Test the connection?"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:291
+#: src/Admin/SettingsPage.php:297
 msgid "This asks AhaSend whether it accepts the saved API key from this server. Nothing is sent and no settings change."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:292
+#: src/Admin/SettingsPage.php:298
 msgid "It checks the key, its IP allow list and the connection. It does not check whether the key may send from the sending domain: the test email does that."
 msgstr ""
 
 #. translators: %s: email address of the current user
-#: src/Admin/SettingsPage.php:296
+#: src/Admin/SettingsPage.php:302
 #, php-format
 msgid "Send test email to %s"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:297
+#: src/Admin/SettingsPage.php:303
 msgid "Send a test email?"
 msgstr ""
 
 #. translators: 1: recipient email address, 2: sender email address
-#: src/Admin/SettingsPage.php:298
+#: src/Admin/SettingsPage.php:304
 #, php-format
 msgid "This sends a real email through AhaSend to %1$s, from %2$s."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:299
+#: src/Admin/SettingsPage.php:305
 msgid "It does not depend on the email-type switches, and it appears in the log."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:300
+#: src/Admin/SettingsPage.php:306
 msgid "Sandbox mode is on: AhaSend accepts the email but does not deliver it."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:301
+#: src/Admin/SettingsPage.php:307
 msgid "Send test email"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:313
+#: src/Admin/SettingsPage.php:319
 msgid "Slack"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:314
+#: src/Admin/SettingsPage.php:320
 msgid "Posts to Slack when an email this plugin takes over can't be sent, when the twice-daily check of the API key fails, and once when it works again. Recipients are masked; no content is posted."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:318 src/Admin/SetupWizard.php:169
+#: src/Admin/SettingsPage.php:324 src/Admin/SetupWizard.php:206
 msgid "Slack webhook"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:322
+#: src/Admin/SettingsPage.php:328
 msgid "Remove the Slack webhook"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:325
+#: src/Admin/SettingsPage.php:331
 msgid "A Slack incoming webhook URL. Without one, failures only show in the log and as a notice to managers."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:326
+#: src/Admin/SettingsPage.php:332
 msgid "Saved. Leave empty to keep it; type a new URL to replace it."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:329
+#: src/Admin/SettingsPage.php:335
 msgid "Save alerts"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:334
+#: src/Admin/SettingsPage.php:340
 msgid "Send test alert to Slack"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:335
+#: src/Admin/SettingsPage.php:341
 msgid "Post a test alert to Slack?"
 msgstr ""
 
 #. translators: %s: this site's host name
-#: src/Admin/SettingsPage.php:336
+#: src/Admin/SettingsPage.php:342
 #, php-format
 msgid "This posts a test message to the Slack channel of the saved webhook, saying that alerts from %s arrive there."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:337
+#: src/Admin/SettingsPage.php:343
 msgid "Everyone in that channel sees it."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:338
+#: src/Admin/SettingsPage.php:344
 msgid "Post test alert"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:361
+#: src/Admin/SettingsPage.php:367
 msgid "Only managers see this plugin: in the Plugins list, here, and in notices. Other administrators don't."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:365
+#: src/Admin/SettingsPage.php:371
 msgid "Save managers"
 msgstr ""
 
 #. translators: %d: number of days the log is kept
-#: src/Admin/SettingsPage.php:381
+#: src/Admin/SettingsPage.php:387
 #, php-format
 msgid "Every email this plugin handled in the last %d days. Recipient, subject and outcome only; no content."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:388
+#: src/Admin/SettingsPage.php:394
 msgid "All statuses"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:392
+#: src/Admin/SettingsPage.php:398
 msgid "All email types"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:397
+#: src/Admin/SettingsPage.php:403
 msgid "Filter"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:401
+#: src/Admin/SettingsPage.php:407
 msgid "Time"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:401
+#: src/Admin/SettingsPage.php:407
 msgid "Email type"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:401
+#: src/Admin/SettingsPage.php:407
 msgid "Recipient"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:401
+#: src/Admin/SettingsPage.php:407
 msgid "Subject"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:401
+#: src/Admin/SettingsPage.php:407
 msgid "Status"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:401
+#: src/Admin/SettingsPage.php:407
 msgid "AhaSend message / error"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:406
+#: src/Admin/SettingsPage.php:412
 msgid "Nothing logged."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:446
+#: src/Admin/SettingsPage.php:452
 msgctxt "log status"
 msgid "sent"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:447
+#: src/Admin/SettingsPage.php:453
 msgctxt "log status"
 msgid "failed"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:448
+#: src/Admin/SettingsPage.php:454
 msgctxt "log status"
 msgid "sandbox"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:499
+#: src/Admin/SettingsPage.php:505
 msgid "Cancel"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:506 src/Admin/SetupWizard.php:84 src/Admin/SetupWizard.php:368
+#: src/Admin/SettingsPage.php:512 src/Admin/SetupWizard.php:121 src/Admin/SetupWizard.php:455
 msgid "Sorry, you are not allowed to do that."
 msgstr ""
 
+#: src/Admin/SetupWizard.php:86 src/Admin/SetupWizard.php:98
+msgid "MailDelivery is uninstalled"
+msgstr ""
+
+#: src/Admin/SetupWizard.php:97
+msgid "Go to Plugins"
+msgstr ""
+
 #. translators: 1: integration name, 2: number of emails
-#: src/Admin/SetupWizard.php:103 src/Admin/SetupWizard.php:323
+#: src/Admin/SetupWizard.php:140 src/Admin/SetupWizard.php:404
 #, php-format
 msgid "%1$s is not active on this site: %2$d emails skipped."
 msgstr ""
 
-#: src/Admin/SetupWizard.php:131
+#: src/Admin/SetupWizard.php:168
 msgid "Set this site up in one go: drop a config file, check the emails, fill in the setup key. Every step is checked, and nothing is saved until the new key works."
 msgstr ""
 
-#: src/Admin/SetupWizard.php:138
+#: src/Admin/SetupWizard.php:175
 msgid "This file could not be read."
 msgstr ""
 
 #. translators: %s: file name
-#: src/Admin/SetupWizard.php:140
+#: src/Admin/SetupWizard.php:177
 #, php-format
 msgid "Loaded %s."
 msgstr ""
 
-#: src/Admin/SetupWizard.php:148
+#: src/Admin/SetupWizard.php:185
 msgid "Config file"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:155
+#: src/Admin/SetupWizard.php:192
 msgid "Drop an .xmd file here"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:156
+#: src/Admin/SetupWizard.php:193
 msgid "or click to choose one. It fills in everything below."
 msgstr ""
 
-#: src/Admin/SetupWizard.php:163
+#: src/Admin/SetupWizard.php:200
 msgid "Server IPs"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:165
+#: src/Admin/SetupWizard.php:202
 msgid "One per line. The new key only works from these addresses, so list every server this site may run on."
 msgstr ""
 
-#: src/Admin/SetupWizard.php:171
+#: src/Admin/SetupWizard.php:208
 msgid "Optional."
 msgstr ""
 
-#: src/Admin/SetupWizard.php:171
+#: src/Admin/SetupWizard.php:208
 msgid "Saved. Leave empty to keep it."
 msgstr ""
 
-#: src/Admin/SetupWizard.php:178
+#: src/Admin/SetupWizard.php:215
 msgid "Emails"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:179
+#: src/Admin/SetupWizard.php:216
 msgid "Ticking an integration switches on all of its emails. Emails of plugins that aren't active on this site are skipped."
 msgstr ""
 
-#: src/Admin/SetupWizard.php:190 src/Admin/SetupWizard.php:194
+#: src/Admin/SetupWizard.php:227 src/Admin/SetupWizard.php:231 src/Admin/SetupWizard.php:292
 msgid "Setup key"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:196
+#: src/Admin/SetupWizard.php:233
 msgid "Leave empty to keep this site's current key and only apply the rest."
 msgstr ""
 
-#: src/Admin/SetupWizard.php:197
+#: src/Admin/SetupWizard.php:234
 msgid "An AhaSend API key with the scopes api-keys:write and domains:read. It is used once, to create this site's own key, and never saved."
 msgstr ""
 
-#: src/Admin/SetupWizard.php:201
+#: src/Admin/SetupWizard.php:238
 msgid "Test email"
 msgstr ""
 
 #. translators: %s: email address of the current user
-#: src/Admin/SetupWizard.php:205
+#: src/Admin/SetupWizard.php:242
 #, php-format
 msgid "Send a test email to %s when it's done"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:211
+#: src/Admin/SetupWizard.php:248
 msgid "Set up MailDelivery"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:214
+#: src/Admin/SetupWizard.php:251
 msgid "Config file of this site"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:215
+#: src/Admin/SetupWizard.php:252
 msgid "Saves this site's setup as an .xmd file, to set up the next site the same way. It contains the account ID, the sending domain, the server IPs, the Slack webhook and the switched-on emails. Never an API key."
 msgstr ""
 
-#: src/Admin/SetupWizard.php:220
+#: src/Admin/SetupWizard.php:257
 msgid "Download config file"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:284 src/Admin/SetupWizard.php:286
-msgid "Select individual emails"
+#: src/Admin/SetupWizard.php:274 src/Admin/SetupWizard.php:305
+msgid "Uninstall MailDelivery"
+msgstr ""
+
+#: src/Admin/SetupWizard.php:275
+msgid "Removes MailDelivery from this site completely: first this site's API key in AhaSend, then all settings and the log, then the plugin itself. Emails go the normal way again, without AhaSend."
+msgstr ""
+
+#: src/Admin/SetupWizard.php:280
+msgid "Uninstall MailDelivery?"
+msgstr ""
+
+#: src/Admin/SetupWizard.php:282
+msgid "This removes all MailDelivery settings and the log, then the plugin itself. With a setup key, it first deletes this site's API key in AhaSend. It can't be undone."
+msgstr ""
+
+#: src/Admin/SetupWizard.php:283
+msgid "If deleting the key fails, nothing on this site is removed."
 msgstr ""
 
 #: src/Admin/SetupWizard.php:285
+msgid "Uninstall"
+msgstr ""
+
+#: src/Admin/SetupWizard.php:295
+msgid "This site has no API key, so nothing is deleted in AhaSend."
+msgstr ""
+
+#. translators: %s: the key's label in AhaSend
+#: src/Admin/SetupWizard.php:298
+#, php-format
+msgid "Deletes \"%s\" in AhaSend. Needs the scope api-keys:delete, and api-keys:read to also find keys from earlier setups of this site."
+msgstr ""
+
+#: src/Admin/SetupWizard.php:301
+msgid "This site was set up with an older version that didn't save the key's ID, so api-keys:read is required here."
+msgstr ""
+
+#: src/Admin/SetupWizard.php:302
+msgid "Never saved. Leave empty to keep the key in AhaSend."
+msgstr ""
+
+#: src/Admin/SetupWizard.php:365 src/Admin/SetupWizard.php:367
+msgid "Select individual emails"
+msgstr ""
+
+#: src/Admin/SetupWizard.php:366
 msgid "Hide emails"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:303
+#: src/Admin/SetupWizard.php:384
 msgid "Done"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:304
+#: src/Admin/SetupWizard.php:385
 msgid "Failed"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:305 src/Admin/SetupWizard.php:341
+#: src/Admin/SetupWizard.php:386 src/Admin/SetupWizard.php:428
 msgid "Skipped"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:339
+#: src/Admin/SetupWizard.php:412
+msgid "The uninstall stopped"
+msgstr ""
+
+#: src/Admin/SetupWizard.php:413
 msgid "MailDelivery is set up"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:339
+#: src/Admin/SetupWizard.php:414
 msgid "The setup stopped"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:343
+#: src/Admin/SetupWizard.php:430
 msgid "Close"
 msgstr ""
 
-#: src/Admin/SetupWizard.php:343
+#: src/Admin/SetupWizard.php:430
+msgid "Back"
+msgstr ""
+
+#: src/Admin/SetupWizard.php:430
 msgid "Back to the setup"
 msgstr ""
 
@@ -511,19 +569,27 @@ msgid "No Slack webhook is saved."
 msgstr ""
 
 #. translators: %s: domain name
-#: src/Api/AccountClient.php:40
+#: src/Api/AccountClient.php:42
 #, php-format
 msgid "The domain %s is not in this AhaSend account."
 msgstr ""
 
 #. translators: %s: domain name
-#: src/Api/AccountClient.php:52
+#: src/Api/AccountClient.php:54
 #, php-format
 msgid "The domain %s is in this AhaSend account, but its DNS records are not verified yet."
 msgstr ""
 
-#: src/Api/AccountClient.php:92
+#: src/Api/AccountClient.php:95
 msgid "AhaSend created the key but did not return its secret."
+msgstr ""
+
+#: src/Api/AccountClient.php:111
+msgid "This is not an AhaSend key ID."
+msgstr ""
+
+#: src/Api/AccountClient.php:157
+msgid "AhaSend returned an unexpected list of keys."
 msgstr ""
 
 #: src/Api/Client.php:98
@@ -836,41 +902,41 @@ msgstr ""
 msgid "The account ID is not a valid UUID. It was not saved."
 msgstr ""
 
-#: src/Settings/Configurator.php:50
+#: src/Settings/Configurator.php:53
 msgid "The API key must be an AhaSend API v2 key, starting with \"aha-sk-\". Keys from API v1 do not work. It was not saved."
 msgstr ""
 
-#: src/Settings/Configurator.php:71
+#: src/Settings/Configurator.php:75
 msgid "The sending domain is not a valid domain name. It was not saved."
 msgstr ""
 
 #. translators: %s: the required URL prefix, https://hooks.slack.com/
-#: src/Settings/Configurator.php:97
+#: src/Settings/Configurator.php:101
 #, php-format
 msgid "The Slack webhook must start with %s. It was not saved."
 msgstr ""
 
 #. translators: %s: comma-separated values
-#: src/Settings/Configurator.php:143
+#: src/Settings/Configurator.php:147
 #, php-format
 msgid "Not an IP address or CIDR block: %s."
 msgstr ""
 
-#: src/Settings/Configurator.php:148
+#: src/Settings/Configurator.php:152
 msgid "AhaSend allows at most 100 server IPs per key."
 msgstr ""
 
 #. translators: %s: comma-separated email type markers
-#: src/Settings/Configurator.php:168
+#: src/Settings/Configurator.php:172
 #, php-format
 msgid "Unknown or not yet available email types: %s. Nothing was changed."
 msgstr ""
 
-#: src/Settings/Configurator.php:173
+#: src/Settings/Configurator.php:177
 msgid "Email types can only be switched on once the account ID, a working API key and the sending domain are saved."
 msgstr ""
 
-#: src/Settings/Configurator.php:188
+#: src/Settings/Configurator.php:192
 msgid "At least one manager is needed, and managers must be administrators. The managers were not changed."
 msgstr ""
 
@@ -882,7 +948,7 @@ msgstr ""
 msgid "At least one server IP is needed: the new key only works from those addresses."
 msgstr ""
 
-#: src/Settings/Setup.php:78
+#: src/Settings/Setup.php:78 src/Settings/Uninstall.php:100
 msgid "The setup key must be an AhaSend API v2 key, starting with \"aha-sk-\"."
 msgstr ""
 
@@ -894,52 +960,106 @@ msgstr ""
 msgid "Sending domain checked"
 msgstr ""
 
-#: src/Settings/Setup.php:101 src/Settings/Setup.php:105
+#: src/Settings/Setup.php:101 src/Settings/Setup.php:106
 msgid "API key created"
 msgstr ""
 
 #. translators: 1: key label, 2: comma-separated IP addresses
-#: src/Settings/Setup.php:107
+#: src/Settings/Setup.php:108
 #, php-format
 msgid "\"%1$s\", only for sending from this domain, only from %2$s"
 msgstr ""
 
-#: src/Settings/Setup.php:114
+#: src/Settings/Setup.php:116
 msgid "This site has no working API key yet: fill in a setup key."
 msgstr ""
 
-#: src/Settings/Setup.php:118
+#: src/Settings/Setup.php:120
 msgid "The saved key is kept."
 msgstr ""
 
-#: src/Settings/Setup.php:125
+#: src/Settings/Setup.php:127
 msgid "AhaSend refused the key from this server. Is this server's outgoing IP in the server IPs?"
 msgstr ""
 
-#: src/Settings/Setup.php:127 src/Settings/Setup.php:131
+#: src/Settings/Setup.php:129 src/Settings/Setup.php:133
 msgid "Connection tested"
 msgstr ""
 
-#: src/Settings/Setup.php:147
+#: src/Settings/Setup.php:149
 msgid "Settings saved"
 msgstr ""
 
-#: src/Settings/Setup.php:147
+#: src/Settings/Setup.php:149
 msgid "Sandbox mode is on."
 msgstr ""
 
-#: src/Settings/Setup.php:163 src/Settings/Setup.php:169
+#: src/Settings/Setup.php:165 src/Settings/Setup.php:171
 msgid "Emails switched on"
 msgstr ""
 
 #. translators: %d: number of email types
-#: src/Settings/Setup.php:165
+#: src/Settings/Setup.php:167
 #, php-format
 msgid "Email types going through AhaSend: %d."
 msgstr ""
 
-#: src/Settings/Setup.php:178
+#: src/Settings/Setup.php:180
 msgid "Test email sent"
+msgstr ""
+
+#: src/Settings/Uninstall.php:58
+msgid "API key deleted in AhaSend"
+msgstr ""
+
+#: src/Settings/Uninstall.php:69
+msgid "Settings and log removed"
+msgstr ""
+
+#: src/Settings/Uninstall.php:73
+msgid "Plugin deactivated and deleted"
+msgstr ""
+
+#: src/Settings/Uninstall.php:90
+msgid "This site has no API key."
+msgstr ""
+
+#. translators: %s: the key's label in AhaSend
+#: src/Settings/Uninstall.php:95
+#, php-format
+msgid "No setup key: \"%s\" stays in AhaSend. Delete it there by hand."
+msgstr ""
+
+#. translators: 1: the key's label in AhaSend, 2: error from AhaSend
+#: src/Settings/Uninstall.php:109
+#, php-format
+msgid "This site's key ID isn't saved (it was set up with an older version), so \"%1$s\" has to be looked up, which needs the scope api-keys:read. Nothing was removed. AhaSend said: %2$s"
+msgstr ""
+
+#. translators: 1: number of keys deleted before the error, 2: error from AhaSend
+#: src/Settings/Uninstall.php:122
+#, php-format
+msgid "Deleting the key failed after %1$d deleted. Nothing on this site was removed. AhaSend said: %2$s"
+msgstr ""
+
+#. translators: %s: the key's label in AhaSend
+#: src/Settings/Uninstall.php:133
+#, php-format
+msgid "AhaSend has no key \"%s\" (anymore)."
+msgstr ""
+
+#. translators: 1: the keys' label in AhaSend, 2: number of keys deleted
+#: src/Settings/Uninstall.php:139
+#, php-format
+msgid "\"%1$s\", keys deleted: %2$d"
+msgstr ""
+
+#: src/Settings/Uninstall.php:144
+msgid "Older keys of this site could not be looked up without the scope api-keys:read."
+msgstr ""
+
+#: src/Settings/Uninstall.php:163
+msgid "Deactivated. Delete it on the Plugins screen."
 msgstr ""
 
 #: src/Update/GitHubUpdater.php:85

@@ -17,6 +17,7 @@ final class Options
         'account_id'     => '',
         'api_key'        => '', // encrypted, see Secrets
         'api_key_hint'   => '', // last four characters, for display only
+        'api_key_id'     => '', // AhaSend's ID of the key the setup created, so the uninstall can delete it
         'sending_domain' => '',
         'sandbox'        => false,
         'enabled_types'  => [], // markers, e.g. 'wp-core/password-reset'
