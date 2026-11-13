@@ -636,6 +636,24 @@ msgstr ""
 msgid "The one-time email Shield sends before Email Authentication can be switched on. Switch this on too, so Shield tests the same route its 2FA emails will take."
 msgstr ""
 
+#. translators: %s: "New:" in bold.
+#: src/Integration/Shield/LoginNotice.php:77
+#, php-format
+msgid "%s when you log in to this website, we'll email you a link to confirm it's you."
+msgstr ""
+
+#: src/Integration/Shield/LoginNotice.php:78
+msgid "New:"
+msgstr ""
+
+#: src/Integration/Shield/LoginNotice.php:85
+msgid "Learn more"
+msgstr ""
+
+#: src/Integration/Shield/LoginNotice.php:86
+msgid "(opens in a new tab)"
+msgstr ""
+
 #: src/Integration/Shield/ShieldIntegration.php:31
 msgid "Shield Security"
 msgstr ""
@@ -878,11 +896,11 @@ msgstr ""
 msgid "If you can read this, the site can send email through AhaSend."
 msgstr ""
 
-#: src/Plugin.php:162
+#: src/Plugin.php:165
 msgid "Xolution MailDelivery is not configured: the AhaSend account ID, API key or sending domain is missing."
 msgstr ""
 
-#: src/Plugin.php:170
+#: src/Plugin.php:173
 msgid "The stored AhaSend API key can no longer be decrypted, probably because the salts in wp-config.php changed. Re-enter the API key."
 msgstr ""
 

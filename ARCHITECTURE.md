@@ -167,6 +167,18 @@ Admin login, firewall blocks, Shield deactivated and cloaked plugins are sent ri
 email per event. Admin accounts, vulnerabilities and FileLocker changes are collected and sent
 about 30 seconds later from a WP-Cron event, so those are claimed in a cron request.
 
+### Login notice (since v0.0.20)
+
+A green banner above the WordPress login form (`Integration\Shield\LoginNotice`, `login_message`,
+login action only) while Shield emails a one-click login link: Shield's own
+`Provider\Email::ProviderEnabled()` (Email Authentication on, all modules on, sending verified) and
+`enable_email_auto_login` on. Auto-Login is a ShieldPRO option, read only after `optHasAccess()`:
+Shield's `optGet()` resets a premium option it has no access to. Anything unreadable hides the banner.
+
+The text is fixed in code and translated, not a setting: a release changes it on every site at
+once, while a per-site setting would mean 600 copies to keep in step. Everything beyond one sentence
+lives in the help article behind `HELP_URL` (source in `docs/help/`), which is edited in one place.
+
 ### Gravity Forms integration (since v0.0.17)
 
 Available when Gravity Forms is active. Hooks checked against Gravity Forms 3.2.2. Three email

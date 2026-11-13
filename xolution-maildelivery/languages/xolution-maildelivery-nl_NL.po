@@ -955,3 +955,15 @@ msgstr "MailDelivery verwijderen?"
 
 msgid "\"%1$s\", keys deleted: %2$d"
 msgstr "\"%1$s\", sleutels verwijderd: %2$d"
+
+msgid "%s when you log in to this website, we'll email you a link to confirm it's you."
+msgstr "%s als je inlogt op deze website, mailen we je een link om te bevestigen dat jij het bent."
+
+msgid "New:"
+msgstr "Nieuw:"
+
+msgid "Learn more"
+msgstr "Meer informatie"
+
+msgid "(opens in a new tab)"
+msgstr "(opent in een nieuw tabblad)"
