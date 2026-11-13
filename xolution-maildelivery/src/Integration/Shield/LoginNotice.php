@@ -21,8 +21,8 @@ use Throwable;
  */
 final class LoginNotice
 {
-    /** The "Learn more" page. Empty: the banner is shown without a link. */
-    public const HELP_URL = '';
+    /** The "Learn more" page, the Dutch help article (source: docs/help/). Empty: the banner is shown without a link. */
+    public const HELP_URL = 'https://xolution.nl/docs/article/inloggen-op-wordpress-met-2fa/';
 
     private const NS             = 'FernleafSystems\\Wordpress\\Plugin\\Shield\\';
     private const EMAIL_PROVIDER = self::NS . 'Modules\\LoginGuard\\Lib\\TwoFactor\\Provider\\Email';
