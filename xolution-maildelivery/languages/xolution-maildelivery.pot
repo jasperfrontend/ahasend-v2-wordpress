@@ -600,6 +600,18 @@ msgstr ""
 msgid "AhaSend did not accept the message."
 msgstr ""
 
+#: src/Integration/Duplicator/DuplicatorIntegration.php:26
+msgid "Duplicator Pro"
+msgstr ""
+
+#: src/Integration/Duplicator/ScheduledBackupEmail.php:40
+msgid "Scheduled backup result"
+msgstr ""
+
+#: src/Integration/Duplicator/ScheduledBackupEmail.php:45
+msgid "The \"Send Build Email\" of Duplicator Pro's schedules: a scheduled backup succeeded, failed, or couldn't start. When it's sent, and to whom, is set in Duplicator → Settings → Schedules."
+msgstr ""
+
 #: src/Integration/Shield/EmailSendingVerification.php:33
 msgid "Email sending verification"
 msgstr ""
@@ -868,11 +880,11 @@ msgstr ""
 msgid "If you can read this, the site can send email through AhaSend."
 msgstr ""
 
-#: src/Plugin.php:164
+#: src/Plugin.php:166
 msgid "Xolution MailDelivery is not configured: the AhaSend account ID, API key or sending domain is missing."
 msgstr ""
 
-#: src/Plugin.php:172
+#: src/Plugin.php:174
 msgid "The stored AhaSend API key can no longer be decrypted, probably because the salts in wp-config.php changed. Re-enter the API key."
 msgstr ""
 

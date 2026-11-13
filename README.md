@@ -47,11 +47,16 @@ a user who can't log in. It is public so you can use it too. Questions: contact@
 | | IP unblock link (to the user) | `shield/ip-unblock` |
 | | Security Admin removal confirmation | `shield/security-admin-removal-confirm` |
 | | Security Admin removed | `shield/security-admin-removed` |
+| Duplicator Pro | Scheduled backup result (succeeded, failed, or couldn't start) | `duplicator/scheduled-backup` |
 
 Shield's alerts, reports and Security Admin emails go to Shield's **Report Email** (Reports →
 Reporting & Alerts Configuration), or to the site admin email when that is empty. Switching a type
 on here doesn't switch the email on in Shield: it only changes the route of emails Shield already
 sends.
+
+Duplicator Pro's scheduled backup email is the one under Duplicator → Settings → Schedules → **Send
+Build Email**. That setting still decides when it's sent (never, on failure, always), and **Email
+Address** to whom (the site admin email when empty).
 
 **Gravity Forms and WooCommerce** are in the private Pro add-on (Gravity Forms since v0.0.22; it was
 built in before). On a site without Pro their emails go through the server's mailer. Switches saved

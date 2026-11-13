@@ -939,3 +939,12 @@ msgstr "Meer informatie"
 
 msgid "(opens in a new tab)"
 msgstr "(opent in een nieuw tabblad)"
+
+msgid "Duplicator Pro"
+msgstr "Duplicator Pro"
+
+msgid "Scheduled backup result"
+msgstr "Resultaat van geplande back-up"
+
+msgid "The \"Send Build Email\" of Duplicator Pro's schedules: a scheduled backup succeeded, failed, or couldn't start. When it's sent, and to whom, is set in Duplicator → Settings → Schedules."
+msgstr "De \"Send Build Email\" van de planningen in Duplicator Pro: een geplande back-up is gelukt, mislukt of kon niet starten. Wanneer en naar wie hij wordt verstuurd, stel je in bij Duplicator → Settings → Schedules."

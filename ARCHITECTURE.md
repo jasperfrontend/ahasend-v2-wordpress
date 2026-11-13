@@ -179,6 +179,26 @@ The text is fixed in code and translated, not a setting: a release changes it on
 once, while a per-site setting would mean 600 copies to keep in step. Everything beyond one sentence
 lives in the help article behind `HELP_URL` (source in `docs/help/`), which is edited in one place.
 
+### Duplicator Pro integration (since v0.0.22)
+
+Available when Duplicator Pro is active (`DUPLICATOR_VERSION` defined and its schedule add-on's
+`SchedulePackageHandler` loadable; Duplicator Lite has no schedules). Checked against Duplicator Pro 5.1.1.
+
+| Email type | Marker | Claimed through |
+|---|---|---|
+| Scheduled backup result | `duplicator/scheduled-backup` | `wp_mail()` called directly by `SchedulePackageHandler::sendBuildEmail()` or `::sendScheduleFailureEmail()` |
+
+- **One switch, like Duplicator's one setting.** Settings → Schedules → "Send Build Email" (Never / On
+  Failure / Always) governs both methods: a finished build ("Backup of <site> (<schedule>) Succeeded" or
+  "Failed") and a schedule that couldn't start. Both go to its "Email Address", or the admin email.
+- **By caller, like Shield's mailer types.** Both send a bare HTML `wp_mail()` with no filter of their
+  own. `duplicator_schedule_send_build_email` runs before `sendBuildEmail()` but not before the failure
+  email, and the build email can still be skipped after it (send mode, already sent), so a flag set
+  there could claim the wrong email. Only the direct caller of `wp_mail()` counts, so mail another
+  plugin sends during a build isn't taken.
+- **Not taken over (yet):** the installer-cleanup notices (`GlobalEntity`, two bare `wp_mail()` calls)
+  and the email summary (`EmailSummaryBootstrap`).
+
 ### Gravity Forms (v0.0.17 to v0.0.21)
 
 Built in from v0.0.17, moved to the private Pro add-on in v0.0.22 (its README has the design). The
@@ -443,6 +463,8 @@ xolution-maildelivery/
     Integration/FilteredEmailType.php, PlannedEmailType.php
     Integration/WpCore/WpCoreIntegration.php, EmailChangeConfirmation.php
     Integration/Shield/ShieldIntegration.php, TwoFactorLoginEmail.php, EmailSendingVerification.php
+    Integration/Shield/ShieldMailerEmailType.php, LoginNotice.php
+    Integration/Duplicator/DuplicatorIntegration.php, ScheduledBackupEmail.php
     Settings/Options.php, Secrets.php, Managers.php, Configurator.php
     Settings/ConfigFile.php, Setup.php, Uninstall.php, Cleanup.php
     Api/AccountClient.php     setup-key calls: domain check, create, list and delete keys

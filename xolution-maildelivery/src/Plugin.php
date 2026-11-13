@@ -13,6 +13,7 @@ use Xolution\MailDelivery\Admin\Notices;
 use Xolution\MailDelivery\Admin\SettingsPage;
 use Xolution\MailDelivery\Admin\SetupWizard;
 use Xolution\MailDelivery\Api\Client;
+use Xolution\MailDelivery\Integration\Duplicator\DuplicatorIntegration;
 use Xolution\MailDelivery\Integration\Integration;
 use Xolution\MailDelivery\Integration\Registry;
 use Xolution\MailDelivery\Integration\Shield\LoginNotice;
@@ -65,6 +66,7 @@ final class Plugin
         $builtIn = [
             new WpCoreIntegration(),
             new ShieldIntegration(),
+            new DuplicatorIntegration(),
             // Gravity Forms moved to the Pro add-on in v0.0.22.
         ];
 
