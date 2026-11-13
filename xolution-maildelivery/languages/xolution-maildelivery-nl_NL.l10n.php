@@ -15,7 +15,7 @@ return array (
     '"A login to your WordPress account just occurred", sent at every login when User Login Notification Email is on.' => '"A login to your WordPress account just occurred", verstuurd bij elke login als User Login Notification Email aan staat.',
     '%1$d of %2$d on' => '%1$d van %2$d aan',
     '%1$s is not active on this site: %2$d emails skipped.' => '%1$s is niet actief op deze site: %2$d e-mails overgeslagen.',
-    '%s when you log in to this website, we\'ll email you a link to confirm it\'s you.' => '%s als je inlogt op deze website, mailen we je een link om te bevestigen dat jij het bent.',
+    '%s once the credentials are filled out, an email is being sent asking you to confirm your login attempt.' => '%s na het invoeren van de inloggegevens, wordt er een e-mail verzonden waarmee de inlogpoging bevestigd kan worden.',
     '(opens in a new tab)' => '(opent in een nieuw tabblad)',
     'A Slack incoming webhook URL. Without one, failures only show in the log and as a notice to managers.' => 'De URL van een inkomende Slack-webhook. Zonder webhook zie je fouten alleen in het log en als bericht voor managers in het dashboard.',
     'A domain verified in AhaSend.' => 'Een domein dat in AhaSend is geverifieerd.',

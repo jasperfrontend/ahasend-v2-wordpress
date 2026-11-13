@@ -639,7 +639,7 @@ msgstr ""
 #. translators: %s: "New:" in bold.
 #: src/Integration/Shield/LoginNotice.php:77
 #, php-format
-msgid "%s when you log in to this website, we'll email you a link to confirm it's you."
+msgid "%s once the credentials are filled out, an email is being sent asking you to confirm your login attempt."
 msgstr ""
 
 #: src/Integration/Shield/LoginNotice.php:78

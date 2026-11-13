@@ -956,8 +956,8 @@ msgstr "MailDelivery verwijderen?"
 msgid "\"%1$s\", keys deleted: %2$d"
 msgstr "\"%1$s\", sleutels verwijderd: %2$d"
 
-msgid "%s when you log in to this website, we'll email you a link to confirm it's you."
-msgstr "%s als je inlogt op deze website, mailen we je een link om te bevestigen dat jij het bent."
+msgid "%s once the credentials are filled out, an email is being sent asking you to confirm your login attempt."
+msgstr "%s na het invoeren van de inloggegevens, wordt er een e-mail verzonden waarmee de inlogpoging bevestigd kan worden."
 
 msgid "New:"
 msgstr "Nieuw:"

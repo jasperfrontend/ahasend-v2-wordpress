@@ -74,7 +74,7 @@ final class LoginNotice
     {
         $text = sprintf(
             /* translators: %s: "New:" in bold. */
-            esc_html__('%s when you log in to this website, we\'ll email you a link to confirm it\'s you.', 'xolution-maildelivery'),
+            esc_html__('%s once the credentials are filled out, an email is being sent asking you to confirm your login attempt.', 'xolution-maildelivery'),
             '<strong>' . esc_html__('New:', 'xolution-maildelivery') . '</strong>',
         );
 
