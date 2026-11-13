@@ -16,6 +16,7 @@ use Xolution\MailDelivery\Api\Client;
 use Xolution\MailDelivery\Integration\GravityForms\GravityFormsIntegration;
 use Xolution\MailDelivery\Integration\Integration;
 use Xolution\MailDelivery\Integration\Registry;
+use Xolution\MailDelivery\Integration\Shield\LoginNotice;
 use Xolution\MailDelivery\Integration\Shield\ShieldIntegration;
 use Xolution\MailDelivery\Integration\WpCore\WpCoreIntegration;
 use Xolution\MailDelivery\Log\LogTable;
@@ -102,6 +103,8 @@ final class Plugin
         // Not admin-only: update checks, auto-updates and the health check run from cron.
         (new GitHubUpdater())->register();
         $this->alerts->register();
+        // On wp-login.php, so not admin-only. Checks Shield's settings itself and stays silent without Shield.
+        (new LoginNotice())->register();
 
         if (defined('WP_CLI') && WP_CLI) {
             \WP_CLI::add_command('maildelivery', Cli\Command::class);

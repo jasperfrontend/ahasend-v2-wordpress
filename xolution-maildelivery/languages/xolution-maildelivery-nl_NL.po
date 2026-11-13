@@ -874,3 +874,15 @@ msgstr "E-mailtypes die via AhaSend gaan: %d."
 
 msgid "Test email sent"
 msgstr "Testmail verstuurd"
+
+msgid "%s when you log in to this website, we'll email you a link to confirm it's you."
+msgstr "%s als je inlogt op deze website, mailen we je een link om te bevestigen dat jij het bent."
+
+msgid "New:"
+msgstr "Nieuw:"
+
+msgid "Learn more"
+msgstr "Meer informatie"
+
+msgid "(opens in a new tab)"
+msgstr "(opent in een nieuw tabblad)"
