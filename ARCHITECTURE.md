@@ -199,6 +199,32 @@ Available when Duplicator Pro is active (`DUPLICATOR_VERSION` defined and its sc
 - **Not taken over (yet):** the installer-cleanup notices (`GlobalEntity`, two bare `wp_mail()` calls)
   and the email summary (`EmailSummaryBootstrap`).
 
+### Moatline Malware Scanner integration (unreleased)
+
+Available when Moatline Malware Scanner is active (`nnms_send_alert()` defined; its main file loads it
+before `init`). Covers the Moatline Pro add-on too, which needs the free plugin. Checked against Moatline
+1.4.4 and Moatline Pro 1.5.2.
+
+| Email type | Marker | Claimed when `nnms_send_alert()` is called by |
+|---|---|---|
+| Threats and vulnerabilities | `moatline/threats` | `NNMS_Scanner::finalise()` (scan found threats), `NNMS_Vulnerabilities::refresh_and_alert()` (twice-daily, exploited or critical only) |
+| New plugins | `moatline/plugin-watch` | `NNMS_Watch::on_install()`, `::on_activate()` (switched on within an hour of installing), `::check_mu_plugins()` |
+| Lock | `moatline/lock` | `NNMS_Site_Lock::do_unlock()`, `::handle_unlock()` (paused after 5 wrong attempts), `::guard_role_meta()` (new admin blocked); Pro `NNMS_Pro_Agency_Control::run()` (unlocked from the agency dashboard) |
+| Malicious script blocked or saved | `moatline/malicious-script` | Pro `NNMS_Pro_Protect::alert()` |
+
+- **One helper, told apart by its caller.** All ten Moatline alerts go through `nnms_send_alert($subject,
+  $body)`: a bare plain-text `wp_mail()` to Moatline's alert address (default the admin email), subject
+  `[Moatline Malware Scanner] [<site>] ...`, no headers, no filter. A type claims the email when
+  `nnms_send_alert()` is the direct caller of `wp_mail()` and one of its methods the direct caller of
+  `nnms_send_alert()`. Moatline's classes aren't namespaced.
+- **Four switches, not ten.** Grouped by what the alert is about. Moatline's own switches still decide
+  whether anything is sent: "Email alerts" (Malware Scanner → Settings → Alerts) for all of them, plus
+  "Email me when a plugin is installed" for New plugins and Pro's "Email me straight away" for malicious
+  scripts.
+- **Not Moatline's:** "Force password reset" calls core `retrieve_password()`, so that's the core
+  password-reset email (`wp-core/password-reset`). Pro's agency events go to moatline.io over HTTP;
+  the agency's email is sent from there. Freemius's `send_email()` in Pro is never called.
+
 ### Gravity Forms (v0.0.17 to v0.0.21)
 
 Built in from v0.0.17, moved to the private Pro add-on in v0.0.22 (its README has the design). The
@@ -465,6 +491,7 @@ xolution-maildelivery/
     Integration/Shield/ShieldIntegration.php, TwoFactorLoginEmail.php, EmailSendingVerification.php
     Integration/Shield/ShieldMailerEmailType.php, LoginNotice.php
     Integration/Duplicator/DuplicatorIntegration.php, ScheduledBackupEmail.php
+    Integration/Moatline/MoatlineIntegration.php, MoatlineAlertEmail.php
     Settings/Options.php, Secrets.php, Managers.php, Configurator.php
     Settings/ConfigFile.php, Setup.php, Uninstall.php, Cleanup.php
     Api/AccountClient.php     setup-key calls: domain check, create, list and delete keys

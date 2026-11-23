@@ -612,6 +612,42 @@ msgstr ""
 msgid "The \"Send Build Email\" of Duplicator Pro's schedules: a scheduled backup succeeded, failed, or couldn't start. When it's sent, and to whom, is set in Duplicator → Settings → Schedules."
 msgstr ""
 
+#: src/Integration/Moatline/MoatlineIntegration.php:27
+msgid "Moatline Malware Scanner"
+msgstr ""
+
+#: src/Integration/Moatline/MoatlineIntegration.php:42
+msgid "Threats and vulnerabilities"
+msgstr ""
+
+#: src/Integration/Moatline/MoatlineIntegration.php:43
+msgid "A scan found threats, or a plugin, theme or WordPress version on this site has a serious known vulnerability."
+msgstr ""
+
+#: src/Integration/Moatline/MoatlineIntegration.php:51
+msgid "New plugins"
+msgstr ""
+
+#: src/Integration/Moatline/MoatlineIntegration.php:52
+msgid "A plugin was installed, a just-installed plugin was switched on, or a new file appeared in wp-content/mu-plugins. Only while \"Email me when a plugin is installed\" is on in Moatline."
+msgstr ""
+
+#: src/Integration/Moatline/MoatlineIntegration.php:61
+msgid "Lock"
+msgstr ""
+
+#: src/Integration/Moatline/MoatlineIntegration.php:62
+msgid "The site was unlocked (also from the agency dashboard), unlocking was paused after wrong attempts, or a new administrator was blocked while the site was locked."
+msgstr ""
+
+#: src/Integration/Moatline/MoatlineIntegration.php:72
+msgid "Malicious script blocked or saved"
+msgstr ""
+
+#: src/Integration/Moatline/MoatlineIntegration.php:73
+msgid "Someone saved a malicious script into a post, page or Elementor data. Only while \"Email me straight away\" is on in Moatline. Moatline Pro."
+msgstr ""
+
 #: src/Integration/Shield/EmailSendingVerification.php:33
 msgid "Email sending verification"
 msgstr ""
@@ -880,11 +916,11 @@ msgstr ""
 msgid "If you can read this, the site can send email through AhaSend."
 msgstr ""
 
-#: src/Plugin.php:166
+#: src/Plugin.php:168
 msgid "Xolution MailDelivery is not configured: the AhaSend account ID, API key or sending domain is missing."
 msgstr ""
 
-#: src/Plugin.php:174
+#: src/Plugin.php:176
 msgid "The stored AhaSend API key can no longer be decrypted, probably because the salts in wp-config.php changed. Re-enter the API key."
 msgstr ""
 

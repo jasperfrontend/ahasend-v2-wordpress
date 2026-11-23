@@ -948,3 +948,30 @@ msgstr "Resultaat van geplande back-up"
 
 msgid "The \"Send Build Email\" of Duplicator Pro's schedules: a scheduled backup succeeded, failed, or couldn't start. When it's sent, and to whom, is set in Duplicator → Settings → Schedules."
 msgstr "De \"Send Build Email\" van de planningen in Duplicator Pro: een geplande back-up is gelukt, mislukt of kon niet starten. Wanneer en naar wie hij wordt verstuurd, stel je in bij Duplicator → Settings → Schedules."
+
+msgid "Moatline Malware Scanner"
+msgstr "Moatline Malware Scanner"
+
+msgid "Threats and vulnerabilities"
+msgstr "Bedreigingen en kwetsbaarheden"
+
+msgid "A scan found threats, or a plugin, theme or WordPress version on this site has a serious known vulnerability."
+msgstr "Een scan heeft bedreigingen gevonden, of een plugin, thema of WordPress-versie op deze site heeft een ernstige bekende kwetsbaarheid."
+
+msgid "New plugins"
+msgstr "Nieuwe plugins"
+
+msgid "A plugin was installed, a just-installed plugin was switched on, or a new file appeared in wp-content/mu-plugins. Only while \"Email me when a plugin is installed\" is on in Moatline."
+msgstr "Er is een plugin geïnstalleerd, een net geïnstalleerde plugin is ingeschakeld, of er staat een nieuw bestand in wp-content/mu-plugins. Alleen als \"Email me when a plugin is installed\" aan staat in Moatline."
+
+msgid "Lock"
+msgstr "Lock (vergrendeling)"
+
+msgid "The site was unlocked (also from the agency dashboard), unlocking was paused after wrong attempts, or a new administrator was blocked while the site was locked."
+msgstr "De site is ontgrendeld (ook vanuit het agency-dashboard), ontgrendelen is gepauzeerd na foute pogingen, of een nieuwe beheerder is geblokkeerd terwijl de site vergrendeld was."
+
+msgid "Malicious script blocked or saved"
+msgstr "Kwaadaardig script geblokkeerd of opgeslagen"
+
+msgid "Someone saved a malicious script into a post, page or Elementor data. Only while \"Email me straight away\" is on in Moatline. Moatline Pro."
+msgstr "Iemand heeft een kwaadaardig script opgeslagen in een bericht, pagina of Elementor-data. Alleen als \"Email me straight away\" aan staat in Moatline. Moatline Pro."

@@ -48,6 +48,10 @@ a user who can't log in. It is public so you can use it too. Questions: contact@
 | | Security Admin removal confirmation | `shield/security-admin-removal-confirm` |
 | | Security Admin removed | `shield/security-admin-removed` |
 | Duplicator Pro | Scheduled backup result (succeeded, failed, or couldn't start) | `duplicator/scheduled-backup` |
+| Moatline Malware Scanner | Threats and vulnerabilities (scan found threats, serious known vulnerability) | `moatline/threats` |
+| | New plugins (installed, just-installed one switched on, new mu-plugins file) | `moatline/plugin-watch` |
+| | Lock (site unlocked, unlocking paused, new administrator blocked) | `moatline/lock` |
+| | Malicious script blocked or saved (Moatline Pro) | `moatline/malicious-script` |
 
 Shield's alerts, reports and Security Admin emails go to Shield's **Report Email** (Reports →
 Reporting & Alerts Configuration), or to the site admin email when that is empty. Switching a type
@@ -57,6 +61,11 @@ sends.
 Duplicator Pro's scheduled backup email is the one under Duplicator → Settings → Schedules → **Send
 Build Email**. That setting still decides when it's sent (never, on failure, always), and **Email
 Address** to whom (the site admin email when empty).
+
+Moatline's alerts go to the address under Malware Scanner → Settings → **Alerts** (the site admin
+email by default), and only while **Email alerts** is on there. New plugins also needs "Email me when
+a plugin is installed", and malicious scripts Moatline Pro's "Email me straight away". Moatline's
+"Force password reset" sends WordPress's own password-reset email, so that one is `wp-core/password-reset`.
 
 **Gravity Forms and WooCommerce** are in the private Pro add-on (Gravity Forms since v0.0.22; it was
 built in before). On a site without Pro their emails go through the server's mailer. Switches saved
